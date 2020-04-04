@@ -101,7 +101,8 @@ function traceLHS(ref, semanticPath, semanticVisitor) {
 }
 
 function isValidRHSParent(ptr, hasHitArrayMethod) {
-  const baseLayer = ['Member', 'Call', 'OptionalCall', 'OptionalMember']
+  console.log(ptr.parentPath.type);
+  const baseLayer = ['Member', 'Call', 'OptionalCall', 'OptionalMember', 'TSAs', 'Logical']
     .map(x => `${x}Expression`)
     .includes(ptr.parentPath.type)
   const validGrandParent =

@@ -207,7 +207,6 @@ const createBlade = ({
     frag.isFragment = true;
     return frag;
   });
-  console.log(fragments);
   return {
     name,
     args,

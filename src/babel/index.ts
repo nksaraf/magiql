@@ -152,7 +152,6 @@ export default function(babel) {
       let currentRazor = razorData;
       semPath.forEach(([name, ref]) => {
         let aliasPath, calleeArguments;
-        console.log(name, ref.type);
         if (isCallee(ref)) {
           // if its a callee, extract its args and push it into RHS
           // will parse out fragments/args/directives later
@@ -165,7 +164,6 @@ export default function(babel) {
 
         if (calleeArguments) {
           for (const x of calleeArguments) {
-            console.log(x);
             if (x.type === "ObjectExpression") {
               for (let arg of x.properties) {
                 if (!t.isObjectProperty(arg)) {
@@ -205,6 +203,18 @@ export default function(babel) {
         // const [hand, ref, semPath, ...rest] = args
         const [, ref] = args;
         const callee = ref.get("callee");
+        // console.log('CallExpression', hand, semPath, ref,callee)
+        ref.replaceWith(callee);
+      },
+      TSAsExpression(...args) {
+        const [, ref] = args;
+        const callee = ref.get("expression");
+        // console.log('CallExpression', hand, semPath, ref,callee)
+        ref.replaceWith(callee);
+      },
+      LogicalExpression(...args) {
+        const [, ref] = args;
+        const callee = ref.get("left");
         // console.log('CallExpression', hand, semPath, ref,callee)
         ref.replaceWith(callee);
       },
@@ -265,7 +275,7 @@ export default function(babel) {
 
   const printRazor = (razor, args) => {
     const literal = razor.print().replace(/\"{([a-zA-Z1-9_]+)}\"/g, (a, b) => {
-      return "${%%" + b + "%%}";
+      return "${JSON.stringify(%%" + b + "%%)}";
     });
 
     let obj = Array.from(args ?? {}).reduce(
@@ -280,11 +290,13 @@ export default function(babel) {
     name: "babel-magiql",
     inherits: jsx,
     visitor: {
-      Identifier(path) {
-        if (looksLike(path, { node: { name: "useMagiqlQuery" } })) {
-          handleUseQuery(path);
+      VariableDeclaration(path) {
+        const init = path.get('declarations')[0].get('init');
+        if (t.isCallExpression(init) && looksLike(init.get('callee'), { node: { name: "useMagiqlQuery" } })){
+          handleUseQuery(init.get('callee'));
         }
-
+      },
+      Identifier(path) {
         if (looksLike(path, { node: { name: "useFragment" } })) {
           handleUseFragment(path);
         }

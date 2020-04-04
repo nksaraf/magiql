@@ -1,51 +1,71 @@
-import { useMagiqlQuery, useFragment } from "./graphql";
+import Link from "next/link";
+import Layout from "../components/Layout";
+import {
+  MagiqlProvider,
+  createClient,
+  useQuery,
+  gql,
+  useMagiqlQuery,
+} from "magiql";
 
-const Note = () => {
-  const note = useFragment("Pokemon");
-  const { id } = note;
-  return note;
+const client = createClient("https://graphql-pokemon.now.sh");
+
+const Data = () => {
+  const { data, loading, error } = useQuery(
+    gql`
+      query pokemon($name: String) {
+        pokemon(name: $name) {
+          id
+          number
+          name
+          attacks {
+            special {
+              name
+              type
+              damage
+            }
+          }
+          image
+        }
+      }
+    `,
+    {
+      variables: {
+        name: "pikachu",
+      },
+    }
+  );
+  return <pre>{JSON.stringify({ loading, data, error }, null, 2)}</pre>;
 };
 
-function OtherNote() {
-  const note = useFragment("PokemonAttack");
-  const { special } = note;
-}
-
-const Success = () => {
-  const { query, loading, error } = useMagiqlQuery("success");
-  // const notes = query.pokemons(`first: ${10}, second: ${8}`);
-  let x = 1;
-  const notes = query.pokemons({ first: x, second: 8 });
-  const moreNotes = notes;
-
-  const { a } = moreNotes;
-  const c = a.x({
-    b: 1
-  });
-
-  if (notes.length === 0) {
-    return <Empty />;
+const OtherData = () => {
+  const { query, loading, error } = useMagiqlQuery("data");
+  if (loading) {
+    return "loading...";
   }
+  const { id }: any = (query.pokemon({
+    name: "pikachu",
+  }) ?? {}) as any;
 
   return (
-    // .filter(note =>
-    //   week > 0 && note !== null ? note.week === week : true
-    // )
-    <Row justifyContent="space-between" flexWrap="wrap">
-      {notes.map((note, index) => (
-        <Column mb="oneLine" key={note.attacks as string}>
-          <BaseLink
-            key={note?._id("@hello") as string}
-            target="_blank"
-            rel="noreferrer"
-            color="black"
-            textDecoration="none"
-            href={note.drive?.webViewLink ?? ""}
-          >
-            <BasicNoteThumbnail key={index} note={note.other(Note.Fragment)} />
-          </BaseLink>
-        </Column>
-      ))}
-    </Row>
+    <pre>
+      {JSON.stringify({ loading, data: { pokemon: id }, error }, null, 2)}
+    </pre>
   );
 };
+
+const IndexPage = () => (
+  <MagiqlProvider client={client}>
+    <Layout title="Home | Next.js + TypeScript Example">
+      <h1>Hello Next.js 👋</h1>
+      <p>
+        <Link href="/about">
+          <a>About</a>
+        </Link>
+      </p>
+      <OtherData />
+    </Layout>
+  </MagiqlProvider>
+);
+
+export default IndexPage;

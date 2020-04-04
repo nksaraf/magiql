@@ -7,6 +7,7 @@ import { indent } from '@graphql-codegen/visitor-plugin-common';
 class MagiqlVisitor extends TsVisitor {
   constructor(schema, config) {
     super(schema, config);
+    (this._argumentsTransformer as any)._avoidOptionals = false;
     // this._argumentsTransformer.transform = (variablesNode) => {
     //   if (!variablesNode || variablesNode.length === 0) {
     //       return null;
@@ -35,7 +36,9 @@ class MagiqlVisitor extends TsVisitor {
 }
 
 const extra = `
-export function useMagiqlQuery(name: string): { query: Query }
+import { UseQueryResult, UseQueryOptions } from './client/hooks';
+
+export function useMagiqlQuery(name: string, options?: UseQueryOptions<any,any>): Omit<UseQueryResult<any,any>, "data"> & { query: Query }
 
 export function useFragment<K extends keyof TypeMaps>(name: K): TypeMaps[K];`;
 
