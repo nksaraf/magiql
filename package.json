@@ -1,6 +1,6 @@
 {
   "name": "magiql",
-  "version": "0.0.1-beta.6",
+  "version": "0.0.1-beta.7",
   "description": "",
   "repository": "Nikhil Saraf",
   "license": "MIT",
@@ -13,6 +13,9 @@
   ],
   "main": "dist/magiql.js",
   "module": "dist/magiql.esm.js",
+  "bin": {
+    "magiql": "dist/cli.js"
+  },
   "scripts": {
     "clean": "rm -rf dist",
     "prepublishOnly": "yarn clean && yarn build && yarn types",
@@ -23,6 +26,7 @@
     "build:main": "klap build --source src/index.ts --module dist/magiql.esm.js --main dist/magiql.js",
     "build:babel": "klap build --source src/babel/index.ts --main dist/babel.js  --no-minify",
     "build:codegen": "klap build --source src/codegen/index.ts --main dist/codegen.js --no-minify",
+    "build:cli": "klap build --source src/cli.ts --main dist/cli.js --no-minify",
     "start": "klap start",
     "watch": "klap watch",
     "test": "yarn babel test/test.tsx -o test/test.out.tsx --extensions=tsx --presets next/babel --plugins=./dist/babel.js"
