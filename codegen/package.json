@@ -1,0 +1,5 @@
+{
+  "name": "magiql/codegen",
+  "private": true,
+  "main": "../dist/codegen.js"
+}
