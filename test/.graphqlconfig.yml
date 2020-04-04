@@ -1,0 +1,8 @@
+schema: schema.graphql
+extensions:
+  endpoints:
+    default: https://graphql-pokemon.now.sh
+  codegen:
+    scalars:
+      DateTime: Date
+    overwrite: true

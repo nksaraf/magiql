@@ -6,6 +6,8 @@ import {
   useQuery,
   gql,
   useMagiqlQuery,
+  Pokemon,
+  PokemonAttack,
 } from "magiql";
 
 const client = createClient("https://graphql-pokemon.now.sh");
@@ -41,15 +43,18 @@ const Data = () => {
 const OtherData = () => {
   const { query, loading, error } = useMagiqlQuery("data");
   if (loading) {
-    return "loading...";
+    return <div>loading...</div>;
   }
-  const { id }: any = (query.pokemon({
-    name: "pikachu",
-  }) ?? {}) as any;
+  const { id, attacks } =
+    query.pokemon({
+      name: "pikach",
+    }) ?? {};
+
+  const result = (attacks?.fast ?? []).map((f) => f?.name);
 
   return (
     <pre>
-      {JSON.stringify({ loading, data: { pokemon: id }, error }, null, 2)}
+      {JSON.stringify({ loading, data: query, result: result, error }, null, 2)}
     </pre>
   );
 };
@@ -64,6 +69,7 @@ const IndexPage = () => (
         </Link>
       </p>
       <OtherData />
+      <Data />
     </Layout>
   </MagiqlProvider>
 );
