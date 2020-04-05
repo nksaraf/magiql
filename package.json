@@ -1,6 +1,6 @@
 {
   "name": "magiql",
-  "version": "0.0.1-beta.9",
+  "version": "0.0.1-beta.11",
   "description": "",
   "repository": "Nikhil Saraf",
   "license": "MIT",
@@ -9,7 +9,8 @@
   "files": [
     "dist",
     "babel",
-    "codegen"
+    "codegen",
+    "client"
   ],
   "main": "dist/magiql.js",
   "module": "dist/magiql.esm.js",
@@ -18,17 +19,17 @@
   },
   "scripts": {
     "clean": "rm -rf dist",
-    "prepublishOnly": "yarn clean && yarn build && yarn types",
+    "prepublishOnl": "yarn clean && yarn build && yarn types",
     "build": "npm-run-all --parallel build:*",
     "types": "tsc -p tsconfig.json",
     "pretest": "yarn build",
     "dev": "yarn test && chokidar \"src/**/*\" \"test/test.tsx\" -c \"yarn test\"",
     "build:main": "klap build --source src/index.ts --module dist/magiql.esm.js --main dist/magiql.js",
+    "build:client": "klap build --source src/client/index.ts --module dist/client.esm.js --main dist/client.js",
     "build:babel": "klap build --source src/babel/index.ts --main dist/babel.js  --no-minify",
     "build:codegen": "klap build --source src/codegen/index.ts --main dist/codegen.js --no-minify",
-    "build:cli": "klap build --source src/cli.ts --main dist/cli.js --no-minify && yarn add:bang",
+    "build:cli": "klap build --source src/cli/index.ts --main dist/cli.js --no-minify && yarn add:bang",
     "add:bang": "sed -i '' '1i\\\n#!/usr/bin/env node\n' \"./dist/cli.js\"",
-    "add:bang2": "type \".temp.txt\" ./dist/cli.js > ./dist/cli.js",
     "start": "klap start",
     "watch": "klap watch",
     "test": "yarn babel test/test.tsx -o test/test.out.tsx --extensions=tsx --presets next/babel --plugins=./dist/babel.js"
@@ -53,6 +54,7 @@
     "@graphql-codegen/cli": "^1.13.1",
     "@graphql-codegen/plugin-helpers": "1.13.1",
     "@graphql-codegen/typescript": "^1.13.1",
+    "@graphql-codegen/typescript-operations": "^1.13.1",
     "@graphql-codegen/visitor-plugin-common": "1.13.1",
     "@types/react-query": "gist:a00f0670c1d29e9490a1d1d856a3866d",
     "auto-bind": "^4.0.0",
