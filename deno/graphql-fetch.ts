@@ -1,8 +1,6 @@
-/// <reference lib="dom" />
-
 export type Variables = { [key: string]: any };
 
-export interface Options extends Omit<RequestInit, "body"> {}
+export interface Options extends Omit<__domTypes.RequestInit, "body"> {}
 
 export interface GraphQLError {
   message: string;
@@ -128,5 +126,3 @@ export const applyMiddleware = (
     return m(agg);
   }, fn);
 };
-
-
