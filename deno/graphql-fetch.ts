@@ -1,3 +1,5 @@
+/// <reference lib="dom" />
+
 export type Variables = { [key: string]: any };
 
 export interface Options extends Omit<RequestInit, "body"> {}
@@ -53,7 +55,7 @@ export class ClientError extends Error {
 async function baseFetchGraphQL<TData extends any, TVariables extends { [key: string]: any }>(
   uri: string,
   query: string,
-  variables: TVariables = undefined,
+  variables: TVariables = {} as any,
   options: Options = {}
 ): Promise<TData> {
   const { headers, ...others } = options;
