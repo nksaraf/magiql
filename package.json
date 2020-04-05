@@ -1,6 +1,6 @@
 {
   "name": "magiql",
-  "version": "0.0.1-beta.11",
+  "version": "0.0.1-beta.13",
   "description": "",
   "repository": "Nikhil Saraf",
   "license": "MIT",
@@ -12,20 +12,21 @@
     "codegen",
     "client"
   ],
-  "main": "dist/magiql.js",
-  "module": "dist/magiql.esm.js",
+  "main": "dist/cjs/magiql.js",
+  "module": "dist/esm/magiql.js",
   "bin": {
     "magiql": "dist/cli.js"
   },
   "scripts": {
     "clean": "rm -rf dist",
-    "prepublishOnl": "yarn clean && yarn build && yarn types",
+    "prepublishOnly": "yarn clean && yarn build && yarn types",
     "build": "npm-run-all --parallel build:*",
     "types": "tsc -p tsconfig.json",
     "pretest": "yarn build",
     "dev": "yarn test && chokidar \"src/**/*\" \"test/test.tsx\" -c \"yarn test\"",
-    "build:main": "klap build --source src/index.ts --module dist/magiql.esm.js --main dist/magiql.js",
-    "build:client": "klap build --source src/client/index.ts --module dist/client.esm.js --main dist/client.js",
+    "build:main": "deno --allow-read --allow-write scripts/index.ts",
+    "build:client": "klap build --source src/client/index.ts --module dist/esm/client.js --main dist/cjs/client.js",
+    "build:hooks": "klap build --source src/hooks.ts --module dist/esm/hooks.js --main dist/cjs/hooks.js",
     "build:babel": "klap build --source src/babel/index.ts --main dist/babel.js  --no-minify",
     "build:codegen": "klap build --source src/codegen/index.ts --main dist/codegen.js --no-minify",
     "build:cli": "klap build --source src/cli/index.ts --main dist/cli.js --no-minify && yarn add:bang",
