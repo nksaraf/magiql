@@ -19,8 +19,18 @@ var _magiql = require("magiql");
 
 var __jsx = _react["default"].createElement;
 
-function _templateObject() {
+function _templateObject2() {
   var data = (0, _taggedTemplateLiteral2["default"])(["\n      query pokemon($name: String) {\n        pokemon(name: $name) {\n          id\n          number\n          name\n          attacks {\n            special {\n              name\n              type\n              damage\n            }\n          }\n          image\n        }\n      }\n    "]);
+
+  _templateObject2 = function _templateObject2() {
+    return data;
+  };
+
+  return data;
+}
+
+function _templateObject() {
+  var data = (0, _taggedTemplateLiteral2["default"])(["\n  query pokemonD($name: String) {\n    pokemon(name: $name) {\n      ...PokDetails\n    }\n  }\n\n  fragment PokDetails on Pokemon {\n    id\n    name\n  }\n"]);
 
   _templateObject = function _templateObject() {
     return data;
@@ -30,9 +40,10 @@ function _templateObject() {
 }
 
 var client = (0, _magiql.createClient)("https://graphql-pokemon.now.sh");
+(0, _magiql.gql)(_templateObject()); // gql``;
 
 var Data = function Data() {
-  var _useQuery = (0, _magiql.useQuery)((0, _magiql.gql)(_templateObject()), {
+  var _useQuery = (0, _magiql.useQuery)((0, _magiql.gql)(_templateObject2()), {
     variables: {
       name: "pikachu"
     }

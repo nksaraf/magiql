@@ -12,6 +12,21 @@ import {
 
 const client = createClient("https://graphql-pokemon.now.sh");
 
+gql`
+  query pokemonD($name: String) {
+    pokemon(name: $name) {
+      ...PokDetails
+    }
+  }
+
+  fragment PokDetails on Pokemon {
+    id
+    name
+  }
+`;
+
+// gql``;
+
 const Data = () => {
   const { data, loading, error } = useQuery(
     gql`
