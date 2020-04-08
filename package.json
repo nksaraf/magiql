@@ -1,6 +1,6 @@
 {
   "name": "magiql",
-  "version": "0.0.1-beta.13",
+  "version": "0.0.1-beta.14",
   "description": "",
   "repository": "Nikhil Saraf",
   "license": "MIT",
@@ -61,10 +61,13 @@
     "auto-bind": "^4.0.0",
     "babel-plugin-transform-async-to-promises": "^0.8.15",
     "camel-case": "^4.1.1",
+    "dedent": "^0.7.0",
     "graphql-ast-types": "^1.0.2",
     "graphql-config": "^3.0.0-rc.1",
     "isomorphic-unfetch": "^3.0.0",
     "pascal-case": "^3.1.1",
+    "path": "^0.12.7",
+    "prettier": "^2.0.4",
     "react-query": "^1.2.1"
   },
   "peerDependencies": {
