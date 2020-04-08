@@ -7,6 +7,7 @@ export interface MagiqlRawPluginConfig extends RawClientSideBasePluginConfig, Ty
    * @default ./client/hooks
    */
   importHooksFrom?: string;
+  mode?: "magic"  | "hooks-types" | "hooks-esm" | "hooks-cjs";
   codegen?: boolean;
   /**
    * @name addDocBlocks
@@ -34,4 +35,5 @@ export interface MagiqlPluginConfig extends ClientSideBasePluginConfig, TypeScri
   importHooksFrom: string;
   addDocBlocks: boolean;
   codegen: boolean;
+  mode: "magic"  | "hooks-types" | "hooks-esm" | "hooks-cjs";
 }

@@ -10,7 +10,7 @@ import {
 import { Middleware } from "./graphql-fetch";
 import { useMagiqlClient } from "./client";
 
-interface GraphQLVariables<TVariables> {
+export interface GraphQLVariables<TVariables> {
   variables?: TVariables;
 }
 

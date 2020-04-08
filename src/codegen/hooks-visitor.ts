@@ -11,6 +11,7 @@ import {
   concatAST,
   FragmentDefinitionNode,
 } from "graphql";
+import dedent from "dedent";
 import { Types, PluginFunction } from "@graphql-codegen/plugin-helpers";
 import { pascalCase } from "pascal-case";
 import { GraphQLSchema } from "graphql";
@@ -18,7 +19,7 @@ import gql from "graphql-tag";
 import { print } from "graphql/language/printer";
 import { MagiqlRawPluginConfig, MagiqlPluginConfig } from "./config";
 
-export class MagiqlHooksVisitor extends ClientSideBaseVisitor<
+export class MagiqlVisitor extends ClientSideBaseVisitor<
   MagiqlRawPluginConfig,
   MagiqlPluginConfig
 > {
@@ -35,10 +36,11 @@ export class MagiqlHooksVisitor extends ClientSideBaseVisitor<
       importHooksFrom: getConfigValue(
         rawConfig.importHooksFrom,
         // "magiql"
-        "./client/hooks"
+        "./client"
       ),
       addDocBlocks: getConfigValue(rawConfig.addDocBlocks, true),
       codegen: getConfigValue(rawConfig.codegen, false),
+      mode: getConfigValue(rawConfig.mode, "hooks-types")
     });
 
     this._externalImportPrefix = this.config.importOperationTypesFrom
@@ -85,7 +87,6 @@ export class MagiqlHooksVisitor extends ClientSideBaseVisitor<
   }
 
   printDocument(node: OperationDefinitionNode) {
-    console.log(node);
     const doc = `
 ${print(node).split("\\").join("\\\\")}
 ${this.printFragments(node)}`;
@@ -114,12 +115,16 @@ ${this.printFragments(node)}`;
       node.name.value.toLowerCase().endsWith(node.operation)
         ? ""
         : operationType;
-    const operationResultType = this._externalImportPrefix + this.convertName(node, {
-      suffix: operationTypeSuffix + this._parsedConfig.operationResultSuffix,
-    });
-    const operationVariablesTypes = this._externalImportPrefix + this.convertName(node, {
-      suffix: operationTypeSuffix + "Variables",
-    });
+    const operationResultType =
+      this._externalImportPrefix +
+      this.convertName(node, {
+        suffix: operationTypeSuffix + this._parsedConfig.operationResultSuffix,
+      });
+    const operationVariablesTypes =
+      this._externalImportPrefix +
+      this.convertName(node, {
+        suffix: operationTypeSuffix + "Variables",
+      });
 
     const suffix = this._getHookSuffix(node.name.value, operationType);
     const operationName: string = this.convertName(node.name.value, {
@@ -127,26 +132,56 @@ ${this.printFragments(node)}`;
       useTypesPrefix: false,
     });
 
-    // console.log(operationResultType);
-
-    !this.config.codegen &&
-      this.imports.add(
-        `import * as MagiqlHooks from "${this.config.importHooksFrom}";`
-      );
-
     const document = `\`${this.printDocument(node)}\``;
 
-    const hook  =
-      this.config.codegen
-        ? `function use${operationName}(options) {
-        return MagiqlHooks.use${operationType}(${document}, { opName: "${node.name.value}", ...options });
-      }`
-        : `${
-            this.config.noExport ? "" : "export "
-          }function use${operationName}(options?: MagiqlHooks.Use${operationType}Options<${operationResultType}, ${operationVariablesTypes}>) {
-        return MagiqlHooks.use${operationType}<${operationResultType}, ${operationVariablesTypes}>(${document}, options);
+    // let hook;
+
+    if (this.config.mode === 'hooks-types') {
+      this.imports.add(
+        `import * as Magiql from "${this.config.importHooksFrom}";`
+      );
+      return `${
+        this.config.noExport ? "" : "export "
+      }function use${operationName}(options?: Magiql.Use${operationType}Options<${operationResultType}, ${operationVariablesTypes}>): Magiql.UseQueryResult<${operationResultType}, ${operationVariablesTypes}>;
+      
+      `
+    } else if (this.config.mode === 'hooks-esm') {
+      this.imports.add(
+        `import * as Magiql from "${this.config.importHooksFrom}";`
+      );
+
+      return `${
+        this.config.noExport ? "" : "export "
+      }function use${operationName}(options) {
+        return Magiql.use${operationType}(${document}, { opName: "${node.name.value}", ...options });
       }
-      `;
+      
+      `
+    } else if (this.config.mode === 'hooks-cjs') {
+      this.imports.add(
+        `const Magiql = require("${this.config.importHooksFrom}");`
+      );
+
+      return `${
+        this.config.noExport ? "" : `module.exports.use${operationName} = `
+      }function use${operationName}(_options) {
+        const options = Object.assign({}, { opName: "${node.name.value}" }, _options);
+        return Magiql.use${operationType}(` + JSON.stringify(this.printDocument(node)) + `, options);
+      }
+      
+      `
+    }
+    // const hook  =
+    //   this.config.codegen
+    //     ? `function use${operationName}(options) {
+    //     return Magiql.use${operationType}(${document}, { opName: "${node.name.value}", ...options });
+    //   }`
+    //     : `${
+    //         this.config.noExport ? "" : "export "
+    //       }function use${operationName}(options?: Magiql.Use${operationType}Options<${operationResultType}, ${operationVariablesTypes}>): Magiql.UseQueryResult<${operationResultType}, ${operationVariablesTypes}> {
+    //     return Magiql.use${operationType}<${operationResultType}, ${operationVariablesTypes}>(${document}, options);
+    //   }
+    //   `;
 
     // if (this.config.addDocBlocks) {
     //   hookFns.unshift(this._buildHooksJSDoc(node, operationName, operationType));
@@ -167,27 +202,27 @@ ${this.printFragments(node)}`;
     //   hookResults.push(`export type ${lazyOperationName}HookResult = ReturnType<typeof use${lazyOperationName}>;`);
     // }
 
-    
     // return hook;
 
     // if (node.type === "Fragment" && this.config.codegen) {
     //   return "";
     // }
 
-    if (this.config.codegen) {
+    // if (this.config.codegen) {
       // return `module.exports.${operationName} = \`${[documentString, additional]
       //   .filter((a) => a)
       //   .join("\n")
       //   .replace(/\`/g, "\\`")}\`
-      
+
       // module.exports.${documentVariableName} = \`${documentString.replace(
       //   /\`/g,
       //   "\\`"
       // )}\``;
-      return  "";
-    } else {
+      return "";
+    // } else {
       // return [documentString, additional].filter((a) => a).join("\n");
-return hook;    }
+      // return hook + "\n";
+    // }
   }
 
   public getImports(): string[] {
@@ -276,7 +311,7 @@ export const runHooksPlugin: PluginFunction<MagiqlRawPluginConfig> = (
     ...(config.externalFragments || []),
   ];
 
-  const visitor = new MagiqlHooksVisitor(
+  const visitor = new MagiqlVisitor(
     schema,
     allFragments,
     config,
