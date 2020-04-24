@@ -11,7 +11,6 @@ import {
   concatAST,
   FragmentDefinitionNode,
 } from "graphql";
-import dedent from "dedent";
 import { Types, PluginFunction } from "@graphql-codegen/plugin-helpers";
 import { pascalCase } from "pascal-case";
 import { GraphQLSchema } from "graphql";

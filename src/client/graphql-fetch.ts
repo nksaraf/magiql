@@ -55,7 +55,7 @@ export class ClientError extends Error {
 async function baseFetchGraphQL<TData extends any, TVariables extends { [key: string]: any }>(
   uri: string,
   query: string,
-  variables: TVariables = undefined,
+  variables: TVariables = {},
   options: Options = {}
 ): Promise<TData> {
   const { headers, ...others } = options;
