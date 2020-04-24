@@ -6,7 +6,7 @@ to make the requests. A simple middleware API is used to allow for things like a
 
 Usage example:
 
-```javascript
+```tsx
 import {
   MagiqlProvider,
   createClient,
@@ -21,22 +21,22 @@ const client = createClient("https://graphql-pokemon.now.sh");
 
 const SearchPokemon = () => {
   const { data, status, error } = useQuery(gql`
-  query pokemon($name: String) {
-    pokemon(name: $name) {
-      id
-      number
-      name
-      attacks {
-        special {
-          name
-          type
-          damage
+    query pokemon($name: String) {
+      pokemon(name: $name) {
+        id
+        number
+        name
+        attacks {
+          special {
+            name
+            type
+            damage
+          }
         }
-      }
 
-      image
+        image
+      }
     }
-  }
   `, {
     variables: {
       name: "pikachu",
@@ -98,7 +98,7 @@ With babel config (example with Next.js):
 
 Code example:
 
-```javascript
+```tsx
 import { useMagiqlQuery } from "magiql";
 
 const MagicalPokemonSearch = () => {
@@ -167,7 +167,7 @@ query searchPokemon($name: String) {
 `;
 ```
 
-```typescript
+```tsx
 import { useSearchPokemonQuery } from "magiql";
 
 const SearchPokemon = () => {
