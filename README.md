@@ -56,6 +56,32 @@ const App = () => {
 
 ```
 
+We can use middleware to customize options passed down to the fetch function. This allows adding functionality for things like auth.
+
+```javascript
+import { parseCookies } from "nookies";
+import { createClient } from "magiql";
+
+const getCookieToken = () => {
+  return parseCookies().token;
+};
+
+export const authMiddleware = (getToken: () => string) => (fetch) => {
+  return (url, operation, vars, options = {} as any) => {
+    const token = getToken();
+    options.headers = {
+      ...options.headers,
+      authorization: token ? `Bearer ${token}` : "",
+    };
+    const a = fetch(url, operation, vars, options);
+    return a;
+  };
+};
+
+const client = createClient("https://graphql-pokemon.now.sh", {}, [authMiddleware(getCookieToken)]);
+
+```
+
 ## Magic
 
 Inspired by [babel-blade](https://github.com/babel-blade/babel-blade), an experimental API to infer
