@@ -118,6 +118,68 @@ const App = () => {
 }
 ```
 
+## Code generation
+
+Uses [graphql-code-generator](https://github.com/dotansimha/graphql-code-generator) to generate hooks from graphql documents
+across your project. Uses [graphql-config](https://github.com/kamilkisiela/graphql-config) spec to get the necessary config.
+Converts magiql into a smart module that supplies necessary hooks with full type-safety during the developent. Just need to run `magiql` command on the CLI to generate types. `magiql --watch` runs it in watch mode.
+
+```yaml
+# .graphqlconfig.yml
+
+schema: https://graphql-pokemon.now.sh
+documents: pages/**/*.{tsx,ts,graphql}
+```
+
+```graphql
+# pokemon.graphql
+query searchPokemon($name: String) {
+    pokemon(name: $name) {
+      id
+      number
+      name
+      attacks {
+        special {
+          name
+          type
+          damage
+        }
+      }
+
+      image
+    }
+  }
+`;
+```
+
+```typescript
+import {
+  MagiqlProvider,
+  createClient,
+  useSearchPokemonQuery
+} from "magiql";
+
+const client = createClient("https://graphql-pokemon.now.sh");
+
+const SearchPokemon = () => {
+  const { data, status, error } = useSearchPokemonQuery({
+    variables: {
+      name: "pikachu",
+    },
+  });
+
+  return <pre>{JSON.stringify({ status, data, error }, null, 2)}</pre>;
+};
+
+const App = () => {
+  return (
+    <MagiqlProvider client={client}>
+      <SearchPokemon />
+    </MagiqlProvider>
+  );
+}
+```
+
 Using code generation, we can get autocompletion for types while working with `useMagiqlQuery`.
 
 ![Typescript auto-complete example](https://github.com/nksaraf/magiql/blob/master/examples/example.png)
