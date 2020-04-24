@@ -120,5 +120,5 @@ const App = () => {
 
 Using code generation, we can get autocompletion for types while working with `useMagiqlQuery`.
 
-![Typescript auto-complete example]("./examples/example.png")
+![Typescript auto-complete example](https://github.com/nksaraf/magiql/blob/master/examples/example.png)
 
