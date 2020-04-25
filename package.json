@@ -56,7 +56,7 @@
     "@graphql-codegen/plugin-helpers": "1.13.1",
     "@graphql-codegen/typescript": "^1.13.1",
     "@graphql-codegen/typescript-operations": "^1.13.1",
-    "@graphql-codegen/visitor-plugin-common": "1.13.1",
+    "@graphql-codegen/visitor-plugin-common": "1.13.3",
     "@types/react-query": "gist:a00f0670c1d29e9490a1d1d856a3866d",
     "auto-bind": "^4.0.0",
     "babel-plugin-transform-async-to-promises": "^0.8.15",
