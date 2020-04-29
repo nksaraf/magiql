@@ -1,77 +1,82 @@
 {
   "name": "magiql",
-  "version": "0.0.1-beta.14",
+  "version": "0.0.1-next.2",
   "description": "",
   "repository": "Nikhil Saraf",
   "license": "MIT",
   "author": "Nikhil Saraf <nsaraf98@gmail.com>",
   "types": "dist/types",
-  "files": [
-    "dist",
-    "babel",
-    "codegen",
-    "client"
-  ],
-  "main": "dist/cjs/magiql.js",
-  "module": "dist/esm/magiql.js",
-  "bin": {
-    "magiql": "dist/cli.js"
-  },
   "scripts": {
-    "clean": "rm -rf dist",
-    "prepublishOnly": "yarn clean && yarn build && yarn types",
-    "build": "npm-run-all --parallel build:*",
-    "types": "tsc -p tsconfig.json",
-    "pretest": "yarn build",
+    "prepublishOnly": "yarn build",
+    "build": "pkger",
     "dev": "yarn test && chokidar \"src/**/*\" \"test/test.tsx\" -c \"yarn test\"",
-    "build:main": "deno --allow-read --allow-write scripts/index.ts",
-    "build:client": "klap build --source src/client/index.ts --module dist/esm/client.js --main dist/cjs/client.js",
-    "build:hooks": "klap build --source src/hooks.ts --module dist/esm/hooks.js --main dist/cjs/hooks.js",
-    "build:babel": "klap build --source src/babel/index.ts --main dist/babel.js  --no-minify",
-    "build:codegen": "klap build --source src/codegen/index.ts --main dist/codegen.js --no-minify",
-    "build:cli": "klap build --source src/cli/index.ts --main dist/cli.js --no-minify && yarn add:bang",
-    "add:bang": "sed -i '' '1i\\\n#!/usr/bin/env node\n' \"./dist/cli.js\"",
-    "start": "klap start",
-    "watch": "klap watch",
-    "test": "yarn babel test/test.tsx -o test/test.out.tsx --extensions=tsx --presets next/babel --plugins=./dist/babel.js"
+    "test": "yarn babel test/test.tsx -o test/test.out.tsx --extensions=tsx --presets next/babel --plugins=./dist/cjs/babel.js"
   },
   "devDependencies": {
     "@babel/preset-typescript": "^7.9.0",
-    "@types/node": "^13.11.0",
+    "@types/node": "^13.13.4",
     "chokidar-cli": "^2.1.0",
     "graphql": "^15.0.0",
-    "klap": "^4.2.3",
-    "next": "^9.3.4",
+    "next": "^9.3.6",
     "npm-run-all": "^4.1.5",
+    "pkger": "^0.0.2-next.3",
     "react": "^16.13.1",
-    "typescript": "3.8.3"
+    "typescript": "^3.8.3"
   },
-  "klap": {
-    "example": "public/index.ts"
+  "pkger": {
+    "target": "browser",
+    "entries": [
+      "client",
+      "hooks",
+      {
+        "name": "babel",
+        "target": "node"
+      },
+      {
+        "name": "codegen"
+      },
+      {
+        "name": "cli",
+        "target": "cli",
+        "cmd": "magiql"
+      }
+    ]
   },
   "dependencies": {
     "@babel/cli": "^7.8.4",
     "@babel/plugin-syntax-jsx": "^7.8.3",
-    "@graphql-codegen/cli": "^1.13.1",
+    "@graphql-codegen/cli": "^1.13.3",
     "@graphql-codegen/plugin-helpers": "1.13.3",
-    "@graphql-codegen/typescript": "^1.13.1",
-    "@graphql-codegen/typescript-operations": "^1.13.1",
+    "@graphql-codegen/typescript": "^1.13.3",
+    "@graphql-codegen/typescript-operations": "^1.13.3",
     "@graphql-codegen/visitor-plugin-common": "1.13.3",
-    "@types/react-query": "gist:a00f0670c1d29e9490a1d1d856a3866d",
     "auto-bind": "^4.0.0",
-    "babel-plugin-transform-async-to-promises": "^0.8.15",
     "camel-case": "^4.1.1",
     "dedent": "^0.7.0",
     "graphql-ast-types": "^1.0.2",
-    "graphql-config": "^3.0.0-rc.1",
+    "graphql-config": "^3.0.0",
     "isomorphic-unfetch": "^3.0.0",
     "pascal-case": "^3.1.1",
     "path": "^0.12.7",
-    "prettier": "^2.0.4",
+    "prettier": "^2.0.5",
     "react-query": "^1.2.9"
   },
   "peerDependencies": {
-    "graphql": "^14.0.0",
-    "react": "^16.8"
-  }
+    "graphql": "^15.0.0",
+    "react": "^16.13"
+  },
+  "bin": {
+    "magiql": "dist/cjs/cli.js"
+  },
+  "module": "dist/esm/magiql.js",
+  "main": "dist/cjs/magiql.js",
+  "browser": "dist/esm/magiql.js",
+  "files": [
+    "dist",
+    "babel",
+    "codegen",
+    "client",
+    "hooks",
+    "dist/types"
+  ]
 }
