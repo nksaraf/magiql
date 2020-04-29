@@ -3,5 +3,5 @@
   "private": true,
   "main": "../dist/cjs/codegen.js",
   "module": "../dist/esm/codegen.js",
-  "types": "../../dist/types"
+  "types": "../dist/types"
 }

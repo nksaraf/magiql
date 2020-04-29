@@ -26,6 +26,7 @@
   },
   "pkger": {
     "target": "browser",
+    "silent": "true",
     "entries": [
       "client",
       "hooks",

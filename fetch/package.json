@@ -3,5 +3,5 @@
   "private": true,
   "main": "../dist/cjs/fetch.js",
   "module": "../dist/esm/fetch.js",
-  "types": "../../dist/types"
+  "types": "../dist/types"
 }
