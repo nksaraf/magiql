@@ -1,0 +1,7 @@
+{
+  "name": "magiql/fetch",
+  "private": true,
+  "main": "../dist/cjs/fetch.js",
+  "module": "../dist/esm/fetch.js",
+  "types": "../../dist/types"
+}

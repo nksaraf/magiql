@@ -14,7 +14,7 @@ async function run() {
   const config = context.getConfig();
   config.overwrite = true;
   config.hooks = {
-    ...config.hooks,
+    ...config.hooks as any,
     afterOneFileWrite: 'prettier --write --with-node-modules'
   }
   config.generates = {
@@ -36,7 +36,11 @@ async function run() {
       plugins: [pluginPath],
       config: { mode: 'hooks-esm' },
     },
-    [path.join(process.cwd(), outputPath, "/cjs/hooks.js")]: {
+    [path.join(process.cwd(), outputPath, "/cjs/development/hooks.js")]: {
+      plugins: [pluginPath],
+      config: { mode: 'hooks-cjs' },
+    },
+    [path.join(process.cwd(), outputPath, "/cjs/production/hooks.js")]: {
       plugins: [pluginPath],
       config: { mode: 'hooks-cjs' },
     },

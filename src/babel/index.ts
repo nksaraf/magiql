@@ -280,20 +280,25 @@ export default function(babel) {
           let hasQueryImport = false;
           path.get('specifiers').forEach(p => {
             const imported = p.get('imported');
-            if (imported.node.name ==="useMagiqlQuery") {
-              magiqlImport = p;
-            }
-            if (imported.node.name ==="useQuery") {
-              hasQueryImport = true;
+            if (imported && imported.node && imported.node.name) {
+              if (imported.node.name ==="useMagiqlQuery") {
+                magiqlImport = p;
+              }
+              if (imported.node.name ==="useQuery") {
+                hasQueryImport = true;
+              }
+          
+              if (magiqlImport) {
+                if (!hasQueryImport) {
+                  magiqlImport.replaceWith(t.importSpecifier(t.identifier("useQuery"), t.identifier("useQuery")));
+                } else {
+                  magiqlImport.remove();
+                }
+              }
             }
           });
-          if (!hasQueryImport) {
-            magiqlImport.replaceWith(t.importSpecifier(t.identifier("useQuery"), t.identifier("useQuery")));
-          } else {
-            magiqlImport.remove();
-          }
-        }  
-      },
+        }
+      },  
       VariableDeclaration(path) {
         const init = path.get('declarations')[0].get('init');
         if (t.isCallExpression(init) && looksLike(init.get('callee'), { node: { name: "useMagiqlQuery" } })){

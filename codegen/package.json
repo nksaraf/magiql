@@ -1,5 +1,7 @@
 {
   "name": "magiql/codegen",
   "private": true,
-  "main": "../dist/codegen.js"
+  "main": "../dist/cjs/codegen.js",
+  "module": "../dist/esm/codegen.js",
+  "types": "../../dist/types"
 }

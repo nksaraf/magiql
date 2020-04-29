@@ -1,4 +1,4 @@
-import { Options, Middleware, fetchGraphQL } from "./graphql-fetch";
+import { Options, Middleware, fetchGraphQL } from "./fetch";
 import { queryCache } from "react-query";
 import React from "react";
 

@@ -15,6 +15,7 @@
   "devDependencies": {
     "@babel/preset-typescript": "^7.9.0",
     "@types/node": "^13.13.4",
+    "@types/react": "^16.9.34",
     "chokidar-cli": "^2.1.0",
     "graphql": "^15.0.0",
     "next": "^9.3.6",
@@ -28,6 +29,7 @@
     "entries": [
       "client",
       "hooks",
+      "fetch",
       {
         "name": "babel",
         "target": "node"
@@ -77,6 +79,7 @@
     "codegen",
     "client",
     "hooks",
-    "dist/types"
+    "dist/types",
+    "fetch"
   ]
 }

@@ -7,7 +7,7 @@ import {
   MutationResult,
   MutateFunction,
 } from "react-query";
-import { Middleware } from "./graphql-fetch";
+import { Middleware } from "./fetch";
 import { useMagiqlClient } from "./client";
 
 export interface GraphQLVariables<TVariables> {
@@ -22,10 +22,9 @@ export interface UseQueryOptions<TData, TVariables>
   opName?: string;
 }
 
-export interface UseQueryResult<TData, TVariables>
-  extends QueryResult<TData, TVariables> {
+export type UseQueryResult<TData> = QueryResult<TData> & {
   loading?: boolean;
-}
+};
 
 export const getOpName = (query: string) => {
   const name = /(query|mutation) ?([\w\d-_]+)? ?\(.*?\)? \{/.exec(query);
@@ -41,13 +40,10 @@ export function useQuery<TData, TVariables extends object>(
     skip = false, // to lazily evaluate query
     ...options
   }: UseQueryOptions<TData, TVariables> = {}
-): UseQueryResult<TData, GraphQLVariables<TVariables>> {
+): UseQueryResult<TData> {
   const client = useMagiqlClient();
   const key: any = [opName, ...(skip ? [false] : [{ variables }])];
-  const { status, ...queryObject } = useBaseQuery<
-    TData,
-    GraphQLVariables<TVariables>
-  >(
+  const { status, ...queryObject }: QueryResult<TData> = useBaseQuery(
     key,
     (async (queryKey: string, { variables }: GraphQLVariables<TVariables>) => {
       return await client.fetch(query, variables, middleware);
@@ -59,21 +55,20 @@ export function useQuery<TData, TVariables extends object>(
 
   return {
     loading: status === "loading",
-    status,
+    status: status as any,
     ...queryObject,
   };
 }
 
 export interface UseMutationOptions<TData, TVariables>
-  extends MutationOptions<TData> {
+  extends MutationOptions<TData, GraphQLVariables<TVariables>> {
   middleware?: Middleware[];
   opName?: string;
 }
 
-export interface UseMutationResult<TData, TVariables>
-  extends MutationResult<TData> {
+export type UseMutationResult<TData> = MutationResult<TData> & {
   loading?: boolean;
-}
+};
 
 export function useMutation<TData, TVariables extends object>(
   mutation: string,
@@ -82,7 +77,7 @@ export function useMutation<TData, TVariables extends object>(
     opName = getOpName(mutation),
     ...options
   }: UseMutationOptions<TData, TVariables> = {}
-): [MutateFunction<TData, TVariables>, UseMutationResult<TData, TVariables>] {
+): [MutateFunction<TData, TVariables>, UseMutationResult<TData>] {
   const client = useMagiqlClient();
   const [mutate, { status, ...mutationObject }] = useBaseMutation<
     TData,
@@ -95,7 +90,7 @@ export function useMutation<TData, TVariables extends object>(
     mutate,
     {
       loading: status === "loading",
-      status,
+      status: status as any,
       ...mutationObject,
     },
   ];

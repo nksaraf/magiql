@@ -1,5 +1,6 @@
 {
   "name": "magiql/babel",
   "private": true,
-  "main": "../dist/babel.js"
+  "main": "../dist/cjs/babel.js",
+  "types": "../../dist/types"
 }

@@ -1,5 +1,5 @@
 {
-  "include": ["src"],
+  "include": ["src/**/*"],
   "exclude": ["node_modules"],
   "compilerOptions": {
     "target": "esnext",
@@ -10,6 +10,7 @@
     "declarationDir": "dist/types",
     "emitDeclarationOnly": true,
     "jsx": "react",
+    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "lib": ["dom", "esnext", "esnext.asynciterable"],
     "removeComments": true,
