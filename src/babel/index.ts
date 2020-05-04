@@ -17,7 +17,8 @@ import {
 } from "./helpers";
 import * as gql from "graphql-ast-types";
 import { semanticTrace } from "./semanticTrace";
-// import
+import dedent from "dedent";
+
 /****
  *
  * Discussion of babel strategy
@@ -66,26 +67,38 @@ import { semanticTrace } from "./semanticTrace";
 
 export default function (babel) {
   const { types: t, template } = babel;
-  // const config = loadConfigSync({})
-  //   .getDefault()
-  //   .getSchemaSync();
 
+  /**
+   * Handle useFragment calls
+   *
+   *  const pokemon = useFragment(Pokemon)
+   *  return <div>{pokemon.name}</div>;
+   *
+   * @param path
+   */
   function handleUseFragment(path) {
     if (!isCallee(path)) {
       return;
     }
     let queryArgs = getCalleeArgs(path);
-    const razorID = getAssignTarget(path);
+    const fragmentRoot = getAssignTarget(path);
+
     const component = path.scope.path;
     let componentName;
+    let container;
+
     if (t.isArrowFunctionExpression(component)) {
       t.assertVariableDeclarator(component.container);
       t.assertIdentifier(component.container.id);
       componentName = component.container.id.name;
+      const body = component.getStatementParent();
+      container = (e) => body.replaceWithMultiple([body.node, e]);
     } else if (t.isFunctionDeclaration(component)) {
       t.assertIdentifier(component.node.id);
       componentName = component.node.id.name;
+      container = (e) => component.replaceWithMultiple([component.node, e]);
     }
+
     let fragmentType = queryArgs[0].value;
     const razor = createFragmentRazor({
       type: "fragment",
@@ -94,105 +107,201 @@ export default function (babel) {
       args: false,
     });
 
-    traceRazor(path, razorID, razor);
-    path.parentPath.replaceWith(
-      t.callExpression(t.identifier("useQuery"), [printRazor(razor, false)])
+    traceRazor(path, fragmentRoot, razor);
+
+    container(
+      t.expressionStatement(
+        t.assignmentExpression(
+          "=",
+          t.memberExpression(
+            t.identifier(componentName),
+            t.identifier(fragmentRoot + "Fragment")
+          ),
+          printRazor(razor, false)
+        )
+      )
     );
+
+    path.parentPath.remove();
   }
 
-  function handleUseQuery(path) {
-    // only useMagiqlQuery(...) calls
-    if (!isCallee(path)) {
-      return;
+  function handleVariablesInput(path) {}
+
+  function buildError(path, ...errors) {
+    return path.buildCodeFrameError([...errors, ""].join("\n"));
+  }
+
+  /**
+   * Handle useMagiqlQuery calls
+   *
+   *   const { query, loading, variables, error } = useMagiqlQuery("searchPokemon", {
+   *     variables: {
+   *         name: "Pikachu"
+   *      }
+   *   });
+   *   return <div>{query.pokemon({ name: variables.name }).id}</div>
+   *
+   *
+   * @param path
+   */
+  function handleUseMagiqlQuery(path) {
+    const callExpression = path.findParent((p) => p.isCallExpression());
+    if (!callExpression) {
+      throw buildError(
+        path,
+        `useMagiqlQuery must be used as a function call,`,
+        `const { query } = eg. useMagiqlQuery("searchPokemon")`
+      );
     }
 
-    // name of the query
-    let queryArgs = getCalleeArgs(path);
-    if (!t.isStringLiteral(queryArgs[0])) return;
-    let queryName = queryArgs[0].value;
-
-    // if we accept dynamic variables
-    const variables = queryArgs[1].properties.find(
-      (prop) => prop.key.name === "variables"
+    const variableDeclaration = path.findParent((p) =>
+      p.isVariableDeclarator()
     );
+    const returnPath = variableDeclaration.get("id");
+    const queryRoot = returnPath.isIdentifier()
+      ? returnPath
+      : returnPath.isObjectPattern()
+      ? returnPath
+          .get("properties")
+          .find((p) =>
+            looksLike(p.node, {
+              key: {
+                name: "query",
+              },
+            })
+          )
+          .get("key")
+      : null;
 
-    //geting the types of the variables
-    const gqlVariables = variables.value.properties
-      .map((prop) => {
-        if (t.isTSAsExpression(prop.value)) {
-          if (t.isTSTypeReference(prop.value.typeAnnotation)) {
-            return [
-              prop.key.name,
-              gqlVariableType(prop.value.typeAnnotation.typeName.name),
-            ];
-          } else if (t.isTSArrayType(prop.value.typeAnnotation)) {
-            console.log(prop.value.typeAnnotation.elementType.type);
-            return [
-              prop.key.name,
-              gql.listType(
-                gqlVariableType(prop.value.typeAnnotation.elementType.type)
-              ),
-            ];
-          } else {
-            return [
-              prop.key.name,
-              gqlVariableType(prop.value.typeAnnotation.type),
-            ];
-          }
-        } else {
-          if (prop.value.type.endsWith("Literal")) {
-            return [prop.key.name, gqlVariableType(prop.value.type)];
-          }
-          return [prop.key.name, gqlVariableType(prop.value.type)];
+    const variablesUsage =
+      returnPath.isObjectPattern() &&
+      returnPath.get("properties").find((p) =>
+        looksLike(p.node, {
+          key: {
+            name: "variables",
+          },
+        })
+      );
+
+    if (!queryRoot) {
+      throw buildError(
+        returnPath,
+        `useMagiqlQuery must be assigned to a variable, or destructured,`,
+        "",
+        `  eg. const { query, loading, error } = useMagiqlQuery("searchPokemon");`,
+        `  eg. const search = useMagiqlQuery("searchPokemon");`
+      );
+    }
+    console.log(queryRoot);
+
+    // [queryName, queryOptions = { variables: queryVariables, ...otherOptions }]
+    let callArgs = callExpression.get("arguments");
+    // console.log(queryArgs[0]);
+
+    // Query name argument
+    if (!callArgs[0].isStringLiteral()) {
+      throw buildError(
+        callArgs[0],
+        "The name of the query should be a string literal",
+        '  eg. useMagiqlQuery("searchPokemon")'
+      );
+    }
+    let queryName = callArgs[0].get("value").node;
+    console.log("Building query ", queryName);
+
+    // Query variables
+    let queryVariables = false;
+    if (callArgs.length > 1) {
+      // if we accept dynamic variables
+      const variables = callArgs[1]
+        .get("properties")
+        .find((prop) => prop.get("key").get("name").node === "variables");
+
+      if (variables) {
+        const variablesObject = variables.get("value");
+        if (!variablesObject.isObjectExpression()) {
+          throw buildError(variablesObject, "Variables must be an object");
         }
-      })
-      .filter(Boolean);
+      } else if (variablesUsage) {
+        // if (!variablesObject.isObjectExpression()) {
+        throw buildError(
+          callArgs[1],
+          "You used variables in your query",
+          "pass the variables here to have them available for usage"
+        );
+        // }
+      }
+
+      // Get the variables and the types of the variables
+      // gqlVariables = variables.value.properties
+      //   .map((prop) => {
+      //     const variableValue = prop.value;
+      //     const variableName = prop.key.name;
+      //     if (t.isTSAsExpression(prop.value)) {
+      //       if (t.isTSTypeReference(prop.value.typeAnnotation)) {
+      //         // x: y as PokemonInput
+      //         return [
+      //           variableName,
+      //           gqlVariableType(prop.value.typeAnnotation.typeName.name),
+      //         ];
+      //       } else if (t.isTSArrayType(prop.value.typeAnnotation)) {
+      //         // x: y as PokemonInput[]
+      //         return [
+      //           variableName,
+      //           gql.listType(
+      //             gqlVariableType(prop.value.typeAnnotation.elementType.type)
+      //           ),
+      //         ];
+      //       } else {
+      //         return [
+      //           variableName,
+      //           gqlVariableType(prop.value.typeAnnotation.type),
+      //         ];
+      //       }
+      //     } else {
+      //       if (prop.value.type.endsWith("Literal")) {
+      //         return [variableName, gqlVariableType(prop.value.type)];
+      //       }
+      //       return [variableName, gqlVariableType(prop.value.type)];
+      //     }
+      //   })
+      //   .filter(Boolean);
+    }
 
     // find the { query, <- loading, error, ...etc } part of the LHS
-    const dataDeclaration = findQueryDeclaration(path);
+    // const dataDeclaration = findQueryRoot(path);
 
     // create a razor starting from that node
-    const razorID = dataDeclaration.get("value").get("name").node;
+    // const razorID = dataDeclaration.get("value").get("name").node;
+    console.log(queryRoot);
     const razor = createRazor({
       type: "query",
       name: queryName,
       fragmentType: false,
-      args: gqlVariables,
+      // args: gqlVariables,
     });
     //trace the razor and get all child razors (ALL THE WORK IS HAPPENING HERE)
-    const [tracedRazor, args] = traceRazor(path, razorID, razor);
+    const [tracedRazor, args] = traceRazor(
+      path,
+      queryRoot.get("name").node,
+      razor
+    );
+
+    console.log("here");
 
     // rename all instances of query with data
-    path.scope.rename("query", "data");
-    dataDeclaration.replaceWith(
-      t.objectProperty(t.identifier("data"), t.identifier("data"))
-    );
+    // path.scope.rename("query", "data");
+    // dataDeclaration.replaceWith(
+    //   t.objectProperty(t.identifier("data"), t.identifier("data"))
+    // );
 
     // move useMagiqlQuery to useQuery
     path.parentPath.replaceWith(
       t.callExpression(t.identifier("useQuery"), [
         printRazor(razor, args),
-        queryArgs[1],
+        // callArgs[1],
       ])
     );
-  }
-
-  function findQueryDeclaration(path) {
-    const razorParentPath = path.findParent((ppath) =>
-      ppath.isVariableDeclarator()
-    );
-    for (var p of razorParentPath.get("id").get("properties")) {
-      if (
-        looksLike(p.node, {
-          key: {
-            name: "query",
-          },
-        })
-      ) {
-        return p;
-      }
-    }
-    throw new Error("Could not find data declaration");
   }
 
   function getSemanticVisitor(
@@ -228,7 +337,6 @@ export default function (babel) {
                   arg.value.object.name === "variables"
                 ) {
                   args.push([arg.key.name, arg.value.property.name]);
-                  // variablesUsed[arg.value.property.name] = "String";
                 } else {
                   argumentReplaceQueue.set(
                     `${name}_${arg.key.name}`,
@@ -267,6 +375,7 @@ export default function (babel) {
     const semanticVisitor = {
       CallExpression(...args) {
         const [, ref] = args;
+        console.log(ref);
         const callee = ref.get("callee");
         ref.replaceWith(callee);
       },
@@ -337,7 +446,45 @@ export default function (babel) {
       {}
     );
 
-    return template(`\`${literal}\``)(obj).expression;
+    return template(`gql\`${literal}\``)(obj).expression;
+  };
+
+  const handleMagiqlImportDeclaration = (path) => {
+    let magiqlImport;
+    let gqlImport;
+    let hasQueryImport = false;
+    path.get("specifiers").forEach((p) => {
+      const imported = p.get("imported");
+      if (imported && imported.node && imported.node.name) {
+        if (imported.node.name === "useMagiqlQuery") {
+          magiqlImport = p;
+        }
+        if (imported.node.name === "useQuery") {
+          hasQueryImport = true;
+        }
+
+        if (imported.node.name === "gql") {
+          gqlImport = true;
+        }
+
+        if (magiqlImport) {
+          if (!hasQueryImport) {
+            magiqlImport.replaceWithMultiple(
+              [
+                t.importSpecifier(
+                  t.identifier("useQuery"),
+                  t.identifier("useQuery")
+                ),
+                !gqlImport &&
+                  t.importSpecifier(t.identifier("gql"), t.identifier("gql")),
+              ].filter(Boolean)
+            );
+          } else {
+            magiqlImport.remove();
+          }
+        }
+      }
+    });
   };
 
   return {
@@ -347,46 +494,16 @@ export default function (babel) {
       ImportDeclaration(path) {
         const source = path.get("source");
         if (t.isStringLiteral(source) && source.node.value === "magiql") {
-          let magiqlImport;
-          let hasQueryImport = false;
-          path.get("specifiers").forEach((p) => {
-            const imported = p.get("imported");
-            if (imported && imported.node && imported.node.name) {
-              if (imported.node.name === "useMagiqlQuery") {
-                magiqlImport = p;
-              }
-              if (imported.node.name === "useQuery") {
-                hasQueryImport = true;
-              }
-
-              if (magiqlImport) {
-                if (!hasQueryImport) {
-                  magiqlImport.replaceWith(
-                    t.importSpecifier(
-                      t.identifier("useQuery"),
-                      t.identifier("useQuery")
-                    )
-                  );
-                } else {
-                  magiqlImport.remove();
-                }
-              }
-            }
-          });
-        }
-      },
-      VariableDeclaration(path) {
-        const init = path.get("declarations")[0].get("init");
-        if (
-          t.isCallExpression(init) &&
-          looksLike(init.get("callee"), { node: { name: "useMagiqlQuery" } })
-        ) {
-          handleUseQuery(init.get("callee"));
+          handleMagiqlImportDeclaration(path);
         }
       },
       Identifier(path) {
         if (looksLike(path, { node: { name: "useFragment" } })) {
           handleUseFragment(path);
+        }
+
+        if (looksLike(path, { node: { name: "useMagiqlQuery" } })) {
+          handleUseMagiqlQuery(path);
         }
       },
     },

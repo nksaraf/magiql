@@ -8,123 +8,139 @@ const arrayPrototypeEnables = {
   reduce: 2, // so we dont touch the accumulator - may be issue in future
   reduceRight: 2,
   some: 1,
-}
+};
 const arrayPrototypeIgnores = [
-  'length',
-  'copyWithin',
-  'fill',
-  'pop', // TODO: may want to revisit
-  'push',
-  'reverse',
-  'shift', // TODO: may want to revisit
-  'unshift',
-  'sort', // TODO: may want to revisit
-  'splice',
-  'concat',
-  'includes',
-  'indexOf',
-  'join',
-  'lastIndexOf',
-  'slice',
-  'toSource', // WARNING PROBABLY DONT USE
-  'toString',
-  'toLocaleString',
-  'entries', // TODO: may want to revisit
-  'every', // ENABLED
-  'filter', // ENABLED
-  'find', // ENABLED
-  'findIndex', // ENABLED
-  'forEach', // ENABLED
-  'keys',
-  'map', // ENABLED
-  'reduce', // ENABLED
-  'reduceRight', // ENABLED
-  'some', // ENABLED
-  'values', // TODO: may want to revisit
-]
+  "length",
+  "copyWithin",
+  "fill",
+  "pop", // TODO: may want to revisit
+  "push",
+  "reverse",
+  "shift", // TODO: may want to revisit
+  "unshift",
+  "sort", // TODO: may want to revisit
+  "splice",
+  "concat",
+  "includes",
+  "indexOf",
+  "join",
+  "lastIndexOf",
+  "slice",
+  "toSource", // WARNING PROBABLY DONT USE
+  "toString",
+  "toLocaleString",
+  "entries", // TODO: may want to revisit
+  "every", // ENABLED
+  "filter", // ENABLED
+  "find", // ENABLED
+  "findIndex", // ENABLED
+  "forEach", // ENABLED
+  "keys",
+  "map", // ENABLED
+  "reduce", // ENABLED
+  "reduceRight", // ENABLED
+  "some", // ENABLED
+  "values", // TODO: may want to revisit
+];
 
+/**
+ *
+ * @param {*} referencePath
+ * @param {*} origin
+ * @param {*} semanticVisitor
+ * @param {*} semanticPath
+ */
 export function semanticTrace(
   referencePath,
   origin,
   semanticVisitor,
-  semanticPath = [],
+  semanticPath = []
 ) {
+  console.log(referencePath, origin, semanticPath);
+
   const refs = referencePath.scope.bindings[origin].referencePaths.filter(
-    ref => ref.parent !== referencePath.parent,
-  )
+    (ref) => ref.parent !== referencePath.parent
+  );
 
   // console.log('==', {origin, refs, semanticVisitor})
   conditionalCall(
     semanticVisitor,
     referencePath.type,
-    'origin',
+    "origin",
     referencePath,
-    semanticPath,
-  )
-  refs.forEach(ref => {
+    semanticPath
+  );
+  refs.forEach((ref) => {
     const [newRef, newSemanticPath, hasHitArrayMethod] = traceRHS(
       ref,
       semanticPath,
-      semanticVisitor,
-    )
-    if (!hasHitArrayMethod) traceLHS(newRef, newSemanticPath, semanticVisitor)
-  })
-  conditionalCall(semanticVisitor, 'default', semanticPath)
+      semanticVisitor
+    );
+    if (!hasHitArrayMethod) traceLHS(newRef, newSemanticPath, semanticVisitor);
+  });
+  conditionalCall(semanticVisitor, "default", semanticPath);
 }
 
 function parseObjectPatternLHS(ref, semanticPath, semanticVisitor) {
   /* --- we do conCall but the semanticVisitor should ideally perform no actions apart from rename  */
-  conditionalCall(semanticVisitor, ref.type, 'LHS', ref, semanticPath)
+  conditionalCall(semanticVisitor, ref.type, "LHS", ref, semanticPath);
   /* --- we do conCall but should have no actions performed on it  */
-  if (ref.type === 'ObjectPattern') {
-    const properties = ref.get('properties')
-    properties.forEach(property => {
-      const newSemanticPath = [...semanticPath]
-      const key = property.get('key')
-      newSemanticPath.push([key.node.name, property])
-      const value = property.get('value')
-      parseObjectPatternLHS(value, newSemanticPath, semanticVisitor)
-    })
-  } else if (ref.type === 'Identifier') {
-    const idname = ref.get('name')
-    semanticTrace(ref, idname.node, semanticVisitor, semanticPath)
+  if (ref.type === "ObjectPattern") {
+    const properties = ref.get("properties");
+    properties.forEach((property) => {
+      const newSemanticPath = [...semanticPath];
+      const key = property.get("key");
+      newSemanticPath.push([key.node.name, property]);
+      const value = property.get("value");
+      parseObjectPatternLHS(value, newSemanticPath, semanticVisitor);
+    });
+  } else if (ref.type === "Identifier") {
+    const idname = ref.get("name");
+    semanticTrace(ref, idname.node, semanticVisitor, semanticPath);
   }
 }
 
 function traceLHS(ref, semanticPath, semanticVisitor) {
-  const ptr = ref
-  const newSemanticPath = [...semanticPath]
-  if (ptr.parentPath.type === 'VariableDeclarator') {
-    const LHS = ptr.parentPath.get('id')
-    parseObjectPatternLHS(LHS, newSemanticPath, semanticVisitor)
+  const ptr = ref;
+  const newSemanticPath = [...semanticPath];
+  if (ptr.parentPath.type === "VariableDeclarator") {
+    const LHS = ptr.parentPath.get("id");
+    parseObjectPatternLHS(LHS, newSemanticPath, semanticVisitor);
   }
 }
 
 function isValidRHSParent(ptr, hasHitArrayMethod) {
-  const baseLayer = ['Member', 'Call', 'OptionalCall', 'OptionalMember', 'TSAs', 'Logical']
-    .map(x => `${x}Expression`)
-    .includes(ptr.parentPath.type)
+  const baseLayer = [
+    "Member",
+    "Call",
+    "OptionalCall",
+    "OptionalMember",
+    "TSAs",
+    "Logical",
+  ]
+    .map((x) => `${x}Expression`)
+    .includes(ptr.parentPath.type);
   const validGrandParent =
-    ptr.parentPath.parentPath.type !== 'ExpressionStatement'
-  return baseLayer && validGrandParent && !hasHitArrayMethod
+    ptr.parentPath.parentPath.type !== "ExpressionStatement";
+  return baseLayer && validGrandParent && !hasHitArrayMethod;
 }
 
 function parseObjectPatternRHS(ref, semanticPath, semanticVisitor) {
   /* --- we do conCall but the semanticVisitor should ideally perform no actions apart from rename  */
-  conditionalCall(semanticVisitor, ref.type, 'LHS', ref, semanticPath)
+  conditionalCall(semanticVisitor, ref.type, "LHS", ref, semanticPath);
   /* --- we do conCall but should have no actions performed on it  */
-  if (ref.type === 'ObjectPattern') {
-    const properties = ref.get('properties')
-    properties.forEach(property => {
-      const newSemanticPath = [...semanticPath]
-      const key = property.get('key')
-      newSemanticPath.push([key.node.name, property])
-      const value = property.get('value')
-      parseObjectPatternRHS(value, newSemanticPath, semanticVisitor)
-    })
-  } else if (ref.type === 'Identifier') {
-    const idname = ref.get('name')
-    semanticTrace(ref, idname.node, semanticVisitor, semanticPath)
+  if (ref.type === "ObjectPattern") {
+    const properties = ref.get("properties");
+    properties.forEach((property) => {
+      const newSemanticPath = [...semanticPath];
+      const key = property.get("key");
+      newSemanticPath.push([key.node.name, property]);
+      const value = property.get("value");
+      parseObjectPatternRHS(value, newSemanticPath, semanticVisitor);
+    });
+  } else if (ref.type === "Identifier") {
+    const idname = ref.get("name");
+    semanticTrace(ref, idname.node, semanticVisitor, semanticPath);
   }
 }
 
@@ -132,64 +148,78 @@ function workOnRHSParent(
   ptr,
   newSemanticPath,
   semanticVisitor,
-  hasHitArrayMethod,
+  hasHitArrayMethod
 ) {
-  if (ptr.type !== 'MemberExpression' && ptr.type !== 'OptionalMemberExpression') return hasHitArrayMethod
+  if (
+    ptr.type !== "MemberExpression" &&
+    ptr.type !== "OptionalMemberExpression"
+  )
+    return hasHitArrayMethod;
 
-  const newPath = ptr.node.property.name
+  const newPath = ptr.node.property.name;
   if (arrayPrototypeIgnores.includes(newPath)) {
-    hasHitArrayMethod = true
+    hasHitArrayMethod = true;
     if (arrayPrototypeEnables[newPath] && isValidArrayPrototypeInternal(ptr)) {
-      const internalFunctionIndex = arrayPrototypeEnables[newPath] // get our hardcoded index of supported array methods
-      const internalFunction = ptr.parentPath.get('arguments')[0] // arrow fn
-      const paramRef = internalFunction.get('params')[internalFunctionIndex - 1] // 1-indexed param just to make it null checkable
-      const newblade = paramRef.get('name').node // new blade sits inside the internal function
-      if (!newblade && paramRef.type === 'ObjectPattern') {
+      const internalFunctionIndex = arrayPrototypeEnables[newPath]; // get our hardcoded index of supported array methods
+      const internalFunction = ptr.parentPath.get("arguments")[0]; // arrow fn
+      const paramRef = internalFunction.get("params")[
+        internalFunctionIndex - 1
+      ]; // 1-indexed param just to make it null checkable
+      const newblade = paramRef.get("name").node; // new blade sits inside the internal function
+      if (!newblade && paramRef.type === "ObjectPattern") {
         // destructuring!
         // *******this is new*******
-        parseObjectPatternRHS(paramRef, newSemanticPath, semanticVisitor)
+        parseObjectPatternRHS(paramRef, newSemanticPath, semanticVisitor);
         // *******this is new*******
       } else {
         // kick off the traversal inside the internal function
-        semanticTrace(paramRef, newblade, semanticVisitor, newSemanticPath)
+        semanticTrace(paramRef, newblade, semanticVisitor, newSemanticPath);
       }
     }
   } else {
-    newSemanticPath.push([newPath, ptr])
-    conditionalCall(semanticVisitor, ptr.type, 'RHS', ptr, newSemanticPath)
+    newSemanticPath.push([newPath, ptr]);
+    conditionalCall(semanticVisitor, ptr.type, "RHS", ptr, newSemanticPath);
   }
-  return hasHitArrayMethod
+  return hasHitArrayMethod;
 }
 
+function hasCallParent(ptr) {
+  return (
+    ptr.parentPath.type === "CallExpression" ||
+    ptr.parentPath.type === "OptionalCallExpression"
+  );
+}
 // will be hoisting up
 function isValidArrayPrototypeInternal(ptr) {
-  const isValidParent = ptr.parentPath.type === 'CallExpression' || ptr.parentPath.type === 'OptionalCallExpression'
+  const isValidParent =
+    ptr.parentPath.type === "CallExpression" ||
+    ptr.parentPath.type === "OptionalCallExpression";
   const isArrowChild = [
-    'ArrowFunctionExpression',
-    'FunctionExpression',
-  ].includes(ptr.parentPath.get('arguments')[0].type)
-  return isValidParent && isArrowChild
+    "ArrowFunctionExpression",
+    "FunctionExpression",
+  ].includes(ptr.parentPath.get("arguments")[0].type);
+  return isValidParent && isArrowChild;
 }
 
 function traceRHS(ref, semanticPath, semanticVisitor) {
-  let ptr = ref
-  const newSemanticPath = [...semanticPath]
-  let hasHitArrayMethod = false
+  let ptr = ref;
+  const newSemanticPath = [...semanticPath];
+  let hasHitArrayMethod = false;
 
   while (isValidRHSParent(ptr, hasHitArrayMethod)) {
-    ptr = ptr.parentPath
-    if (ptr.get('property').type !== 'NumericLiteral')
+    ptr = ptr.parentPath;
+    if (ptr.get("property").type !== "NumericLiteral")
       // skip number acccess
       hasHitArrayMethod = workOnRHSParent(
         ptr,
         newSemanticPath,
         semanticVisitor,
-        hasHitArrayMethod,
-      )
+        hasHitArrayMethod
+      );
   }
-  return [ptr, newSemanticPath, hasHitArrayMethod]
+  return [ptr, newSemanticPath, hasHitArrayMethod];
 }
 
 function conditionalCall(visitor, key, ...args) {
-  if (visitor[key]) visitor[key](...args)
+  if (visitor[key]) visitor[key](...args);
 }

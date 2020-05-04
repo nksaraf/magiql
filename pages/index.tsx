@@ -1,7 +1,6 @@
-import * as Babel from "@babel/standalone";
-import babel from "../src/babel";
 import { prettier } from "next-monaco-editor/plugins";
 import "next-monaco-editor/plugins/prettier.monaco.worker";
+import "../src/babel/babel.monaco.worker";
 import { useDebouncedCallback } from "use-debounce";
 var input = `import {
   MagiqlProvider,
@@ -85,71 +84,98 @@ export function useLocalStorage(key, initialValue) {
   return [storedValue, setValue];
 }
 
-import MonacoEditor from "next-monaco-editor";
+import MonacoEditor, { Editor } from "next-monaco-editor";
+import monacoApi from "next-monaco-editor/api";
 
 export default () => {
   const [code, setCode] = useLocalStorage("code", input);
   const [result, setResult] = React.useState("");
+  const editorRef = React.useRef<monacoApi.editor.IStandaloneCodeEditor>();
+  const monacoRef = React.useRef<typeof monacoApi>();
 
-  // console.log(code);
-  React.useEffect(() => {
-    Babel.registerPlugin("magiql", babel);
-  }, []);
+  async function transform() {
+    if (
+      monacoRef.current &&
+      editorRef.current &&
+      editorRef.current.getModel()
+    ) {
+      const babelWorker = await monacoRef.current.worker.get(
+        "babel",
+        editorRef.current.getModel().uri.path
+      );
+
+      setResult(
+        await babelWorker.transform(editorRef.current.getModel().uri.toString())
+      );
+    }
+  }
 
   React.useEffect(() => {
-    (async () => {
-      try {
-        var output = Babel.transform(code, {
-          presets: [["typescript", { isTsx: true, allExtensions: true }]],
-          filename: "babel.tsx",
-          plugins: ["magiql"],
-        }).code;
-        setResult(output);
-      } catch (e) {
-        setResult(e.message);
-      }
-    })();
+    transform();
   }, [code]);
 
   const [setCodeValue, _] = useDebouncedCallback((value) => {
     setCode(value);
   }, 500);
+
   return (
     <>
-      <row>
-        <MonacoEditor
-          defaultValue={code}
-          path="code.tsx"
-          // id="code"
-          onChange={setCodeValue}
-          language="typescript"
-          editorWillMount={(monaco) => {
-            monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions(
-              {
-                noSemanticValidation: true,
-                noSyntaxValidation: true,
+      <column gap={2}>
+        <button width={6} onClick={() => transform()}>
+          Transform
+        </button>
+        <row>
+          <MonacoEditor
+            defaultValue={code}
+            path="code.tsx"
+            onChange={setCodeValue}
+            language="typescript"
+            editorWillMount={(monaco) => {
+              monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions(
+                {
+                  noSemanticValidation: true,
+                  noSyntaxValidation: true,
+                }
+              );
+              monaco.worker.register({
+                label: "babel",
+              });
+            }}
+            ref={editorRef}
+            editorDidMount={async (editor, monaco) => {
+              monacoRef.current = monaco;
+
+              if (editor.getModel()) {
+                const babelWorker = await monaco.worker.get(
+                  "babel",
+                  editor.getModel().uri.path
+                );
+
+                setResult(
+                  await babelWorker.transform(editor.getModel().uri.toString())
+                );
               }
-            );
-          }}
-          plugins={[prettier(["typescript"])]}
-          options={{
-            minimap: {
-              enabled: false,
-            },
-          }}
-        />
-        <MonacoEditor
-          value={result}
-          path="result.tsx"
-          // id="result"
-          language="typescript"
-          options={{
-            minimap: {
-              enabled: false,
-            },
-          }}
-        />
-      </row>
+            }}
+            plugins={[prettier(["typescript"])]}
+            options={{
+              minimap: {
+                enabled: false,
+              },
+            }}
+          />
+          <MonacoEditor
+            value={result}
+            path="result.tsx"
+            // id="result"
+            language="typescript"
+            options={{
+              minimap: {
+                enabled: false,
+              },
+            }}
+          />
+        </row>
+      </column>
     </>
   );
 };

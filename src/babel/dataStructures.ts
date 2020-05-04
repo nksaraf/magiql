@@ -71,19 +71,20 @@ export const createRazor = ({
       return newChild;
     },
     print: () => {
-      console.log(args);
       return print(
         gql.document([
           gql.operationDefinition(
             "query",
             gql.selectionSet(children.map((c) => c.ast())),
             gql.name(name),
-            args.map((arg) =>
-              gql.variableDefinition(
-                gql.variable(gql.name(arg[0])),
-                gqlVariableType(arg[1])
+            args &&
+              args.length > 0 &&
+              args.map((arg) =>
+                gql.variableDefinition(
+                  gql.variable(gql.name(arg[0])),
+                  gqlVariableType(arg[1])
+                )
               )
-            )
           ),
         ])
       );
