@@ -33,7 +33,7 @@ const varsMap = {
 export const gqlVariableType = (key: any) => {
   return typeof key === "string"
     ? varsMap[key]
-      ? varsMap[key]
+      ? gql.nonNullType(varsMap[key])
       : gql.namedType(gql.name(key))
     : key;
 };
