@@ -25,7 +25,7 @@ class BabelWorker extends BaseWorker {
         plugins: ["magiql"],
       }).code;
     } catch (e) {
-      return e.message;
+      return e.toString();
     }
   }
 }

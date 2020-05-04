@@ -56,8 +56,6 @@ export function semanticTrace(
   semanticVisitor,
   semanticPath = []
 ) {
-  console.log(referencePath, origin, semanticPath);
-
   const refs = referencePath.scope.bindings[origin].referencePaths.filter(
     (ref) => ref.parent !== referencePath.parent
   );
