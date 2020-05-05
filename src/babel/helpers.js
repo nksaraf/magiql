@@ -25,27 +25,12 @@ export function getObjectPropertyName(path) {
   return path.container.property ? path.container.property.name : undefined;
 }
 
-// // potentially useful export function from devon to extract a colocated fragment's name
-// export function getFragmentName(path) {
-//   // console.log('getfragname', { path });
-//   if (
-//     path.parentPath.isAssignmentExpression() &&
-//     path.parent.left.type === 'MemberExpression' &&
-//     path.parent.left.property.name === 'fragment'
-//   ) {
-//     const name = path.parent.left.object.name
-//     return name[0].toLowerCase() + name.slice(1) + 'Fragment'
-//   }
-//   return null
-// }
-
 export function isObject(path) {
   return looksLike(path, { key: "object" });
 }
 
 export function getCalleeArgs(calleePath) {
   const parent = calleePath.findParent((p) => p.isCallExpression());
-  // console.log(parent);
   const arg = calleePath.container.arguments;
   return arg;
 }

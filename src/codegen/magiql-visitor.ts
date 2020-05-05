@@ -34,8 +34,6 @@ class MagiqlVisitor extends TsVisitor<
   //   return "";
   // }
   mergeAllFields(allFields, hasInterfaces) {
-    console.log(allFields);
-
     return [
       ...allFields,
       `  fragment: (fragment?: MagiQLFragment) => Maybe<${this.currentNode}>;`,

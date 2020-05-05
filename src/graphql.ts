@@ -17,15 +17,13 @@ export function useMagiqlQuery<TQuery = any, TVariables = {}>(
   variables: TVariables;
 } {
   throw new Error(
-    `Unimplemented: I think your babel config is not working. 
-    Make sure magiql/babel is added as a plugin.`
+    `Unimplemented: Make sure magiql/babel is added as a plugin.`
   );
 }
 
 export function useFragment<K extends keyof Types>(name: K): Type<K> {
   throw new Error(
-    `Unimplemented: I think your babel config is not working. 
-    Make sure magiql/babel is added as a plugin.`
+    `Unimplemented: Make sure magiql/babel is added as a plugin.`
   );
 }
 

@@ -17,7 +17,6 @@ class BabelWorker extends BaseWorker {
 
   transform(path) {
     try {
-      // console.log("hered");
       return Babel.transform(this.getText(path), {
         presets: [
           "env",
