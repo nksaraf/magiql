@@ -1,6 +1,6 @@
 {
   "name": "magiql",
-  "version": "0.0.2-beta.22",
+  "version": "0.0.2-beta.23",
   "description": "",
   "repository": "Nikhil Saraf",
   "license": "MIT",
@@ -14,7 +14,7 @@
     "dev": "yarn test && chokidar \"src/**/*\" \"test/test.tsx\" -c \"yarn test\"",
     "test": "yarn babel test/test.tsx -o test/test.out.tsx --extensions=tsx --presets next/babel --plugins=./dist/cjs/babel.js",
     "test:codegen": "NODE_ENV=test node ./dist/cjs/cli.js",
-    "postinstall": "magiql"
+    "postinstall": "node ./dist/cjs/cli.js"
   },
   "devDependencies": {
     "@babel/preset-typescript": "^7.9.0",
