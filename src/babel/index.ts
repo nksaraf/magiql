@@ -74,7 +74,6 @@ export default function (babel) {
    */
   function handleUseFragment(path) {
     const callExpression = path.findParent((p) => p.isCallExpression());
-    console.log(callExpression);
     if (!callExpression) {
       throw buildError(
         path,
@@ -116,7 +115,6 @@ export default function (babel) {
 
     // [queryName, queryOptions = { variables: queryVariables, ...otherOptions }]
     let callArgs = callExpression.get("arguments");
-    // console.log(queryArgs[0]);
 
     // Query name argument
     if (!callArgs[0].isStringLiteral()) {
@@ -128,7 +126,6 @@ export default function (babel) {
     }
 
     let fragmentType = callArgs[0].get("value").node;
-    console.log("Building type ", fragmentType);
 
     const component = path.scope.path;
     let componentName;
@@ -149,8 +146,6 @@ export default function (babel) {
       }
 
       componentName = componentDeclartion.get("id").get("name").node;
-      console.log(component);
-      console.log(component.findParent((p) => p.isStatement()));
 
       container = component.getStatementParent();
     } else if (t.isFunctionDeclaration(component)) {
@@ -203,10 +198,6 @@ export default function (babel) {
       ...propsToAdd,
       ...propsContainer.get("properties").map((p) => p.node),
     ]);
-
-    console.log(gqlTag);
-
-    console.log("CONT", container);
 
     container.insertAfter(
       t.expressionStatement(
@@ -286,7 +277,6 @@ export default function (babel) {
       );
     }
     let queryName = callArgs[0].get("value").node;
-    console.log("Building query ", queryName);
 
     // Query variables
     let queryVariables = null;
@@ -351,6 +341,7 @@ export default function (babel) {
                   ),
                 ];
               }
+              return [variableName, gqlVariableType(typeAnnotation.type)];
             } else {
               if (variableType.node.type.endsWith("Literal")) {
                 return [variableName, gqlVariableType(variableType.node.type)];
@@ -375,6 +366,7 @@ export default function (babel) {
       type: "query",
       name: queryName,
       variables: queryVariables || [],
+      fragments: [],
       fragmentType: false,
     });
 
@@ -424,25 +416,6 @@ export default function (babel) {
           // will parse out fragments/args/directives later
           calleeArguments = getCalleeArgs(ref);
           aliasPath = ref;
-
-          if (aliasPath && aliasPath.isMemberExpression()) {
-            if (calleeArguments.length === 0) {
-              throw buildError(
-                aliasPath,
-                "while using fragment requires one argumment (type for fragment)"
-              );
-            }
-
-            console.log(aliasPath);
-
-            if (aliasPath.get("property").get("name").node === "fragment") {
-              const random = Math.round(Math.random() * 1000);
-              currentGqlNode.fragments.push(t.identifier("Fragment" + random));
-              gqlTree.fragments.push(["Fragment" + random, calleeArguments[0]]);
-              aliasPath.parentPath.replaceWith(aliasPath.get("object"));
-              return;
-            }
-          }
         }
 
         let args = [];
@@ -496,6 +469,8 @@ export default function (babel) {
           aliasReplaceQueue.set(aliasPath, currentGqlNode);
         }
       });
+
+      return currentGqlNode;
     }
 
     const semanticVisitor = {
@@ -525,11 +500,34 @@ export default function (babel) {
       },
       MemberExpression(...topargs) {
         const [, , semPath] = topargs;
+
         idempotentAddToRazorData(semPath);
       },
       OptionalMemberExpression(...topargs) {
         const [, , semPath] = topargs;
+
         idempotentAddToRazorData(semPath);
+      },
+      Fragment(...topargs) {
+        const [, semPath] = topargs;
+
+        const root = idempotentAddToRazorData(
+          semPath.slice(0, semPath.length - 1)
+        );
+        const path = semPath[semPath.length - 1][1];
+        const random = Math.round(Math.random() * 1000);
+        root.fragments.push(t.identifier("Fragment" + random));
+        gqlTree.fragments.push([
+          "Fragment" + random,
+          path.parentPath.get("arguments")[0].node,
+        ]);
+        path.parentPath.replaceWith(path.node.object);
+        if (t.isCallExpression(path.node.object)) {
+          path.parentPath
+            .get("callee")
+            .get("property")
+            .replaceWithSourceString(root.alias ? root.alias : root.name);
+        }
       },
       /*
         default(...args){
@@ -553,10 +551,13 @@ export default function (babel) {
     );
 
     aliasReplaceMap.forEach((currentRazor, aliasPath) => {
-      aliasPath.parentPath.replaceWith(aliasPath);
-      if (currentRazor.alias) {
-        aliasPath.node.property.name = currentRazor.alias;
-      }
+      aliasPath
+        .get("property")
+        // .get("name")
+        .replaceWithSourceString(
+          currentRazor.alias ? currentRazor.alias : currentRazor.name
+        );
+      aliasPath.find((p) => p.isCallExpression()).replaceWith(aliasPath);
     });
 
     const literal = gqlTree
@@ -591,8 +592,7 @@ export default function (babel) {
     let hasQueryImport = false;
     path.get("specifiers").forEach((p) => {
       const imported = p.get("imported");
-
-      if (imported.node.name) {
+      if (imported.node && imported.node.name) {
         if (imported.node.name === "useMagiqlQuery") {
           p.remove();
           return;
@@ -612,8 +612,9 @@ export default function (babel) {
         }
       }
     });
+
     path.set("specifiers", [
-      ...path.get("specifiers"),
+      ...path.get("specifiers").map((s) => s.node),
       ...[
         !hasQueryImport &&
           t.importSpecifier(t.identifier("useQuery"), t.identifier("useQuery")),
@@ -632,6 +633,85 @@ export default function (babel) {
         if (t.isStringLiteral(source) && source.node.value === "magiql") {
           handleMagiqlImportDeclaration(path);
         }
+      },
+
+      ArrowFunctionExpression(path) {
+        path.traverse({
+          VariableDeclaration(path) {
+            const init = path.get("declarations")[0].get("init");
+            path.get("declarations").forEach((dec) => {
+              if (
+                t.isCallExpression(init) &&
+                looksLike(init.get("callee"), {
+                  node: { name: "useMagiqlQuery" },
+                })
+              ) {
+                handleUseMagiqlQuery(init.get("callee"));
+              }
+
+              // if (looksLike(path, { node: { name: "useFragment" } })) {
+              //   handleUseMagiqlQuery(path);
+              // }
+
+              if (
+                t.isCallExpression(init) &&
+                looksLike(init.get("callee"), { node: { name: "useFragment" } })
+              ) {
+                handleUseFragment(init.get("callee"));
+              }
+            });
+          },
+        });
+      },
+      FunctionDeclaration(path) {
+        path.traverse({
+          VariableDeclaration(path) {
+            const init = path.get("declarations")[0].get("init");
+            path.get("declarations").forEach((dec) => {
+              if (
+                t.isCallExpression(init) &&
+                looksLike(init.get("callee"), {
+                  node: { name: "useMagiqlQuery" },
+                })
+              ) {
+                handleUseMagiqlQuery(init.get("callee"));
+              }
+
+              // if (looksLike(path, { node: { name: "useFragment" } })) {
+              //   handleUseMagiqlQuery(path);
+              // }
+
+              if (
+                t.isCallExpression(init) &&
+                looksLike(init.get("callee"), { node: { name: "useFragment" } })
+              ) {
+                handleUseFragment(init.get("callee"));
+              }
+            });
+          },
+        });
+      },
+      VariableDeclaration(path) {
+        const init = path.get("declarations")[0].get("init");
+        path.get("declarations").forEach((dec) => {
+          if (
+            t.isCallExpression(init) &&
+            looksLike(init.get("callee"), { node: { name: "useMagiqlQuery" } })
+          ) {
+            handleUseMagiqlQuery(init.get("callee"));
+          }
+
+          // if (looksLike(path, { node: { name: "useFragment" } })) {
+          //   handleUseMagiqlQuery(path);
+          // }
+
+          if (
+            t.isCallExpression(init) &&
+            looksLike(init.get("callee"), { node: { name: "useFragment" } })
+          ) {
+            handleUseFragment(init.get("callee"));
+          }
+        });
       },
       Identifier(path) {
         if (looksLike(path, { node: { name: "useFragment" } })) {

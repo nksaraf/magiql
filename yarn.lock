@@ -6212,6 +6212,14 @@ map-visit@^1.0.0:
   dependencies:
     object-visit "^1.0.0"
 
+match-sorter@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/match-sorter/-/match-sorter-4.1.0.tgz#8ba63f4aaf438d7a844829f1a75aa3ab1b2587ba"
+  integrity sha512-DCzT9JVO2FWVOTfsKqIqVhu/skFa3bK0lQom70j6Co9yKX9bPn2gRtn9BFD9ykkM8F/USjTQeId+nlFfTVvz+w==
+  dependencies:
+    "@babel/runtime" "^7.9.2"
+    remove-accents "0.4.2"
+
 md5.js@^1.3.4:
   version "1.3.5"
   resolved "https://registry.yarnpkg.com/md5.js/-/md5.js-1.3.5.tgz#b5d07b8e3216e3e27cd728d72f70d1e6a342005f"
@@ -7841,6 +7849,13 @@ react-modal@^3.11.2:
     react-lifecycles-compat "^3.0.0"
     warning "^4.0.3"
 
+react-query-devtools@^1.1.5:
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/react-query-devtools/-/react-query-devtools-1.1.5.tgz#0bd14abe28dcf807495acd65c1bec1665e2937ad"
+  integrity sha512-KGOjlDNn/OLUh7s5ECKs2Dv8y0TDiGgQbBv9SWxnIsoTmxWRV7Gk4OZ0L3sge3IgwpQJqkSOTFMOwQGsdX3mtA==
+  dependencies:
+    match-sorter "^4.1.0"
+
 react-query@^1.2.9:
   version "1.2.9"
   resolved "https://registry.yarnpkg.com/react-query/-/react-query-1.2.9.tgz#a1804224e6e3c51b018f73355b6904662e10e3c7"
@@ -8053,6 +8068,11 @@ remedial@^1.0.7:
   version "1.0.8"
   resolved "https://registry.yarnpkg.com/remedial/-/remedial-1.0.8.tgz#a5e4fd52a0e4956adbaf62da63a5a46a78c578a0"
   integrity sha512-/62tYiOe6DzS5BqVsNpH/nkGlX45C/Sp6V+NtiN6JQNS1Viay7cWkazmRkrQrdFj2eshDe96SIQNIoMxqhzBOg==
+
+remove-accents@0.4.2:
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/remove-accents/-/remove-accents-0.4.2.tgz#0a43d3aaae1e80db919e07ae254b285d9e1c7bb5"
+  integrity sha1-CkPTqq4egNuRngeuJUsoXZ4ce7U=
 
 remove-trailing-separator@^1.0.1:
   version "1.1.0"

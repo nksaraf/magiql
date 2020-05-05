@@ -99,6 +99,7 @@ export const createFragmentRazor = ({
   name = null,
   type = null,
   fragmentType = null,
+  fragments = [],
 }) => {
   if (!type) throw new Error("type must be either fragment or query");
   if (type === "fragment" && !fragmentType)
@@ -111,6 +112,7 @@ export const createFragmentRazor = ({
     children,
     args,
     name,
+    fragments,
     type,
     fragmentType,
     addChild: (val) => {
@@ -202,9 +204,15 @@ const createBlade = ({
           directives.length
             ? directives.map((d) => gql.directive(gql.name(d.value.substr(1))))
             : null,
-          children.length ? gql.selectionSet(getChildrenAst(children)) : null
+          gql.selectionSet([
+            ...(children.length ? getChildrenAst(children) : []),
+            ...(fragments.length
+              ? fragments.map((fragm) =>
+                  gql.fragmentSpread(gql.name(fragm.name))
+                )
+              : []),
+          ])
         ),
-        ...fragments.map((fragm) => gql.fragmentSpread(gql.name(fragm.name))),
       ];
     },
   };

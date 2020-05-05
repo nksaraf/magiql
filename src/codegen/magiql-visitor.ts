@@ -7,6 +7,7 @@ import {
   GraphQLSchema,
   DocumentNode,
   FieldDefinitionNode,
+  ObjectTypeDefinitionNode,
 } from "graphql";
 import { indent } from "@graphql-codegen/visitor-plugin-common";
 import { MagiqlRawPluginConfig, MagiqlPluginConfig } from "./config";
@@ -16,10 +17,39 @@ class MagiqlVisitor extends TsVisitor<
   MagiqlRawPluginConfig,
   MagiqlPluginConfig
 > {
+  currentNode?: string;
   constructor(schema: GraphQLSchema, config: MagiqlRawPluginConfig) {
     super(schema, config);
     (this._argumentsTransformer as any)._avoidOptionals = false;
   }
+
+  // ObjectTypeDefinition(
+  //   node: ObjectTypeDefinitionNode,
+  //   key: number | string | undefined,
+  //   parent: any
+  // ) {
+  //   // console.log(arguments);
+  //   // super.ObjectTypeDefinition(node, key, parent);
+  //   console.log(super.ObjectTypeDefinition(node, key, parent));
+  //   return "";
+  // }
+  mergeAllFields(allFields, hasInterfaces) {
+    console.log(allFields);
+
+    return [
+      ...allFields,
+      `  fragment: (fragment?: MagiQLFragment) => Maybe<${this.currentNode}>;`,
+    ].join("\n");
+  }
+
+  convertName(str: string) {
+    this.currentNode = super.convertName(str);
+    return this.currentNode;
+  }
+  // NamedType() {
+  //   console.log(arguments);
+  //   return "";
+  // }
 
   FieldDefinition(
     node: FieldDefinitionNode,
@@ -59,7 +89,18 @@ import { UseQueryResult, UseQueryOptions } from './client/hooks';
 
 export function useMagiqlQuery<TVariables>(name: string, options?: UseQueryOptions<any, TVariables>): Omit<UseQueryResult<any,TVariables>, "data"> & { query: Query, variables: TVariables }
 
-export function useFragment<K extends keyof TypeMaps>(name: K): TypeMaps[K];`;
+export function useFragment<K extends keyof TypeMaps>(name: K): TypeMaps[K];
+
+export type MagiQLFragment = (name?: string) => string;
+
+export type FragmentComponent<T> = React.ComponentType<
+  { [K in keyof T]?: Maybe<TypeMaps[T[K]]> }
+> &
+  { [K in keyof T]?: MagiQLFragment };
+
+
+
+`;
 
 function getTypeMap(astNode: DocumentNode) {
   let typeMap = `type TypeMaps = {\n`;
@@ -86,6 +127,7 @@ export const runMagiqlPlugin: PluginFunction<MagiqlRawPluginConfig> = (
   const scalars = visitor.scalarsDefinition;
   return {
     prepend: [
+      'import React from "react";',
       ...visitor.getEnumsImports(),
       ...visitor.getScalarsImports(),
       ...visitor.getWrapperDefinitions(),

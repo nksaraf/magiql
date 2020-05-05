@@ -1,7 +1,7 @@
 schema: schema.graphql
 documents:
-  - "test/**/*.graphql"
-  - "test/**/*.{ts,tsx}"
+  - "examples/test/**/*.graphql"
+  - "examples/test/**/*.{ts,tsx}"
 extensions:
   endpoints:
     default: https://graphql-pokemon.now.sh

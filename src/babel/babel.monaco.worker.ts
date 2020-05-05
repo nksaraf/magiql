@@ -12,14 +12,17 @@ class BabelWorker extends BaseWorker {
   constructor(ctx, options) {
     super(ctx, options);
     Babel.registerPlugin("magiql", babel);
+    // Babel.registerPreset("next", nextBabel);
   }
 
   transform(path) {
     try {
+      // console.log("hered");
       return Babel.transform(this.getText(path), {
         presets: [
-          "react",
+          "env",
           ["typescript", { isTsx: true, allExtensions: true }],
+          // "next",
         ],
         filename: "babel.ts",
         plugins: ["magiql"],

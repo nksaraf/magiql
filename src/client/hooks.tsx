@@ -8,7 +8,7 @@ import {
   MutateFunction,
 } from "react-query";
 import { Middleware } from "./fetch";
-import { useMagiqlClient } from "./client";
+import { useClient } from "./client";
 
 export interface GraphQLVariables<TVariables> {
   variables?: TVariables;
@@ -41,7 +41,7 @@ export function useQuery<TData, TVariables extends object>(
     ...options
   }: UseQueryOptions<TData, TVariables> = {}
 ): UseQueryResult<TData> {
-  const client = useMagiqlClient();
+  const client = useClient();
   const key: any = [opName, ...(skip ? [false] : [{ variables }])];
   const { status, ...queryObject }: QueryResult<TData> = useBaseQuery(
     key,
@@ -78,7 +78,7 @@ export function useMutation<TData, TVariables extends object>(
     ...options
   }: UseMutationOptions<TData, TVariables> = {}
 ): [MutateFunction<TData, TVariables>, UseMutationResult<TData>] {
-  const client = useMagiqlClient();
+  const client = useClient();
   const [mutate, { status, ...mutationObject }] = useBaseMutation<
     TData,
     TVariables

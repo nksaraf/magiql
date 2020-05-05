@@ -41,6 +41,7 @@ const arrayPrototypeIgnores = [
   "reduceRight", // ENABLED
   "some", // ENABLED
   "values", // TODO: may want to revisit
+  "fragment",
 ];
 
 /**
@@ -173,6 +174,24 @@ function workOnRHSParent(
         // kick off the traversal inside the internal function
         semanticTrace(paramRef, newblade, semanticVisitor, newSemanticPath);
       }
+    }
+    if (newPath === "fragment") {
+      //   if (aliasPath.get("property").get("name").node === "fragment") {
+      //     // console.log(aliasPath, currentGqlNode);
+      //     const random = Math.round(Math.random() * 1000);
+      //     currentGqlNode.fragments.push(t.identifier("Fragment" + random));
+      //     gqlTree.fragments.push(["Fragment" + random, calleeArguments[0]]);
+      //     // console.log(JSON.stringify(gqlTree, null, 2));
+      //     // console.log(aliasPath.replaceWith(t.identifier("hello")));
+      //     // aliasPath.get("object").replaceWith(t.identifier("a"));
+      //     // aliasPath.set("property", t.identifier(t.name("hello")));
+      //     // aliasPath.parentPath.replaceWith(aliasPath.get("object"));
+      //     return;
+      //   }
+      // }
+      newSemanticPath.push([newPath, ptr]);
+      semanticVisitor["Fragment"](ptr, newSemanticPath);
+      hasHitArrayMethod = true;
     }
   } else {
     newSemanticPath.push([newPath, ptr]);
