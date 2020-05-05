@@ -1,0 +1,11 @@
+{
+  "files.exclude": {
+    "babel": true,
+    "client": true,
+    "codegen": true,
+    "devtools": true,
+    "fetch": true,
+    "hooks": true,
+    "deno": true
+  }
+}

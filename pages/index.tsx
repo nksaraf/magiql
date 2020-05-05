@@ -2,6 +2,7 @@ import { prettier } from "next-monaco-editor/plugins";
 import "next-monaco-editor/plugins/prettier.monaco.worker";
 import "../src/babel/babel.monaco.worker";
 import { useDebouncedCallback } from "use-debounce";
+
 var input = `import {
   MagiqlProvider,
   createClient,
@@ -166,7 +167,6 @@ export default () => {
           <MonacoEditor
             value={result}
             path="result.tsx"
-            // id="result"
             language="typescript"
             options={{
               minimap: {

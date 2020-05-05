@@ -17,6 +17,14 @@
     "postinstall": "node ./dist/cjs/cli.js"
   },
   "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/plugin-syntax-jsx": "^7.8.3",
+    "@babel/preset-react": "^7.9.4",
+    "@graphql-codegen/cli": "^1.13.3",
+    "@graphql-codegen/plugin-helpers": "1.13.3",
+    "@graphql-codegen/typescript": "^1.13.3",
+    "@graphql-codegen/typescript-operations": "^1.13.3",
+    "@graphql-codegen/visitor-plugin-common": "1.13.3",
     "@babel/preset-typescript": "^7.9.0",
     "@babel/standalone": "^7.9.6",
     "@types/node": "^13.13.4",
@@ -27,7 +35,19 @@
     "pkger": "^0.0.2-next.12",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "typescript": "^3.8.3"
+    "typescript": "^3.8.3",
+    "auto-bind": "^4.0.0",
+    "camel-case": "^4.1.1",
+    "dedent": "^0.7.0",
+    "graphql-ast-types": "^1.0.2",
+    "graphql-config": "^3.0.0",
+    "magic-components": "^0.0.2-beta.30",
+    "next-monaco-editor": "^0.0.1-beta.22",
+    "pascal-case": "^3.1.1",
+    "path": "^0.12.7",
+    "prettier": "^2.0.5",
+    "react-query-devtools": "^1.1.5",
+    "use-debounce": "^3.4.2"
   },
   "pkger": {
     "target": "browser",
@@ -52,28 +72,8 @@
     ]
   },
   "dependencies": {
-    "@babel/cli": "^7.8.4",
-    "@babel/plugin-syntax-jsx": "^7.8.3",
-    "@babel/preset-react": "^7.9.4",
-    "@graphql-codegen/cli": "^1.13.3",
-    "@graphql-codegen/plugin-helpers": "1.13.3",
-    "@graphql-codegen/typescript": "^1.13.3",
-    "@graphql-codegen/typescript-operations": "^1.13.3",
-    "@graphql-codegen/visitor-plugin-common": "1.13.3",
-    "auto-bind": "^4.0.0",
-    "camel-case": "^4.1.1",
-    "dedent": "^0.7.0",
-    "graphql-ast-types": "^1.0.2",
-    "graphql-config": "^3.0.0",
     "isomorphic-unfetch": "^3.0.0",
-    "magic-components": "^0.0.2-beta.30",
-    "next-monaco-editor": "^0.0.1-beta.22",
-    "pascal-case": "^3.1.1",
-    "path": "^0.12.7",
-    "prettier": "^2.0.5",
-    "react-query": "^1.3.0",
-    "react-query-devtools": "^1.1.5",
-    "use-debounce": "^3.4.2"
+    "react-query": "^1.3.0"
   },
   "peerDependencies": {
     "graphql": "^15.0.0",
