@@ -24,7 +24,7 @@
     "@graphql-codegen/plugin-helpers": "1.13.3",
     "@graphql-codegen/typescript": "^1.13.3",
     "@graphql-codegen/typescript-operations": "^1.13.3",
-    "@graphql-codegen/visitor-plugin-common": "1.13.3",
+    "@graphql-codegen/visitor-plugin-common": "1.13.5",
     "@babel/preset-typescript": "^7.9.0",
     "@babel/standalone": "^7.9.6",
     "@types/node": "^13.13.4",
