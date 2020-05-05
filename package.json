@@ -1,6 +1,6 @@
 {
   "name": "magiql",
-  "version": "0.0.2-beta.15",
+  "version": "0.0.2-beta.16",
   "description": "",
   "repository": "Nikhil Saraf",
   "license": "MIT",
@@ -9,6 +9,7 @@
   "scripts": {
     "prepublishOnly": "yarn build",
     "build": "pkger build",
+    "prepack": "node ./dist/cjs/cli.js",
     "pub": "bump && yarn publish --access public --non-interactive",
     "dev": "yarn test && chokidar \"src/**/*\" \"test/test.tsx\" -c \"yarn test\"",
     "test": "yarn babel test/test.tsx -o test/test.out.tsx --extensions=tsx --presets next/babel --plugins=./dist/cjs/babel.js"
