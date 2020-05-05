@@ -1,6 +1,3 @@
-// attempt at making a standalone testable data structure
-
-import { maybeGetSimpleString, getSimpleFragmentName } from "./helpers";
 import * as gql from "graphql-ast-types";
 import { print } from "graphql/language/printer";
 

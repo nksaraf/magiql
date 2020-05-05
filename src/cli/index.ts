@@ -1,11 +1,10 @@
 import { generate, parseArgv, createContext } from "@graphql-codegen/cli";
 import path from "path";
 
-const pluginPath = "magiql/codegen";
-const outputPath = "/node_modules/magiql/dist";
-
-// const pluginPath = "./dist/cjs/codegen";
-// const outputPath = "/dist";
+const pluginPath =
+  process.env.NODE_ENV === "test" ? "./dist/cjs/codegen" : "magiql/codegen";
+const outputPath =
+  process.env.NODE_ENV === "test" ? "./dist" : "/node_modules/magiql/dist";
 
 async function run() {
   const cliFlags = parseArgv(process.argv);

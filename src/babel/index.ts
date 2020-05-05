@@ -624,6 +624,8 @@ export default function (babel) {
     ]);
   };
 
+  const handleWithFragment = (path) => {};
+
   return {
     name: "babel-magiql",
     inherits: jsx,
@@ -663,6 +665,7 @@ export default function (babel) {
           },
         });
       },
+
       FunctionDeclaration(path) {
         path.traverse({
           VariableDeclaration(path) {
@@ -720,6 +723,10 @@ export default function (babel) {
 
         if (looksLike(path, { node: { name: "useMagiqlQuery" } })) {
           handleUseMagiqlQuery(path);
+        }
+
+        if (looksLike(path, { node: { name: "withFragment" } })) {
+          handleWithFragment(path);
         }
       },
     },

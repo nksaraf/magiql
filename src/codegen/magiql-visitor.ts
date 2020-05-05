@@ -85,25 +85,44 @@ class MagiqlVisitor extends TsVisitor<
 }
 
 const extra = `
-import { UseQueryResult, UseQueryOptions } from './client/hooks';
+import { UseQueryResult, UseQueryOptions } from "./client/hooks";
 
-export function useMagiqlQuery<TVariables>(name: string, options?: UseQueryOptions<any, TVariables>): Omit<UseQueryResult<any,TVariables>, "data"> & { query: Query, variables: TVariables }
-
-export function useFragment<K extends keyof TypeMaps>(name: K): TypeMaps[K];
+export type Type<K extends keyof Types = "Query"> = Types[K];
 
 export type MagiQLFragment = (name?: string) => string;
 
-export type FragmentComponent<T> = React.ComponentType<
-  { [K in keyof T]?: Maybe<TypeMaps[T[K]]> }
-> &
-  { [K in keyof T]?: MagiQLFragment };
+export function useMagiqlQuery<TVariables = {}>(
+  name: string,
+  options?: UseQueryOptions<Query, TVariables>
+): Omit<UseQueryResult<Query>, "data"> & {
+  query: Query;
+  variables: TVariables;
+};
 
+export function useFragment<K extends keyof Types>(name: K): Type<K>;
 
+export type FragmentProps<F = {}> = {
+  [K in keyof F]?: Maybe<F[K]>;
+};
+
+export type ComponentTypeWithFragment<
+  F = {},
+  P = {}
+> = React.ComponentType<FragmentProps<F> & P>;
+
+export type ComponentWithFragment<
+  F extends FragmentDictionary,
+  P = {}
+> = ComponentTypeWithFragment<F, P> & { [K in keyof F]?: MagiQLFragment };
+
+export function withFragment<F = {}, P = any>(
+  Component: ComponentTypeWithFragment<F, P>
+): ComponentWithFragment<F, P>;
 
 `;
 
 function getTypeMap(astNode: DocumentNode) {
-  let typeMap = `type TypeMaps = {\n`;
+  let typeMap = `export type Types = {\n`;
   astNode.definitions.forEach((d) => {
     if (d.kind === "ObjectTypeDefinition") {
       typeMap += `  ${d.name.value}: ${d.name.value};\n`;
