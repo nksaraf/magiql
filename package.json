@@ -1,6 +1,6 @@
 {
   "name": "magiql",
-  "version": "0.0.2-beta.14",
+  "version": "0.0.2-beta.15",
   "description": "",
   "repository": "Nikhil Saraf",
   "license": "MIT",
@@ -33,6 +33,7 @@
       "client",
       "hooks",
       "fetch",
+      "devtools",
       {
         "name": "babel",
         "target": "node"
@@ -68,6 +69,7 @@
     "path": "^0.12.7",
     "prettier": "^2.0.5",
     "react-query": "^1.2.9",
+    "react-query-devtools": "^1.1.5",
     "use-debounce": "^3.4.2"
   },
   "peerDependencies": {
@@ -87,6 +89,7 @@
     "client",
     "hooks",
     "dist/types",
-    "fetch"
+    "fetch",
+    "devtools"
   ]
 }
