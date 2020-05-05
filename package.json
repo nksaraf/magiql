@@ -1,6 +1,6 @@
 {
   "name": "magiql",
-  "version": "0.0.2-beta.19",
+  "version": "0.0.2-beta.20",
   "description": "",
   "repository": "Nikhil Saraf",
   "license": "MIT",
@@ -9,10 +9,11 @@
   "scripts": {
     "prepublishOnly": "yarn build",
     "build": "pkger build",
-    "prepack": "node ./dist/cjs/cli.js",
+    "prepare": "node ./dist/cjs/cli.js",
     "pub": "bump && yarn publish --access public --non-interactive",
     "dev": "yarn test && chokidar \"src/**/*\" \"test/test.tsx\" -c \"yarn test\"",
-    "test": "yarn babel test/test.tsx -o test/test.out.tsx --extensions=tsx --presets next/babel --plugins=./dist/cjs/babel.js"
+    "test": "yarn babel test/test.tsx -o test/test.out.tsx --extensions=tsx --presets next/babel --plugins=./dist/cjs/babel.js",
+    "test:codegen": "NODE_ENV=test node ./dist/cjs/cli.js"
   },
   "devDependencies": {
     "@babel/preset-typescript": "^7.9.0",
@@ -69,7 +70,7 @@
     "pascal-case": "^3.1.1",
     "path": "^0.12.7",
     "prettier": "^2.0.5",
-    "react-query": "^1.2.9",
+    "react-query": "^1.3.0",
     "react-query-devtools": "^1.1.5",
     "use-debounce": "^3.4.2"
   },
