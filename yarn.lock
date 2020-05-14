@@ -7886,9 +7886,9 @@ react-query-devtools@^1.1.5:
     match-sorter "^4.1.0"
 
 react-query@^1.3.3:
-  version "1.3.3"
-  resolved "https://registry.yarnpkg.com/react-query/-/react-query-1.3.3.tgz#41d349e4ab951251dcbaacacf1fd2d9f7bbeed1d"
-  integrity sha512-hamNWxLHycMv0hYIlUK/GSQUkXiQML4sUjeqxYJ3W4FO6TLXxqTgtj/r0W7CYQ0VYGvmU3CmbaP6gESxRdkbuw==
+  version "1.4.4"
+  resolved "https://registry.yarnpkg.com/react-query/-/react-query-1.4.4.tgz#81822983131f79f3e09b44669d78c8ec1e409347"
+  integrity sha512-WDjQp3ujw9KcbrwwDausMrjLMOv6j19qxfhnUXSf+N73ku28uwrKFPBGbKbmj3n/ybnSN//7KLey6LT76KtFxQ==
   dependencies:
     "@scarf/scarf" "^1.0.0"
     ts-toolbelt "^6.4.2"
