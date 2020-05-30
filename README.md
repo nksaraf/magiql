@@ -1,4 +1,4 @@
-# 🧙magiql
+# 🧙 magiql
 
 A simple but potentially magical GraphQL client for React backed by [react-query](https://github.com/tannerlinsley/react-query).
 The API is very similar to Apollo Client. The cache is managed by react-query and a very thin fetch wrapper is used
