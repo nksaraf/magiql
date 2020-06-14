@@ -41,7 +41,6 @@
     "next-monaco-editor": "^0.0.1-beta.22",
     "pascal-case": "^3.1.1",
     "path": "^0.12.7",
-    "pkger": "^0.0.2-next.16",
     "prettier": "^2.0.5",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",

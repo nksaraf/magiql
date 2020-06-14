@@ -1,18 +1,13 @@
 import * as Babel from "@babel/standalone";
-import syntaxJsx from "@babel/plugin-syntax-jsx";
 import babel from ".";
-import {
-  monacoWorker,
-  initialize,
-  BaseWorker,
-} from "next-monaco-editor/worker";
+import { initialize, BaseWorker } from "next-monaco-editor/worker";
 
 // const
-class BabelWorker extends BaseWorker {
+export class BabelWorker extends BaseWorker {
+  Babel = Babel;
   constructor(ctx, options) {
     super(ctx, options);
     Babel.registerPlugin("magiql", babel);
-    // Babel.registerPreset("next", nextBabel);
   }
 
   transform(path) {
