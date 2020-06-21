@@ -1,6 +1,6 @@
 {
   "name": "magiql",
-  "version": "0.0.2",
+  "version": "0.0.3-next.0",
   "description": "",
   "repository": "Nikhil Saraf",
   "license": "MIT",
@@ -13,44 +13,29 @@
     "pub": "bump && yarn publish --access public --non-interactive",
     "dev": "yarn test && chokidar \"src/**/*\" \"test/test.tsx\" -c \"yarn test\"",
     "test": "yarn babel test/test.tsx -o test/test.out.tsx --extensions=tsx --presets next/babel --plugins=./dist/cjs/babel.js",
-    "test:codegen": "NODE_ENV=test node ./dist/cjs/cli.js",
-    "postinstall": "node ./dist/cjs/cli.js"
+    "test:codegen": "NODE_ENV=test node ./dist/cjs/cli.js"
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",
-    "@babel/plugin-syntax-jsx": "^7.8.3",
     "@babel/preset-react": "^7.9.4",
     "@babel/preset-typescript": "^7.9.0",
     "@babel/standalone": "^7.9.6",
-    "@graphql-codegen/cli": "^1.13.5",
-    "@graphql-codegen/plugin-helpers": "1.13.5",
-    "@graphql-codegen/typescript": "^1.13.5",
-    "@graphql-codegen/typescript-operations": "^1.13.5",
-    "@graphql-codegen/visitor-plugin-common": "1.13.5",
     "@types/node": "^13.13.5",
     "@types/react": "^16.9.34",
     "auto-bind": "^4.0.0",
-    "camel-case": "^4.1.1",
     "chokidar-cli": "^2.1.0",
     "dedent": "^0.7.0",
     "graphql": "^15.0.0",
-    "graphql-ast-types": "^1.0.2",
-    "graphql-config": "^3.0.1",
     "magic-components": "^0.0.2-beta.30",
     "next": "^9.3.6",
     "next-monaco-editor": "^0.0.1-beta.22",
-    "pascal-case": "^3.1.1",
-    "path": "^0.12.7",
     "prettier": "^2.0.5",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-query-devtools": "^1.1.5",
-    "typescript": "^3.8.3",
-    "use-debounce": "^3.4.2"
+    "typescript": "^3.8.3"
   },
   "pkger": {
     "target": "browser",
-    "silent": "true",
     "entries": [
       "client",
       "hooks",
@@ -71,8 +56,21 @@
     ]
   },
   "dependencies": {
+    "@babel/plugin-syntax-jsx": "^7.8.3",
+    "@graphql-codegen/cli": "^1.13.5",
+    "@graphql-codegen/plugin-helpers": "1.13.5",
+    "@graphql-codegen/typescript": "^1.13.5",
+    "@graphql-codegen/typescript-operations": "^1.13.5",
+    "@graphql-codegen/visitor-plugin-common": "1.13.5",
+    "camel-case": "^4.1.1",
+    "graphql-ast-types": "^1.0.2",
+    "graphql-config": "^3.0.1",
     "isomorphic-unfetch": "^3.0.0",
-    "react-query": "^1.3.3"
+    "pascal-case": "^3.1.1",
+    "path": "^0.12.7",
+    "react-query": "^1.3.3",
+    "react-query-devtools": "^1.1.5",
+    "use-debounce": "^3.4.2"
   },
   "peerDependencies": {
     "graphql": "^15.0.0",
@@ -84,6 +82,66 @@
   "module": "dist/esm/magiql.js",
   "main": "dist/cjs/magiql.js",
   "browser": "dist/esm/magiql.js",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/magiql.js",
+      "browser": "./dist/esm/magiql.js",
+      "require": "./dist/cjs/production/magiql.js",
+      "node": "./dist/cjs/production/magiql.js",
+      "default": "./dist/esm/magiql.js"
+    },
+    "./client": {
+      "import": "./dist/esm/client.js",
+      "browser": "./dist/esm/client.js",
+      "require": "./dist/cjs/production/client.js",
+      "node": "./dist/cjs/production/client.js",
+      "default": "./dist/esm/client.js"
+    },
+    "./hooks": {
+      "import": "./dist/esm/hooks.js",
+      "browser": "./dist/esm/hooks.js",
+      "require": "./dist/cjs/production/hooks.js",
+      "node": "./dist/cjs/production/hooks.js",
+      "default": "./dist/esm/hooks.js"
+    },
+    "./fetch": {
+      "import": "./dist/esm/fetch.js",
+      "browser": "./dist/esm/fetch.js",
+      "require": "./dist/cjs/production/fetch.js",
+      "node": "./dist/cjs/production/fetch.js",
+      "default": "./dist/esm/fetch.js"
+    },
+    "./devtools": {
+      "import": "./dist/esm/devtools.js",
+      "browser": "./dist/esm/devtools.js",
+      "require": "./dist/cjs/production/devtools.js",
+      "node": "./dist/cjs/production/devtools.js",
+      "default": "./dist/esm/devtools.js"
+    },
+    "./babel": {
+      "import": "./dist/esm/babel.js",
+      "browser": "./dist/esm/babel.js",
+      "require": "./dist/cjs/production/babel.js",
+      "node": "./dist/cjs/production/babel.js",
+      "default": "./dist/esm/babel.js"
+    },
+    "./codegen": {
+      "import": "./dist/esm/codegen.js",
+      "browser": "./dist/esm/codegen.js",
+      "require": "./dist/cjs/production/codegen.js",
+      "node": "./dist/cjs/production/codegen.js",
+      "default": "./dist/esm/codegen.js"
+    },
+    "./cli": {
+      "import": "./dist/esm/cli.js",
+      "browser": "./dist/esm/cli.js",
+      "require": "./dist/cjs/production/cli.js",
+      "node": "./dist/cjs/production/cli.js",
+      "default": "./dist/esm/cli.js"
+    },
+    "./package.json": "./package.json",
+    "./": "./"
+  },
   "files": [
     "dist",
     "babel",
@@ -92,6 +150,7 @@
     "hooks",
     "dist/types",
     "fetch",
-    "devtools"
+    "devtools",
+    "README.md"
   ]
 }
