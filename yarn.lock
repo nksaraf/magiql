@@ -1939,10 +1939,10 @@
   dependencies:
     any-observable "^0.3.0"
 
-"@scarf/scarf@^1.0.0":
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/@scarf/scarf/-/scarf-1.0.4.tgz#d7c09e7d38428123df18a8d83a4bb5d09517d952"
-  integrity sha512-lkhjzeYyYAG4VvdrjvbZCOYzXH5vCwfzYj9xJ4zHDgyYIOzObZwcsbW6W1q5Z4tywrb14oG/tfsFAMMQPCTFqw==
+"@scarf/scarf@^1.0.6":
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/@scarf/scarf/-/scarf-1.0.6.tgz#52011dfb19187b53b75b7b6eac20da0810ddd88f"
+  integrity sha512-y4+DuXrAd1W5UIY3zTcsosi/1GyYT8k5jGnZ/wG7UUHVrU+MHlH4Mp87KK2/lvMW4+H7HVcdB+aJhqywgXksjA==
 
 "@types/color-name@^1.1.1":
   version "1.1.1"
@@ -7886,12 +7886,12 @@ react-query-devtools@^1.1.5:
     match-sorter "^4.1.0"
 
 react-query@^1.3.3:
-  version "1.3.3"
-  resolved "https://registry.yarnpkg.com/react-query/-/react-query-1.3.3.tgz#41d349e4ab951251dcbaacacf1fd2d9f7bbeed1d"
-  integrity sha512-hamNWxLHycMv0hYIlUK/GSQUkXiQML4sUjeqxYJ3W4FO6TLXxqTgtj/r0W7CYQ0VYGvmU3CmbaP6gESxRdkbuw==
+  version "1.5.9"
+  resolved "https://registry.yarnpkg.com/react-query/-/react-query-1.5.9.tgz#8df202a338c1875a033cc6a29d1b7f777b233237"
+  integrity sha512-RrCSSRBkFZe+AAhGFuMDvaucMIANWEbDeuVbn/bWPXuYCNYKz2HD4v7uN1FYAArFjv3i8E0PoR8ll3dBjhrObg==
   dependencies:
-    "@scarf/scarf" "^1.0.0"
-    ts-toolbelt "^6.4.2"
+    "@scarf/scarf" "^1.0.6"
+    ts-toolbelt "^6.9.4"
 
 react-reconciler@^0.24.0:
   version "0.24.0"
@@ -9193,10 +9193,10 @@ ts-pnp@^1.1.2:
   resolved "https://registry.yarnpkg.com/ts-pnp/-/ts-pnp-1.2.0.tgz#a500ad084b0798f1c3071af391e65912c86bca92"
   integrity sha512-csd+vJOb/gkzvcCHgTGSChYpy5f1/XKNsmvBGO4JXS+z1v2HobugDz4s1IeFXM3wZB44uczs+eazB5Q/ccdhQw==
 
-ts-toolbelt@^6.4.2:
-  version "6.5.1"
-  resolved "https://registry.yarnpkg.com/ts-toolbelt/-/ts-toolbelt-6.5.1.tgz#1316b8c6522797c0bee289ca5deaa159af846231"
-  integrity sha512-zjnZ/vy1eUA0li3H0JXecl0R3jiP42snpLimsrppt9V3LLbM4NM4jMgjXQ4S67hvehq+r9CxpX4Wj6RnFRzReA==
+ts-toolbelt@^6.9.4:
+  version "6.9.9"
+  resolved "https://registry.yarnpkg.com/ts-toolbelt/-/ts-toolbelt-6.9.9.tgz#e6cfd8ec7d425d2a06bda3b4fe9577ceaf2abda8"
+  integrity sha512-5a8k6qfbrL54N4Dw+i7M6kldrbjgDWb5Vit8DnT+gwThhvqMg8KtxLE5Vmnft+geIgaSOfNJyAcnmmlflS+Vdg==
 
 tslib@1.11.1, tslib@^1.10.0, tslib@^1.11.1, tslib@^1.9.0, tslib@^1.9.3, tslib@~1.11.1:
   version "1.11.1"
