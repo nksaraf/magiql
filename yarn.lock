@@ -6252,9 +6252,9 @@ lru-cache@^5.1.1:
     yallist "^3.0.2"
 
 magic-components@^0.0.2-beta.30:
-  version "0.0.2-beta.30"
-  resolved "https://registry.yarnpkg.com/magic-components/-/magic-components-0.0.2-beta.30.tgz#b58354f088916fc5beab30978ae73a23820e1ce7"
-  integrity sha512-Z1XZKNrU5+GnflXtX38Zhx3g/LHym+V2GWhdoDzfl46Fm+gbguR2jbMCScaQ/KcyjJKL03doPlGknNN9JPhN3w==
+  version "0.0.2-beta.31"
+  resolved "https://registry.yarnpkg.com/magic-components/-/magic-components-0.0.2-beta.31.tgz#f6f2f3175f044f62a81ba74715cea313f8eaaf4f"
+  integrity sha512-Cu8HFBrczT1oBoxqQVJ4YGHrW6pkJRFclz40aZ0+/cpmWTdJZgsm9WbjrQcTXiZDqINXnDdMxgm9n6q0V2taCA==
   dependencies:
     "@nksaraf/colors" "^0.0.3"
     "@reach/listbox" "^0.10.1"
