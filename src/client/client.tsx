@@ -4,6 +4,7 @@ import {
   ReactQueryConfigProvider,
   ReactQueryProviderConfig,
 } from "react-query";
+import { SubscriptionClient } from "subscriptions-transport-ws";
 import React from "react";
 
 export interface ClientFetchFn<TData, TVariables> {
@@ -15,6 +16,7 @@ export interface ClientFetchFn<TData, TVariables> {
 }
 
 export interface GraphQLClientOptions<TData, TVariables> {
+  subscriptionUrl?: string;
   fetchOptions?: Options;
   config?: ReactQueryProviderConfig;
   middleware?: Middleware<TData, TVariables>[];
@@ -23,12 +25,14 @@ export interface GraphQLClient<TData, TVariables>
   extends GraphQLClientOptions<TData, TVariables> {
   url: string;
   cache: typeof queryCache;
+  subscriptionClient?: SubscriptionClient;
   fetch: ClientFetchFn<TData, TVariables>;
 }
 
 export const createClient = (
   url: string,
   {
+    subscriptionUrl,
     fetchOptions = {},
     middleware = [],
     config = {},
@@ -39,6 +43,13 @@ export const createClient = (
     fetchOptions: fetchOptions,
     middleware,
     config,
+    subscriptionUrl,
+    subscriptionClient:
+      subscriptionUrl &&
+      typeof window !== "undefined" &&
+      new SubscriptionClient(subscriptionUrl, {
+        reconnect: true,
+      }),
     cache: queryCache,
     fetch: async <TData, TVariables>(
       query: string,

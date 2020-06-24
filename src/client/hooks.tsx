@@ -1,3 +1,4 @@
+import React from "react";
 import {
   useQuery as useBaseQuery,
   QueryOptions,
@@ -52,6 +53,89 @@ export function useQuery<TData, TVariables extends object, TError = Error>(
     },
     options
   );
+}
+
+export function useMountedCallback(callback: any) {
+  const mounted = React.useRef(false);
+
+  React[typeof window === "undefined" ? "useEffect" : "useLayoutEffect"](() => {
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+    };
+  }, []);
+
+  return React.useCallback(
+    (...args) => (mounted.current ? callback(...args) : void 0),
+    [callback]
+  );
+}
+
+export function useSubscrition<
+  TData,
+  TVariables extends object,
+  TError = Error
+>(
+  subscription: string,
+  {
+    variables = {} as TVariables,
+    operationName = getOperationName(subscription),
+    ...options
+  }: UseQueryOptions<TData, TVariables, TError> = {}
+): UseQueryResult<TData, TError> {
+  const rerender = useMountedCallback(React.useState()[1]);
+
+  const client = useClient();
+
+  const query = (client.cache as any).buildQuery(
+    [operationName, { variables: variables }],
+    () => new Promise(() => {}),
+    options
+  );
+
+  const instanceRef = React.useRef();
+
+  React.useEffect(() => {
+    if (!client.subscriptionClient) {
+      return;
+    }
+
+    instanceRef.current = query.subscribe(() => rerender({}));
+
+    const observable = client.subscriptionClient.request({
+      query: subscription,
+      variables: variables,
+    });
+
+    const sub = observable.subscribe({
+      next: (result) => {
+        query.setData(result.data);
+      },
+      error: (error) => {
+        query.setState((state: any) => ({
+          ...state,
+          status: "error",
+          isError: true,
+          isFetching: false,
+          isStale: true,
+          error,
+        }));
+        sub.unsubscribe();
+      },
+      complete: () => {
+        sub.unsubscribe();
+      },
+    });
+    return () => {
+      (instanceRef.current as any).unsubscribe();
+      sub.unsubscribe();
+    };
+  }, [query, rerender]);
+
+  return {
+    query,
+    ...query.state,
+  };
 }
 
 export interface UseMutationOptions<TData, TVariables, TError = Error>
