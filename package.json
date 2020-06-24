@@ -1,6 +1,6 @@
 {
   "name": "magiql",
-  "version": "0.0.3-next.3",
+  "version": "0.0.3-next.4",
   "description": "",
   "repository": "Nikhil Saraf",
   "license": "MIT",
@@ -31,6 +31,7 @@
     "prettier": "^2.0.5",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-query-devtools": "^2.0.0",
     "typescript": "^3.8.3"
   },
   "pkger": {
@@ -68,12 +69,13 @@
     "pascal-case": "^3.1.1",
     "path": "^0.12.7",
     "react-query": "npm:@nksaraf/react-query",
-    "react-query-devtools": "^1.1.5",
     "use-debounce": "^3.4.2"
   },
   "peerDependencies": {
     "graphql": "^15.0.0",
-    "react": "^16.13"
+    "react": "^16.13",
+    "react-query": "^2.0",
+    "react-query-devtools": "^2.0"
   },
   "bin": {
     "magiql": "dist/cjs/cli.js"
