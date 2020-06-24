@@ -1,6 +1,6 @@
 {
   "name": "magiql",
-  "version": "0.0.3-next.4",
+  "version": "0.0.3-next.5",
   "description": "",
   "repository": "Nikhil Saraf",
   "license": "MIT",
@@ -69,6 +69,7 @@
     "pascal-case": "^3.1.1",
     "path": "^0.12.7",
     "react-query": "npm:@nksaraf/react-query",
+    "subscriptions-transport-ws": "^0.9.16",
     "use-debounce": "^3.4.2"
   },
   "peerDependencies": {
