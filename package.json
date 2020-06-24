@@ -1,6 +1,6 @@
 {
   "name": "magiql",
-  "version": "0.0.3-next.1",
+  "version": "0.0.3-next.3",
   "description": "",
   "repository": "Nikhil Saraf",
   "license": "MIT",
@@ -9,7 +9,6 @@
   "scripts": {
     "prepublishOnly": "yarn build",
     "build": "pkger build",
-    "prepare": "node ./dist/cjs/cli.js",
     "pub": "bump && yarn publish --access public --non-interactive",
     "dev": "yarn test && chokidar \"src/**/*\" \"test/test.tsx\" -c \"yarn test\"",
     "test": "yarn babel test/test.tsx -o test/test.out.tsx --extensions=tsx --presets next/babel --plugins=./dist/cjs/babel.js",
@@ -68,7 +67,7 @@
     "isomorphic-unfetch": "^3.0.0",
     "pascal-case": "^3.1.1",
     "path": "^0.12.7",
-    "react-query": "^1.3.3",
+    "react-query": "npm:@nksaraf/react-query",
     "react-query-devtools": "^1.1.5",
     "use-debounce": "^3.4.2"
   },
