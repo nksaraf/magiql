@@ -1,1 +1,0 @@
-export const gql : (query: TemplateStringsArray, ..._fragments: any) => string = String.raw;

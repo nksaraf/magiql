@@ -5,15 +5,34 @@ export interface Headers {
 }
 
 export interface FetchOptions {
-  method?: "GET" | "POST" | "DELETE" | "PATCH" | "PUT" | "HEAD" | "OPTIONS" | "CONNECT";
+  method?:
+    | "GET"
+    | "POST"
+    | "DELETE"
+    | "PATCH"
+    | "PUT"
+    | "HEAD"
+    | "OPTIONS"
+    | "CONNECT";
   headers?: Headers;
   body?: any;
   mode?: "cors" | "no-cors" | "same-origin";
   credentials?: "omit" | "same-origin" | "include";
-  cache?: "default" | "no-store" | "reload" | "no-cache" | "force-cache" | "only-if-cached";
+  cache?:
+    | "default"
+    | "no-store"
+    | "reload"
+    | "no-cache"
+    | "force-cache"
+    | "only-if-cached";
   redirect?: "follow" | "error" | "manual";
   referrer?: string;
-  referrerPolicy?: "referrer" | "no-referrer-when-downgrade" | "origin" | "origin-when-cross-origin" | "unsafe-url";
+  referrerPolicy?:
+    | "referrer"
+    | "no-referrer-when-downgrade"
+    | "origin"
+    | "origin-when-cross-origin"
+    | "unsafe-url";
   integrity?: any;
 }
 
@@ -22,12 +41,12 @@ export enum ResponseType {
   Cors,
   Default,
   Error,
-  Opaque
+  Opaque,
 }
 
 export interface ResponseHeaders {
-  append(name: string, value: string):void;
-  delete(name: string):void;
+  append(name: string, value: string): void;
+  delete(name: string): void;
   get(name: string): string;
   getAll(name: string): Array<string>;
   has(name: string): boolean;
@@ -57,12 +76,11 @@ export interface Response extends ResponseBody {
 
 type Fetch = (url: string, options?: FetchOptions) => Promise<Response>;
 
-
-interface Window  {
-  fetch: Fetch
+interface Window {
+  fetch: Fetch;
 }
 
-export const fetch : Fetch = (unfetch as unknown as Fetch);
+export const fetch: Fetch = (unfetch as unknown) as Fetch;
 
 export type Variables = { [key: string]: any };
 
@@ -90,7 +108,7 @@ export class ClientError extends Error {
   request: GraphQLRequestContext;
 
   constructor(response: GraphQLResponse, request: GraphQLRequestContext) {
-    const message = ClientError.extractMessage(response)
+    const message = ClientError.extractMessage(response);
     // JSON.stringify({
     //   response,
     //   request
@@ -116,7 +134,7 @@ export class ClientError extends Error {
   }
 }
 
-async function baseFetchGraphQL<TData extends any, TVariables extends { [key: string]: any } = any>(
+async function baseFetchGraphQL<TData, TVariables>(
   uri: string,
   query: string,
   variables: TVariables = {} as any,
@@ -127,27 +145,33 @@ async function baseFetchGraphQL<TData extends any, TVariables extends { [key: st
 
   const body = JSON.stringify({
     query,
-    variables: variables
+    variables: variables,
   });
   try {
     const response = await fetch(uri, {
       method: "POST",
       headers: Object.assign({ "Content-Type": "application/json" }, headers),
       body,
-      ...others
+      ...others,
     });
-  
-    const result : string | GraphQLResponse = await (response.headers
+
+    const result: string | GraphQLResponse = (await (response.headers
       .get("Content-Type")
       ?.startsWith("application/json")
       ? response.json()
-      : response.text()) as any;
-  
-    if (response.ok && typeof result !==  "string" && !result.errors && result.data) {
+      : response.text())) as any;
+
+    if (
+      response.ok &&
+      typeof result !== "string" &&
+      !result.errors &&
+      result.data
+    ) {
       // const { headers, status } = response
       return result.data;
     } else {
-      const errorResult = typeof result === "string" ? { error: result } : result;
+      const errorResult =
+        typeof result === "string" ? { error: result } : result;
       throw new ClientError(
         { ...errorResult, status: response.status },
         { query, variables }
@@ -157,40 +181,45 @@ async function baseFetchGraphQL<TData extends any, TVariables extends { [key: st
     if (e instanceof ClientError) {
       throw e;
     } else {
-      throw new ClientError(
-        { ...e, status: '400' },
-        { query, variables }
-      )
+      throw new ClientError({ ...e, status: "400" }, { query, variables });
     }
   }
 }
 
-export async function fetchGraphQL<T extends any, V extends object>(
+export interface FetchGraphql<TData, TVariables> {
+  (
+    uri: string,
+    query: string,
+    variables?: TVariables,
+    options?: Options & { middleware?: Middleware<TData, TVariables>[] }
+  ): Promise<TData>;
+}
+
+export const fetchGraphQL = async <TData, TVariables>(
   uri: string,
   query: string,
-  variables?: V,
-  { middleware = [], ...options }: Options & { middleware?: Middleware[] } = {}
-): Promise<T> {
-  const result = await ((applyMiddleware(baseFetchGraphQL, middleware))(
-    uri,
-    query,
-    variables,
-    options
-  ));
+  variables?: TVariables,
+  {
+    middleware = [],
+    ...options
+  }: Options & { middleware?: Middleware<TData, TVariables>[] } = {}
+): Promise<TData> => {
+  const result = await applyMiddleware<TData, TVariables>(
+    baseFetchGraphQL,
+    middleware
+  )(uri, query, variables, options);
   return result;
+};
+
+export interface Middleware<TData, TVariables> {
+  (fetch: FetchGraphql<TData, TVariables>): FetchGraphql<TData, TVariables>;
 }
 
-export interface Middleware {
-  (fetch: typeof fetchGraphQL): typeof fetchGraphQL;
-}
-
-export const applyMiddleware = (
-  fn: typeof fetchGraphQL,
-  middleware: Middleware[]
-) => {
+export const applyMiddleware = <TData, TVariables>(
+  fn: FetchGraphql<TData, TVariables>,
+  middleware: Middleware<TData, TVariables>[]
+): FetchGraphql<TData, TVariables> => {
   return middleware.reduce((agg, m) => {
     return m(agg);
   }, fn);
 };
-
-

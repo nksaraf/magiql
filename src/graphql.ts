@@ -9,10 +9,10 @@ export type Type<K extends keyof Types = "Query"> = Types[K];
 
 export type MagiQLFragment = (name?: string) => string;
 
-export function useMagiqlQuery<TQuery = any, TVariables = {}>(
+export function useMagiqlQuery<TQuery = any, TVariables = {}, TError = Error>(
   name: string,
-  options?: UseQueryOptions<TQuery, TVariables>
-): Omit<UseQueryResult<TQuery>, "data"> & {
+  options?: UseQueryOptions<TQuery, TVariables, TError>
+): Omit<UseQueryResult<TQuery, TError>, "data"> & {
   query: TQuery;
   variables: TVariables;
 } {

@@ -39,7 +39,7 @@ export class MagiqlVisitor extends ClientSideBaseVisitor<
       ),
       addDocBlocks: getConfigValue(rawConfig.addDocBlocks, true),
       codegen: getConfigValue(rawConfig.codegen, false),
-      mode: getConfigValue(rawConfig.mode, "hooks-types")
+      mode: getConfigValue(rawConfig.mode, "hooks-types"),
     });
 
     this._externalImportPrefix = this.config.importOperationTypesFrom
@@ -135,16 +135,16 @@ ${this.printFragments(node)}`;
 
     // let hook;
 
-    if (this.config.mode === 'hooks-types') {
+    if (this.config.mode === "hooks-types") {
       this.imports.add(
         `import * as Magiql from "${this.config.importHooksFrom}";`
       );
       return `${
         this.config.noExport ? "" : "export "
-      }function use${operationName}(options?: Magiql.Use${operationType}Options<${operationResultType}, ${operationVariablesTypes}>): Magiql.UseQueryResult<${operationResultType}, ${operationVariablesTypes}>;
+      }function use${operationName}(options?: Magiql.Use${operationType}Options<${operationResultType}, ${operationVariablesTypes}, Error>): Magiql.UseQueryResult<${operationResultType}, ${operationVariablesTypes}, Error>;
       
-      `
-    } else if (this.config.mode === 'hooks-esm') {
+      `;
+    } else if (this.config.mode === "hooks-esm") {
       this.imports.add(
         `import * as Magiql from "${this.config.importHooksFrom}";`
       );
@@ -152,23 +152,31 @@ ${this.printFragments(node)}`;
       return `${
         this.config.noExport ? "" : "export "
       }function use${operationName}(options) {
-        return Magiql.use${operationType}(${document}, { opName: "${node.name.value}", ...options });
+        return Magiql.use${operationType}(${document}, { operationName: "${
+        node.name.value
+      }", ...options });
       }
       
-      `
-    } else if (this.config.mode === 'hooks-cjs') {
+      `;
+    } else if (this.config.mode === "hooks-cjs") {
       this.imports.add(
         `const Magiql = require("${this.config.importHooksFrom}");`
       );
 
-      return `${
-        this.config.noExport ? "" : `module.exports.use${operationName} = `
-      }function use${operationName}(_options) {
-        const options = Object.assign({}, { opName: "${node.name.value}" }, _options);
-        return Magiql.use${operationType}(` + JSON.stringify(this.printDocument(node)) + `, options);
+      return (
+        `${
+          this.config.noExport ? "" : `module.exports.use${operationName} = `
+        }function use${operationName}(_options) {
+        const options = Object.assign({}, { operationName: "${
+          node.name.value
+        }" }, _options);
+        return Magiql.use${operationType}(` +
+        JSON.stringify(this.printDocument(node)) +
+        `, options);
       }
       
       `
+      );
     }
     // const hook  =
     //   this.config.codegen
@@ -208,19 +216,19 @@ ${this.printFragments(node)}`;
     // }
 
     // if (this.config.codegen) {
-      // return `module.exports.${operationName} = \`${[documentString, additional]
-      //   .filter((a) => a)
-      //   .join("\n")
-      //   .replace(/\`/g, "\\`")}\`
+    // return `module.exports.${operationName} = \`${[documentString, additional]
+    //   .filter((a) => a)
+    //   .join("\n")
+    //   .replace(/\`/g, "\\`")}\`
 
-      // module.exports.${documentVariableName} = \`${documentString.replace(
-      //   /\`/g,
-      //   "\\`"
-      // )}\``;
-      return "";
+    // module.exports.${documentVariableName} = \`${documentString.replace(
+    //   /\`/g,
+    //   "\\`"
+    // )}\``;
+    return "";
     // } else {
-      // return [documentString, additional].filter((a) => a).join("\n");
-      // return hook + "\n";
+    // return [documentString, additional].filter((a) => a).join("\n");
+    // return hook + "\n";
     // }
   }
 
@@ -310,12 +318,7 @@ export const runHooksPlugin: PluginFunction<MagiqlRawPluginConfig> = (
     ...(config.externalFragments || []),
   ];
 
-  const visitor = new MagiqlVisitor(
-    schema,
-    allFragments,
-    config,
-    documents
-  );
+  const visitor = new MagiqlVisitor(schema, allFragments, config, documents);
 
   const visitorResult = visit(allDocuments, { enter: null, leave: visitor });
 

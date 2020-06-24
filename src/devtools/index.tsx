@@ -21,6 +21,6 @@ if (typeof window !== "undefined") {
   };
 }
 
-Devtools.displayName = "Editor";
+Devtools.displayName = "Devtools";
 export { Devtools };
 export default Devtools;

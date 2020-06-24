@@ -89,10 +89,10 @@ export type Type<K extends keyof Types = "Query"> = Types[K];
 
 export type MagiQLFragment = (name?: string) => string;
 
-export function useMagiqlQuery<TVariables = {}>(
+export function useMagiqlQuery<TVariables = {}, TError = Error>(
   name: string,
-  options?: UseQueryOptions<Query, TVariables>
-): Omit<UseQueryResult<Query>, "data"> & {
+  options?: UseQueryOptions<Query, TVariables, TError>
+): Omit<UseQueryResult<Query, TError>, "data"> & {
   query: Query;
   variables: TVariables;
 };

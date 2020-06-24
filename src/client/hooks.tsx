@@ -14,86 +14,64 @@ export interface GraphQLVariables<TVariables> {
   variables?: TVariables;
 }
 
-export interface UseQueryOptions<TData, TVariables>
-  extends QueryOptions<TData>,
+export interface UseQueryOptions<TData, TVariables, TError = Error>
+  extends QueryOptions<TData, TError>,
     GraphQLVariables<TVariables> {
-  middleware?: Middleware[];
-  skip?: boolean;
-  opName?: string;
+  middleware?: Middleware<TData, TVariables>[];
+  operationName?: string;
 }
 
-export type UseQueryResult<TData> = QueryResult<TData> & {
-  loading?: boolean;
-};
+export type UseQueryResult<TData, TError> = QueryResult<TData, TError>;
+export type UseMutationResult<TData, TVariables, TError> = [
+  MutateFunction<TData, TVariables, TError>,
+  MutationResult<TData, TError>
+];
 
-export const getOpName = (query: string) => {
-  const name = /(query|mutation) ?([\w\d-_]+)? ?\(.*?\)? \{/.exec(query);
+export const getOperationName = (query: string) => {
+  const name = /(query|mutation|subscription) ([\w\d-_]+)/.exec(query);
   return name && name.length && name[2] ? name[2] : query;
 };
 
-export function useQuery<TData, TVariables extends object>(
+type GraphqlQueryKey<TVariables> = [string, GraphQLVariables<TVariables>];
+
+export function useQuery<TData, TVariables extends object, TError = Error>(
   query: string,
   {
     variables = {} as TVariables,
     middleware = [],
-    opName = getOpName(query),
-    skip = false, // to lazily evaluate query
+    operationName = getOperationName(query),
     ...options
-  }: UseQueryOptions<TData, TVariables> = {}
-): UseQueryResult<TData> {
-  const client = useClient();
-  const key: any = [opName, ...(skip ? [false] : [{ variables }])];
-  const { status, ...queryObject }: QueryResult<TData> = useBaseQuery(
+  }: UseQueryOptions<TData, TVariables, TError> = {}
+): UseQueryResult<TData, TError> {
+  const client = useClient<TData, TVariables>();
+  const key: GraphqlQueryKey<TVariables> = [operationName, { variables }];
+  return useBaseQuery<TData, GraphqlQueryKey<TVariables>, TError>(
     key,
-    (async (queryKey: string, { variables }: GraphQLVariables<TVariables>) => {
+    async (queryKey, { variables }) => {
       return await client.fetch(query, variables, middleware);
-    }) as any,
-    {
-      ...options,
-    } as QueryOptions<TData>
+    },
+    options
   );
-
-  return {
-    loading: status === "loading",
-    status: status as any,
-    ...queryObject,
-  };
 }
 
-export interface UseMutationOptions<TData, TVariables>
-  extends MutationOptions<TData, GraphQLVariables<TVariables>> {
-  middleware?: Middleware[];
-  opName?: string;
+export interface UseMutationOptions<TData, TVariables, TError = Error>
+  extends MutationOptions<TData, GraphQLVariables<TVariables>, TError> {
+  middleware?: Middleware<TData, TVariables>[];
+  operationName?: string;
 }
 
-export type UseMutationResult<TData> = MutationResult<TData> & {
-  loading?: boolean;
-};
-
-export function useMutation<TData, TVariables extends object>(
+export function useMutation<TData, TVariables extends object, TError>(
   mutation: string,
   {
     middleware = [],
-    opName = getOpName(mutation),
+    operationName = getOperationName(mutation),
     ...options
-  }: UseMutationOptions<TData, TVariables> = {}
-): [MutateFunction<TData, TVariables>, UseMutationResult<TData>] {
-  const client = useClient();
-  const [mutate, { status, ...mutationObject }] = useBaseMutation<
-    TData,
-    TVariables
-  >(async (variables: any) => {
+  }: UseMutationOptions<TData, TVariables, TError> = {}
+): UseMutationResult<TData, TVariables, TError> {
+  const client = useClient<TData, TVariables>();
+  return useBaseMutation<TData, TVariables, TError>(async (variables) => {
     return await client.fetch(mutation, variables, middleware);
   }, options);
-
-  return [
-    mutate,
-    {
-      loading: status === "loading",
-      status: status as any,
-      ...mutationObject,
-    },
-  ];
 }
 
 // export async function prefetchGraphQLQuery<TData, TVariables extends object>(

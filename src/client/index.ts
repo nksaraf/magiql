@@ -1,3 +1,3 @@
-export * from './client';
-export * from './gql';
-export * from './hooks';
+export * from "./client";
+export const gql = String.raw;
+export * from "./hooks";

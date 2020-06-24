@@ -30,29 +30,6 @@ async function run() {
     },
   };
 
-  const hooksGenerate = {
-    [path.join(process.cwd(), outputPath, "/types/hooks.d.ts")]: {
-      plugins: ["typescript", "typescript-operations", pluginPath],
-      config: {
-        mode: "hooks-types",
-        // avoidOptionals: false,
-        preResolveTypes: true,
-        flattenGeneratedTypes: true,
-      },
-    },
-    [path.join(process.cwd(), outputPath, "/esm/hooks.js")]: {
-      plugins: [pluginPath],
-      config: { mode: "hooks-esm" },
-    },
-    [path.join(process.cwd(), outputPath, "/cjs/development/hooks.js")]: {
-      plugins: [pluginPath],
-      config: { mode: "hooks-cjs" },
-    },
-    [path.join(process.cwd(), outputPath, "/cjs/production/hooks.js")]: {
-      plugins: [pluginPath],
-      config: { mode: "hooks-cjs" },
-    },
-  };
   try {
     const magiqlConfig = {
       ...config,
@@ -68,9 +45,50 @@ async function run() {
   try {
     const hooks = await context.loadDocuments(documents as any);
     if (hooks.length > 0) {
+      const hooksGenerate = {
+        [path.join(process.cwd(), outputPath, "/types/hooks.d.ts")]: {
+          plugins: ["typescript", "typescript-operations", pluginPath],
+          config: {
+            mode: "hooks-types",
+            // avoidOptionals: false,
+            preResolveTypes: true,
+            flattenGeneratedTypes: true,
+          },
+        },
+        [path.join(process.cwd(), outputPath, "/esm/hooks.js")]: {
+          plugins: [pluginPath],
+          config: { mode: "hooks-esm" },
+        },
+        [path.join(process.cwd(), outputPath, "/cjs/development/hooks.js")]: {
+          plugins: [pluginPath],
+          config: { mode: "hooks-cjs" },
+        },
+        [path.join(process.cwd(), outputPath, "/cjs/production/hooks.js")]: {
+          plugins: [pluginPath],
+          config: { mode: "hooks-cjs" },
+        },
+      };
       const hooksConfig = {
         ...config,
         documents,
+        generates: {
+          ...config.generates,
+          ...hooksGenerate,
+        },
+      };
+      await generate(hooksConfig, true);
+    } else {
+      const hooksGenerate = {
+        [path.join(process.cwd(), outputPath, "/types/hooks.d.ts")]: {
+          plugins: ["typescript"],
+          config: {
+            preResolveTypes: true,
+            flattenGeneratedTypes: true,
+          },
+        },
+      };
+      const hooksConfig = {
+        ...config,
         generates: {
           ...config.generates,
           ...hooksGenerate,

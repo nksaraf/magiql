@@ -6,28 +6,33 @@ import {
 } from "react-query";
 import React from "react";
 
-export interface FetchGraphQL<TData extends any, TVariables extends object> {
+export interface ClientFetchFn<TData, TVariables> {
   (
     query: string,
     variables?: TVariables,
-    fetchMiddleware?: Middleware[]
+    fetchMiddleware?: Middleware<TData, TVariables>[]
   ): Promise<TData>;
 }
 
-export interface GraphQLClientOptions {
+export interface GraphQLClientOptions<TData, TVariables> {
   fetchOptions?: Options;
   config?: ReactQueryProviderConfig;
-  middleware?: Middleware[];
+  middleware?: Middleware<TData, TVariables>[];
 }
-export interface GraphQLClient extends GraphQLClientOptions {
+export interface GraphQLClient<TData, TVariables>
+  extends GraphQLClientOptions<TData, TVariables> {
   url: string;
   cache: typeof queryCache;
-  fetch: FetchGraphQL<any, any>;
+  fetch: ClientFetchFn<TData, TVariables>;
 }
 
 export const createClient = (
   url: string,
-  { fetchOptions = {}, middleware = [], config = {} }: GraphQLClientOptions = {}
+  {
+    fetchOptions = {},
+    middleware = [],
+    config = {},
+  }: GraphQLClientOptions<any, any> = {}
 ) => {
   return {
     url,
@@ -35,31 +40,34 @@ export const createClient = (
     middleware,
     config,
     cache: queryCache,
-    fetch: async <TData, TVariables extends object>(
+    fetch: async <TData, TVariables>(
       query: string,
       variables?: TVariables,
-      fetchMiddleware: Middleware[] = []
+      fetchMiddleware: Middleware<TData, TVariables>[] = []
     ): Promise<TData> => {
       return await fetchGraphQL(url, query, variables, {
         ...fetchOptions,
         middleware: [...fetchMiddleware, ...middleware],
       });
     },
-  } as GraphQLClient;
+  } as GraphQLClient<any, any>;
 };
 
-const MagiqlContext = React.createContext<GraphQLClient>(
+const MagiqlContext = React.createContext<GraphQLClient<any, any>>(
   createClient("/graphql")
 );
 
-export function useClient<TData, TVariables extends object>() {
+export function useClient<TData, TVariables>(): GraphQLClient<
+  TData,
+  TVariables
+> {
   return React.useContext(MagiqlContext);
 }
 
 export const MagiqlProvider = ({
   children,
   client,
-}: React.PropsWithChildren<{ client: GraphQLClient }>) => {
+}: React.PropsWithChildren<{ client: GraphQLClient<any, any> }>) => {
   return (
     <ReactQueryConfigProvider config={client.config}>
       <MagiqlContext.Provider value={client}>{children}</MagiqlContext.Provider>
