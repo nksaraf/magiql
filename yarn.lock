@@ -52,6 +52,11 @@
   dependencies:
     cross-fetch "3.0.4"
 
+"@ardatan/aggregate-error@0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@ardatan/aggregate-error/-/aggregate-error-0.0.1.tgz#1403ac5de10d8ca689fc1f65844c27179ae1d44f"
+  integrity sha512-UQ9BequOTIavs0pTHLMwQwKQF8tTV1oezY/H2O9chA+JNPFZSua55xpU5dPSjAU9/jLJ1VwU+HJuTVN8u7S6Fg==
+
 "@babel/cli@^7.8.4":
   version "7.8.4"
   resolved "https://registry.yarnpkg.com/@babel/cli/-/cli-7.8.4.tgz#505fb053721a98777b2b175323ea4f090b7d3c1c"
@@ -1438,6 +1443,22 @@
     tslib "~1.11.1"
     upper-case "2.0.1"
 
+"@graphql-codegen/plugin-helpers@1.16.0":
+  version "1.16.0"
+  resolved "https://registry.yarnpkg.com/@graphql-codegen/plugin-helpers/-/plugin-helpers-1.16.0.tgz#4be4788735c6e7e2ef5d25ba1cb2609a89c0505a"
+  integrity sha512-HhSrwjrpdm9HOXijgPGCrleR/HvfW/7boqdkpWXRPMpoc9VfQRnVoHhjbI22DwC77rzH8vRCPm8HM8yB9zNAsA==
+  dependencies:
+    "@graphql-tools/utils" "^6.0.0"
+    camel-case "4.1.1"
+    common-tags "1.8.0"
+    constant-case "3.0.3"
+    import-from "3.0.0"
+    lower-case "2.0.1"
+    param-case "3.0.3"
+    pascal-case "3.1.1"
+    tslib "~2.0.0"
+    upper-case "2.0.1"
+
 "@graphql-codegen/typescript-operations@^1.13.5":
   version "1.13.5"
   resolved "https://registry.yarnpkg.com/@graphql-codegen/typescript-operations/-/typescript-operations-1.13.5.tgz#842c779cd4d1facface08d937aa2fc37a4529a6f"
@@ -1449,7 +1470,7 @@
     auto-bind "~4.0.0"
     tslib "~1.11.1"
 
-"@graphql-codegen/typescript@1.13.5", "@graphql-codegen/typescript@^1.13.5":
+"@graphql-codegen/typescript@1.13.5":
   version "1.13.5"
   resolved "https://registry.yarnpkg.com/@graphql-codegen/typescript/-/typescript-1.13.5.tgz#c843ad5985410393946c18be1a2b79e80d30ce0e"
   integrity sha512-wa9rF7xFaobxzw79Ok40pkjAS2as7nsgm+bRIwyP07YZSOYoa2TOepvAcT4NdZg5+ocmYWIZDpWwtchRHZoT5A==
@@ -1458,6 +1479,16 @@
     "@graphql-codegen/visitor-plugin-common" "1.13.5"
     auto-bind "~4.0.0"
     tslib "~1.11.1"
+
+"@graphql-codegen/typescript@^1.13.5":
+  version "1.16.0"
+  resolved "https://registry.yarnpkg.com/@graphql-codegen/typescript/-/typescript-1.16.0.tgz#b26e3b5ec57750228c101fd0c0ae79d3a1963b9a"
+  integrity sha512-P+9HPOCPfPAa1SDOQWLoEckap7Zg5v/eiKu2srpu5+K68kvtKaidzgn5AjsALRUQY6lRtFupOdlpNQRsUA6uFA==
+  dependencies:
+    "@graphql-codegen/plugin-helpers" "1.16.0"
+    "@graphql-codegen/visitor-plugin-common" "1.16.0"
+    auto-bind "~4.0.0"
+    tslib "~2.0.0"
 
 "@graphql-codegen/visitor-plugin-common@1.13.5":
   version "1.13.5"
@@ -1473,6 +1504,21 @@
     parse-filepath "1.0.2"
     pascal-case "3.1.1"
     tslib "~1.11.1"
+
+"@graphql-codegen/visitor-plugin-common@1.16.0":
+  version "1.16.0"
+  resolved "https://registry.yarnpkg.com/@graphql-codegen/visitor-plugin-common/-/visitor-plugin-common-1.16.0.tgz#31cc46cd4e95b2ebe06808f431888f0f8825ec8f"
+  integrity sha512-WDdc/hwq6LIsTCbBz7laC2ZAyMAxC++k6RQeOh2VsfpMQ1aiO0x8ZTGTjecnBr9cMS4NI2S6aaFVKyWNvwuAwg==
+  dependencies:
+    "@graphql-codegen/plugin-helpers" "1.16.0"
+    "@graphql-tools/relay-operation-optimizer" "6.0.11"
+    array.prototype.flatmap "1.2.3"
+    auto-bind "~4.0.0"
+    dependency-graph "0.9.0"
+    graphql-tag "2.10.3"
+    parse-filepath "1.0.2"
+    pascal-case "3.1.1"
+    tslib "~2.0.0"
 
 "@graphql-toolkit/apollo-engine-loader@~0.10.4":
   version "0.10.5"
@@ -1669,6 +1715,22 @@
     graphql-tools "5.0.0"
     tslib "1.11.1"
     valid-url "1.0.9"
+
+"@graphql-tools/relay-operation-optimizer@6.0.11":
+  version "6.0.11"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/relay-operation-optimizer/-/relay-operation-optimizer-6.0.11.tgz#155208469858c5227d816b47ddb30f927f2bc5b8"
+  integrity sha512-ypgpbm3rc2e/NgVCY6ttpZH8OVXFFKzbIBqkHD1CP1+H6ZneaSCtILPgvho4Y91GI68kzkG6asx5JcwuGrMq8w==
+  dependencies:
+    "@graphql-tools/utils" "6.0.11"
+    relay-compiler "9.1.0"
+
+"@graphql-tools/utils@6.0.11", "@graphql-tools/utils@^6.0.0":
+  version "6.0.11"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-6.0.11.tgz#c394201c992dbc8f3644b9ad71411fdd55832f2d"
+  integrity sha512-BK6HO73FbB/Ufac6XX5H0O2q4tEZi//HaQ7DgmHFoda53GZSZ/ZckJ59wh/tUvHykEaSFUSmMBVQxKbXBhGhyg==
+  dependencies:
+    "@ardatan/aggregate-error" "0.0.1"
+    camel-case "4.1.1"
 
 "@jest/types@^25.5.0":
   version "25.5.0"
@@ -8107,10 +8169,40 @@ relay-compiler@9.0.0:
     signedsource "^1.0.0"
     yargs "^14.2.0"
 
+relay-compiler@9.1.0:
+  version "9.1.0"
+  resolved "https://registry.yarnpkg.com/relay-compiler/-/relay-compiler-9.1.0.tgz#e2975de85192e2470daad78e30052bf9614d22ed"
+  integrity sha512-jsJx0Ux5RoxM+JFm3M3xl7UfZAJ0kUTY/r6jqOpcYgVI3GLJthvNI4IoziFRlWbhizEzGFbpkdshZcu9IObJYA==
+  dependencies:
+    "@babel/core" "^7.0.0"
+    "@babel/generator" "^7.5.0"
+    "@babel/parser" "^7.0.0"
+    "@babel/runtime" "^7.0.0"
+    "@babel/traverse" "^7.0.0"
+    "@babel/types" "^7.0.0"
+    babel-preset-fbjs "^3.3.0"
+    chalk "^2.4.1"
+    fast-glob "^2.2.2"
+    fb-watchman "^2.0.0"
+    fbjs "^1.0.0"
+    immutable "~3.7.6"
+    nullthrows "^1.1.1"
+    relay-runtime "9.1.0"
+    signedsource "^1.0.0"
+    yargs "^14.2.0"
+
 relay-runtime@9.0.0:
   version "9.0.0"
   resolved "https://registry.yarnpkg.com/relay-runtime/-/relay-runtime-9.0.0.tgz#03633be24dc3c8b56e472062de6f103954e3d296"
   integrity sha512-bBNeNmwMOnqtCvuPnWdgflFSVwuUbGV7m7os8qHCUCSJ52DT5B/m6K4wisVh3eZ0QWYr7hheRDfmR/3UEdUe5A==
+  dependencies:
+    "@babel/runtime" "^7.0.0"
+    fbjs "^1.0.0"
+
+relay-runtime@9.1.0:
+  version "9.1.0"
+  resolved "https://registry.yarnpkg.com/relay-runtime/-/relay-runtime-9.1.0.tgz#d0534007d5c43e7b9653c6f5cc112ffac09c5020"
+  integrity sha512-6FE5YlZpR/b3R/HzGly85V+c4MdtLJhFY/outQARgxXonomrwqEik0Cr34LnPK4DmGS36cMLUliqhCs/DZyPVw==
   dependencies:
     "@babel/runtime" "^7.0.0"
     fbjs "^1.0.0"
@@ -9228,6 +9320,11 @@ tslib@1.11.1, tslib@^1.10.0, tslib@^1.11.1, tslib@^1.9.0, tslib@^1.9.3, tslib@~1
   version "1.11.1"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.11.1.tgz#eb15d128827fbee2841549e171f45ed338ac7e35"
   integrity sha512-aZW88SY8kQbU7gpV19lN24LtXh/yD4ZZg6qieAJDDg+YBsJcSmLGK9QpnUjAKVG/xefmvJGd1WUmfpT/g6AJGA==
+
+tslib@~2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.0.0.tgz#18d13fc2dce04051e20f074cc8387fd8089ce4f3"
+  integrity sha512-lTqkx847PI7xEDYJntxZH89L2/aXInsyF2luSafe/+0fHOMjlBNXdH6th7f70qxLDhul7KZK0zC8V5ZIyHl0/g==
 
 tty-browserify@0.0.0:
   version "0.0.0"
