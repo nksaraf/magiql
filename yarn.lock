@@ -1939,11 +1939,6 @@
   dependencies:
     any-observable "^0.3.0"
 
-"@scarf/scarf@^1.0.6":
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/@scarf/scarf/-/scarf-1.0.6.tgz#52011dfb19187b53b75b7b6eac20da0810ddd88f"
-  integrity sha512-y4+DuXrAd1W5UIY3zTcsosi/1GyYT8k5jGnZ/wG7UUHVrU+MHlH4Mp87KK2/lvMW4+H7HVcdB+aJhqywgXksjA==
-
 "@types/color-name@^1.1.1":
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@types/color-name/-/color-name-1.1.1.tgz#1c1261bbeaa10a8055bbc5d8ab84b7b2afc846a0"
@@ -7900,12 +7895,11 @@ react-query-devtools@^2.0.0:
   dependencies:
     match-sorter "^4.1.0"
 
-"react-query@npm:@nksaraf/react-query":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@nksaraf/react-query/-/react-query-2.0.0.tgz#607ec3bbcaeb5faa4477b61a272568396861c5c0"
-  integrity sha512-e4N6Na07NkK8SNv2P5JQOgUuTYh1i1SG/ubCk9uS5zZ2Tu7vT34kF1Lo1Kbia/9xbmwBlQ26OmLXMcLX2jYU8A==
+react-query@^2.4.15:
+  version "2.4.15"
+  resolved "https://registry.yarnpkg.com/react-query/-/react-query-2.4.15.tgz#359b320e9943d3b8e6b1f7b197b005156ecd47e8"
+  integrity sha512-9z+JqhSCAx3vEQH85AoNgbr9zgRZVPWGeG9Yzw5jOWGmeZ7PRkgE2llIDfQjrZIEhZouX0sGYSuUxNNYXXvr2g==
   dependencies:
-    "@scarf/scarf" "^1.0.6"
     ts-toolbelt "^6.9.4"
 
 react-reconciler@^0.24.0:

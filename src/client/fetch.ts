@@ -103,17 +103,20 @@ export interface GraphQLRequestContext {
   variables?: Variables;
 }
 
+function extractErrorMessage(response: GraphQLResponse): string {
+  try {
+    return response.errors![0].message;
+  } catch (e) {
+    return `GraphQL Error (Code: ${response.status})`;
+  }
+}
+
 export class ClientError extends Error {
   response: GraphQLResponse;
   request: GraphQLRequestContext;
 
   constructor(response: GraphQLResponse, request: GraphQLRequestContext) {
-    const message = ClientError.extractMessage(response);
-    // JSON.stringify({
-    //   response,
-    //   request
-    // })}`;
-
+    const message = extractErrorMessage(response);
     super(message);
     this.response = response;
     this.request = request;
@@ -124,35 +127,59 @@ export class ClientError extends Error {
       (Error as any).captureStackTrace(this, ClientError);
     }
   }
-
-  private static extractMessage(response: GraphQLResponse): string {
-    try {
-      return response.errors![0].message;
-    } catch (e) {
-      return `GraphQL Error (Code: ${response.status})`;
-    }
-  }
 }
 
-async function baseFetchGraphQL<TData, TVariables>(
-  uri: string,
-  query: string,
-  variables: TVariables = {} as any,
-  options: Options = {}
-): Promise<TData> {
-  const { headers, ...others } = options;
-  // const printedQuery = print(query);
+export enum OperationType {
+  Query,
+  Mutation,
+  Subscription,
+}
+
+export interface GraphQLOperation<TVariables> {
+  query?: string;
+  operationName?: string;
+  operationType: OperationType;
+  variables?: TVariables;
+  endpoint: string;
+}
+
+export type FetchOptionsFn<TVariables> = (
+  operation: GraphQLOperation<TVariables>
+) => Options;
+
+export interface FetchGraphQLOptions<TVariables>
+  extends GraphQLOperation<TVariables> {
+  fetchOptions: FetchOptionsFn<TVariables>;
+}
+
+export async function fetchGraphQL<TData, TVariables>({
+  endpoint,
+  query,
+  fetchOptions,
+  variables,
+  operationName,
+  operationType,
+}: FetchGraphQLOptions<TVariables>): Promise<TData> {
+  const { headers, ...options } = fetchOptions({
+    endpoint,
+    query,
+    variables,
+    operationName,
+    operationType,
+  });
 
   const body = JSON.stringify({
     query,
-    variables: variables,
+    variables,
+    operationName,
   });
+
   try {
-    const response = await fetch(uri, {
+    const response = await fetch(endpoint, {
       method: "POST",
-      headers: Object.assign({ "Content-Type": "application/json" }, headers),
+      headers: { "Content-Type": "application/json", ...headers },
       body,
-      ...others,
+      ...options,
     });
 
     const result: string | GraphQLResponse = (await (response.headers
@@ -186,40 +213,42 @@ async function baseFetchGraphQL<TData, TVariables>(
   }
 }
 
-export interface FetchGraphql<TData, TVariables> {
-  (
-    uri: string,
-    query: string,
-    variables?: TVariables,
-    options?: Options & { middleware?: Middleware<TData, TVariables>[] }
-  ): Promise<TData>;
-}
+export type FetchGraphql = typeof fetchGraphQL;
 
-export const fetchGraphQL = async <TData, TVariables>(
-  uri: string,
-  query: string,
-  variables?: TVariables,
-  {
-    middleware = [],
-    ...options
-  }: Options & { middleware?: Middleware<TData, TVariables>[] } = {}
-): Promise<TData> => {
-  const result = await applyMiddleware<TData, TVariables>(
-    baseFetchGraphQL,
-    middleware
-  )(uri, query, variables, options);
-  return result;
-};
+// export interface FetchGraphql<TData, TVariables> {
+//   (
+//     uri: string,
+//     query: string,
+//     variables?: TVariables,
+//     options?: Options & { middleware?: Middleware<TData, TVariables>[] }
+//   ): Promise<TData>;
+// }
 
-export interface Middleware<TData, TVariables> {
-  (fetch: FetchGraphql<TData, TVariables>): FetchGraphql<TData, TVariables>;
-}
+// export const fetchGraphQL = async <TData, TVariables>(
+//   uri: string,
+//   query: string,
+//   variables?: TVariables,
+//   {
+//     middleware = [],
+//     ...options
+//   }: Options & { middleware?: Middleware<TData, TVariables>[] } = {}
+// ): Promise<TData> => {
+//   const result = await applyMiddleware<TData, TVariables>(
+//     baseFetchGraphQL,
+//     middleware
+//   )(uri, query, variables, options);
+//   return result;
+// };
 
-export const applyMiddleware = <TData, TVariables>(
-  fn: FetchGraphql<TData, TVariables>,
-  middleware: Middleware<TData, TVariables>[]
-): FetchGraphql<TData, TVariables> => {
-  return middleware.reduce((agg, m) => {
-    return m(agg);
-  }, fn);
-};
+// export interface Middleware<TData, TVariables> {
+//   (fetch: FetchGraphql<TData, TVariables>): FetchGraphql<TData, TVariables>;
+// }
+
+// export const applyMiddleware = <TData, TVariables>(
+//   baseFetchGraphql: FetchGraphql<TData, TVariables>,
+//   middlewares: Middleware<TData, TVariables>[]
+// ): FetchGraphql<TData, TVariables> => {
+//   return middlewares.reduce((fetchGraphql, middleware) => {
+//     return middleware(fetchGraphql);
+//   }, baseFetchGraphql);
+// };

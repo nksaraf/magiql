@@ -1,71 +1,114 @@
-import { Options, Middleware, fetchGraphQL } from "./fetch";
+import { Options, fetchGraphQL, FetchOptionsFn, OperationType } from "./fetch";
 import {
   queryCache,
   ReactQueryConfigProvider,
   ReactQueryProviderConfig,
+  QueryCache,
+  QueryOptions,
+  CachedQuery,
 } from "react-query";
 import { SubscriptionClient } from "subscriptions-transport-ws";
 import React from "react";
+import { GraphqlQueryKey } from "./utils";
+
+export type ClientFetchOperation<TVariables> = {
+  query: string;
+  variables?: TVariables;
+  operationName?: string;
+  operationType?: OperationType;
+};
 
 export interface ClientFetchFn<TData, TVariables> {
-  (
-    query: string,
-    variables?: TVariables,
-    fetchMiddleware?: Middleware<TData, TVariables>[]
-  ): Promise<TData>;
+  (operation: ClientFetchOperation<TVariables>): Promise<TData>;
 }
 
-export interface GraphQLClientOptions<TData, TVariables> {
-  subscriptionUrl?: string;
-  fetchOptions?: Options;
-  config?: ReactQueryProviderConfig;
-  middleware?: Middleware<TData, TVariables>[];
-}
-export interface GraphQLClient<TData, TVariables>
-  extends GraphQLClientOptions<TData, TVariables> {
-  url: string;
-  cache: typeof queryCache;
-  subscriptionClient?: SubscriptionClient;
-  fetch: ClientFetchFn<TData, TVariables>;
+export interface GraphQLClient<TData, TVariables> {
+  endpoint?: string;
+  fetchOptions?: FetchOptionsFn<TVariables>;
+  reactQueryConfig?: ReactQueryProviderConfig;
+  cache?: MagiqlCache;
+  subscriptions?: {
+    client?: SubscriptionClient;
+    endpoint?: string;
+    fetchOptions?: FetchOptionsFn<TVariables>;
+  };
+  fetch?: ClientFetchFn<TData, TVariables>;
 }
 
-export const createClient = (
-  url: string,
-  {
-    subscriptionUrl,
-    fetchOptions = {},
-    middleware = [],
-    config = {},
-  }: GraphQLClientOptions<any, any> = {}
-) => {
-  return {
-    url,
-    fetchOptions: fetchOptions,
-    middleware,
-    config,
-    subscriptionUrl,
-    subscriptionClient:
-      subscriptionUrl &&
-      typeof window !== "undefined" &&
-      new SubscriptionClient(subscriptionUrl, {
+interface BuiltQuery<TData, TError> extends CachedQuery<TData, TError> {
+  subscribe(
+    callback: () => void
+  ): {
+    unsubscribe: () => void;
+  };
+  setState(updater: (oldState: any) => any): void;
+}
+
+interface MagiqlCache extends QueryCache {
+  buildQuery: <TData, TVariables, TError = Error>(
+    queryKey: GraphqlQueryKey<TVariables>,
+    config: QueryOptions<TData, TError>
+  ) => BuiltQuery<TData, TError>;
+}
+
+export const createClient = ({
+  endpoint = "/graphql",
+  fetchOptions = () => {
+    return {};
+  },
+  cache = queryCache as MagiqlCache,
+  subscriptions = undefined,
+  reactQueryConfig = {},
+  fetch = async <TData, TVariables>({
+    query,
+    variables = {} as TVariables,
+    operationName = undefined,
+    operationType = OperationType.Query,
+  }): Promise<TData> => {
+    return await fetchGraphQL({
+      endpoint,
+      query,
+      variables,
+      fetchOptions,
+      operationName,
+      operationType,
+    });
+  },
+}: GraphQLClient<any, any> = {}) => {
+  if (subscriptions && typeof window !== "undefined") {
+    let {
+      endpoint: subscriptionEndpoint = endpoint,
+      fetchOptions: subscriptionFetchOptions = fetchOptions,
+      client = new SubscriptionClient(subscriptionEndpoint, {
         reconnect: true,
+        connectionParams: () => {
+          return subscriptionFetchOptions({
+            operationType: OperationType.Subscription,
+            endpoint: subscriptionEndpoint,
+          });
+        },
       }),
-    cache: queryCache,
-    fetch: async <TData, TVariables>(
-      query: string,
-      variables?: TVariables,
-      fetchMiddleware: Middleware<TData, TVariables>[] = []
-    ): Promise<TData> => {
-      return await fetchGraphQL(url, query, variables, {
-        ...fetchOptions,
-        middleware: [...fetchMiddleware, ...middleware],
-      });
-    },
+    } = subscriptions;
+
+    subscriptions = {
+      client,
+      endpoint: subscriptionEndpoint,
+      fetchOptions: subscriptionFetchOptions,
+    };
+  }
+
+  return {
+    endpoint,
+    fetchOptions,
+    cache,
+    reactQueryConfig,
+    subscriptions,
+    fetch,
   } as GraphQLClient<any, any>;
 };
 
 const MagiqlContext = React.createContext<GraphQLClient<any, any>>(
-  createClient("/graphql")
+  createClient()
 );
 
 export function useClient<TData, TVariables>(): GraphQLClient<
@@ -80,7 +123,7 @@ export const MagiqlProvider = ({
   client,
 }: React.PropsWithChildren<{ client: GraphQLClient<any, any> }>) => {
   return (
-    <ReactQueryConfigProvider config={client.config}>
+    <ReactQueryConfigProvider config={client.reactQueryConfig}>
       <MagiqlContext.Provider value={client}>{children}</MagiqlContext.Provider>
     </ReactQueryConfigProvider>
   );

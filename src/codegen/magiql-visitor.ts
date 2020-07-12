@@ -83,7 +83,7 @@ class MagiqlVisitor extends TsVisitor<
 }
 
 const extra = `
-import { UseQueryResult, UseQueryOptions } from "./client/hooks";
+import { UseQueryResult, UseQueryOptions } from "./client/useQuery";
 
 export type Type<K extends keyof Types = "Query"> = Types[K];
 

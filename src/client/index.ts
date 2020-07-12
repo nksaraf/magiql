@@ -1,3 +1,7 @@
-export * from "./client";
 export const gql = String.raw;
-export * from "./hooks";
+export const graphql = String.raw;
+export * from "./client";
+export * from "./useSubscription";
+export * from "./useQuery";
+export * from "./useMutation";
+export * from "./fetch";

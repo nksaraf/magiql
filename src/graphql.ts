@@ -1,4 +1,4 @@
-import { UseQueryResult, UseQueryOptions } from "./client/hooks";
+import { UseQueryResult, UseQueryOptions } from "./client/useQuery";
 import React from "react";
 
 export type Types = { [key: string]: any };
