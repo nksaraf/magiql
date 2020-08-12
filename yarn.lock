@@ -52,6 +52,11 @@
   dependencies:
     cross-fetch "3.0.4"
 
+"@ardatan/aggregate-error@0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@ardatan/aggregate-error/-/aggregate-error-0.0.1.tgz#1403ac5de10d8ca689fc1f65844c27179ae1d44f"
+  integrity sha512-UQ9BequOTIavs0pTHLMwQwKQF8tTV1oezY/H2O9chA+JNPFZSua55xpU5dPSjAU9/jLJ1VwU+HJuTVN8u7S6Fg==
+
 "@babel/cli@^7.8.4":
   version "7.8.4"
   resolved "https://registry.yarnpkg.com/@babel/cli/-/cli-7.8.4.tgz#505fb053721a98777b2b175323ea4f090b7d3c1c"
@@ -1438,6 +1443,23 @@
     tslib "~1.11.1"
     upper-case "2.0.1"
 
+"@graphql-codegen/plugin-helpers@1.17.8":
+  version "1.17.8"
+  resolved "https://registry.yarnpkg.com/@graphql-codegen/plugin-helpers/-/plugin-helpers-1.17.8.tgz#d47e8bd6b425b38cfc4e2d670b31183b8e9a91e8"
+  integrity sha512-Ck1E4QC4yrhX5zUtMlc/uloly6TWSpJDA7+aJrdMOY+MEUgrrM7wJsLV9azNae2OmrhZAQopSuGezjHNbsqSdA==
+  dependencies:
+    "@graphql-tools/utils" "^6.0.18"
+    camel-case "4.1.1"
+    common-tags "1.8.0"
+    constant-case "3.0.3"
+    import-from "3.0.0"
+    lodash "~4.17.15"
+    lower-case "2.0.1"
+    param-case "3.0.3"
+    pascal-case "3.1.1"
+    tslib "~2.0.0"
+    upper-case "2.0.1"
+
 "@graphql-codegen/typescript-operations@^1.13.5":
   version "1.13.5"
   resolved "https://registry.yarnpkg.com/@graphql-codegen/typescript-operations/-/typescript-operations-1.13.5.tgz#842c779cd4d1facface08d937aa2fc37a4529a6f"
@@ -1492,7 +1514,7 @@
     "@graphql-toolkit/graphql-tag-pluck" "0.10.5"
     tslib "1.11.1"
 
-"@graphql-toolkit/common@0.10.5", "@graphql-toolkit/common@~0.10.4":
+"@graphql-toolkit/common@0.10.5":
   version "0.10.5"
   resolved "https://registry.yarnpkg.com/@graphql-toolkit/common/-/common-0.10.5.tgz#5190f53179d832fc352d5ae986103bac4e81e4da"
   integrity sha512-XwdjIIAruL+7JLREOIIGnczBSve6HomBAyWE6P7G4AG9NgEOGQUuPZ1CY2mK5ChKCKwTWm12cM5SfJLJXO7JHw==
@@ -1502,7 +1524,7 @@
     graphql-tools "5.0.0"
     lodash "4.17.15"
 
-"@graphql-toolkit/common@0.10.6", "@graphql-toolkit/common@~0.10.6":
+"@graphql-toolkit/common@0.10.6", "@graphql-toolkit/common@~0.10.4", "@graphql-toolkit/common@~0.10.6":
   version "0.10.6"
   resolved "https://registry.yarnpkg.com/@graphql-toolkit/common/-/common-0.10.6.tgz#43591fd3478ab27ec95bf39d5a8afdd17f0ac2fd"
   integrity sha512-rrH/KPheh/wCZzqUmNayBHd+aNWl/751C4iTL/327TzONdAVrV7ZQOyEkpGLW6YEFWPIlWxNkaBoEALIjCxTGg==
@@ -1669,6 +1691,14 @@
     graphql-tools "5.0.0"
     tslib "1.11.1"
     valid-url "1.0.9"
+
+"@graphql-tools/utils@^6.0.18":
+  version "6.0.18"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-6.0.18.tgz#bba960f0ab327c8304089d41da0b7a3e00fe430f"
+  integrity sha512-8ntYuXJucBtjViOYljeKBzScfpVTnv7BfqIPU/WJ65h6nXD+qf8fMUR1C4MpCUeFvSjMiDSB5Z4enJmau/9D3A==
+  dependencies:
+    "@ardatan/aggregate-error" "0.0.1"
+    camel-case "4.1.1"
 
 "@jest/types@^25.5.0":
   version "25.5.0"
@@ -6196,10 +6226,15 @@ lodash.upperfirst@^4.3.1:
   resolved "https://registry.yarnpkg.com/lodash.upperfirst/-/lodash.upperfirst-4.3.1.tgz#1365edf431480481ef0d1c68957a5ed99d49f7ce"
   integrity sha1-E2Xt9DFIBIHvDRxolXpe2Z1J984=
 
-lodash@4.17.15, lodash@^4.17.11, lodash@^4.17.13, lodash@^4.17.15, lodash@^4.17.4:
+lodash@4.17.15:
   version "4.17.15"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.15.tgz#b447f6670a0455bbfeedd11392eff330ea097548"
   integrity sha512-8xOcRHvCjnocdS5cpwXQXVzmmh5e5+saE2QGoeQmbKmRS6J3VQppPOIt0MnmE+4xlZoumy0GPG0D0MVIQbNA1A==
+
+lodash@^4.17.11, lodash@^4.17.13, lodash@^4.17.15, lodash@^4.17.4, lodash@~4.17.15:
+  version "4.17.19"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.19.tgz#e48ddedbe30b3321783c5b4301fbd353bc1e4a4b"
+  integrity sha512-JNvd8XER9GQX0v2qJgsaN/mzFCNA5BRe/j8JN9d+tWyGLSodKQHKFicdwNYzWwI3wjRnaKPsGj1XkBjx/F96DQ==
 
 log-symbols@4.0.0:
   version "4.0.0"
@@ -7895,13 +7930,6 @@ react-query-devtools@^2.0.0:
   dependencies:
     match-sorter "^4.1.0"
 
-react-query@^2.4.15:
-  version "2.4.15"
-  resolved "https://registry.yarnpkg.com/react-query/-/react-query-2.4.15.tgz#359b320e9943d3b8e6b1f7b197b005156ecd47e8"
-  integrity sha512-9z+JqhSCAx3vEQH85AoNgbr9zgRZVPWGeG9Yzw5jOWGmeZ7PRkgE2llIDfQjrZIEhZouX0sGYSuUxNNYXXvr2g==
-  dependencies:
-    ts-toolbelt "^6.9.4"
-
 react-reconciler@^0.24.0:
   version "0.24.0"
   resolved "https://registry.yarnpkg.com/react-reconciler/-/react-reconciler-0.24.0.tgz#5a396b2c2f5efe8554134a5935f49f546723f2dd"
@@ -9213,15 +9241,15 @@ ts-pnp@^1.1.2:
   resolved "https://registry.yarnpkg.com/ts-pnp/-/ts-pnp-1.2.0.tgz#a500ad084b0798f1c3071af391e65912c86bca92"
   integrity sha512-csd+vJOb/gkzvcCHgTGSChYpy5f1/XKNsmvBGO4JXS+z1v2HobugDz4s1IeFXM3wZB44uczs+eazB5Q/ccdhQw==
 
-ts-toolbelt@^6.9.4:
-  version "6.9.9"
-  resolved "https://registry.yarnpkg.com/ts-toolbelt/-/ts-toolbelt-6.9.9.tgz#e6cfd8ec7d425d2a06bda3b4fe9577ceaf2abda8"
-  integrity sha512-5a8k6qfbrL54N4Dw+i7M6kldrbjgDWb5Vit8DnT+gwThhvqMg8KtxLE5Vmnft+geIgaSOfNJyAcnmmlflS+Vdg==
-
 tslib@1.11.1, tslib@^1.10.0, tslib@^1.11.1, tslib@^1.9.0, tslib@^1.9.3, tslib@~1.11.1:
   version "1.11.1"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.11.1.tgz#eb15d128827fbee2841549e171f45ed338ac7e35"
   integrity sha512-aZW88SY8kQbU7gpV19lN24LtXh/yD4ZZg6qieAJDDg+YBsJcSmLGK9QpnUjAKVG/xefmvJGd1WUmfpT/g6AJGA==
+
+tslib@~2.0.0:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.0.1.tgz#410eb0d113e5b6356490eec749603725b021b43e"
+  integrity sha512-SgIkNheinmEBgx1IUNirK0TUD4X9yjjBRTqqjggWCU3pUEqIk3/Uwl3yRixYKT6WjQuGiwDv4NomL3wqRCj+CQ==
 
 tty-browserify@0.0.0:
   version "0.0.0"
