@@ -32,7 +32,7 @@ export interface UseMutationOptions<TMutation extends Query, TError = Error>
 }
 
 export function useMutation<TMutation extends Query, TError = Error>(
-  mutation: GraphQLTaggedNode,
+  mutation: GraphQLTaggedNode | string,
   {
     onSuccess,
     invalidateQueries = [],
@@ -71,7 +71,7 @@ export function useMutation<TMutation extends Query, TError = Error>(
       operation: {
         request: {
           node,
-          identifier: "",
+          identifier: node.params.id,
           variables: {},
         },
       } as any,

@@ -8,18 +8,22 @@
   "types": "dist/types",
   "scripts": {
     "prepublishOnly": "yarn build",
-    "build": "pkger build",
+    "build": "yarn tsup src/node.ts src/index.ts src/recoil.ts src/devtools.ts --format esm,cjs",
     "pub": "bump && yarn publish --access public --non-interactive",
     "dev": "yarn test && chokidar \"src/**/*\" \"test/test.tsx\" -c \"yarn test\"",
     "test": "yarn babel test/test.tsx -o test/test.out.tsx --extensions=tsx --presets next/babel --plugins=./dist/cjs/babel.js",
     "test:codegen": "NODE_ENV=test node ./dist/cjs/cli.js"
   },
   "devDependencies": {
+    "@types/node": "^14.6.0",
     "@types/react": "^16.9.46",
     "@types/react-dom": "^16.9.8",
+    "graphql": "^15.3.0",
+    "next": "^9.5.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "tsup": "^3.6.1"
+    "tsup": "^3.6.1",
+    "typescript": "^4.0.2"
   },
   "pkger": {
     "target": "browser",
@@ -51,11 +55,18 @@
     "react-query": "^2.10.0",
     "react-query-devtools": "^2.4.4",
     "recoil": "^0.0.10",
+    "relay-compiler": "^10.0.1",
+    "relay-compiler-language-typescript": "file:.yalc/relay-compiler-language-typescript",
     "relay-config": "^10.0.1",
     "relay-runtime": "^10.0.1",
     "subscriptions-transport-ws": "^0.9.18"
   },
-  "peerDependencies": {},
+  "peerDependencies": {
+    "graphql": "*",
+    "react": "*",
+    "react-dom": "*",
+    "react-native": "*"
+  },
   "bin": {
     "magiql": "dist/cjs/cli.js"
   },

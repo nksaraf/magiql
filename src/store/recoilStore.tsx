@@ -381,6 +381,9 @@ export function createRecoilStore(
   };
 
   const useSelector = function <TData>(fragment: ReaderSelector) {
+    if (!fragment) {
+      throw new Error("Use babel plugin");
+    }
     return useRecoilValueLoadable(fragmentSelector(fragment)).contents as TData;
   };
 
@@ -408,6 +411,10 @@ export function createRecoilStore(
     fragmentNode,
     fragmentRef
   ) {
+    if (!fragmentNode) {
+      throw new Error("Use babel plugin");
+    }
+
     return useSelector(getSelector(fragmentNode, fragmentRef));
   };
 
@@ -439,6 +446,9 @@ export function createRecoilStore(
         operation: OperationDescriptor<TQuery>,
         data: Response<TQuery>
       ) {
+        if (!operation.request.node.operation) {
+          throw new Error("Use babel plugin");
+        }
         const recordSource = normalizer.normalizeResponse(
           operation.request.node,
           data,

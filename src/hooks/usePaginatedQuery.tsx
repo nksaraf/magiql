@@ -14,7 +14,6 @@ import {
   Store,
   OperationDescriptor,
 } from "../types";
-import { createState, Stated } from "../utils";
 import { useClient } from "./useClient";
 
 export interface UsePaginatedQueryOptions<TQuery extends Query, TError = Error>
@@ -23,11 +22,10 @@ export interface UsePaginatedQueryOptions<TQuery extends Query, TError = Error>
   operationName?: string;
 }
 
-export type UsePaginatedQueryResult<TQuery extends Query, TError> = Omit<
-  PaginatedQueryResult<Response<TQuery>, TError>,
-  "status"
-> & {
-  status: Stated<QueryStatus>;
+export type UsePaginatedQueryResult<
+  TQuery extends Query,
+  TError
+> = PaginatedQueryResult<Response<TQuery>, TError> & {
   client: ReturnType<typeof useClient>;
   store: Store;
   resolvedOperation: OperationDescriptor<TQuery>;
@@ -35,7 +33,7 @@ export type UsePaginatedQueryResult<TQuery extends Query, TError> = Omit<
 };
 
 export function usePaginatedQuery<TQuery extends Query, TError = Error>(
-  query: GraphQLTaggedNode,
+  query: GraphQLTaggedNode | string,
   {
     variables = {} as Variables<TQuery>,
     ...options
@@ -76,6 +74,5 @@ export function usePaginatedQuery<TQuery extends Query, TError = Error>(
     latestOperation,
     client,
     store,
-    status: createState(baseQuery.status as QueryStatus),
   };
 }

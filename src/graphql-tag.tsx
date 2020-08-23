@@ -16,18 +16,31 @@ export type { GraphQLTaggedNode } from "relay-runtime";
 
 export const getRequest = (
   taggedNode: GraphQLTaggedNode | string
-): ConcreteRequest | string => {
-  return typeof taggedNode === "string"
-    ? taggedNode
-    : baseGetRequest(taggedNode);
+): ConcreteRequest => {
+  if (typeof taggedNode === "string") {
+    const { operationName, operationKind } = getOperationName(taggedNode);
+    return {
+      kind: "Request",
+      fragment: null,
+      operation: null,
+      params: {
+        operationKind: operationKind,
+        name: operationName,
+        id: operationName,
+        text: taggedNode,
+        metadata: {},
+      },
+      // @ts-ignore
+      query: taggedNode,
+    };
+  }
+  return baseGetRequest(taggedNode);
 };
 
 export const getFragment = (
   taggedNode: GraphQLTaggedNode | string
-): ReaderFragment | string => {
-  return typeof taggedNode === "string"
-    ? taggedNode
-    : baseGetFragment(taggedNode);
+): ReaderFragment | null => {
+  return typeof taggedNode === "string" ? null : baseGetFragment(taggedNode);
 };
 
 export const getOperationName = (query: string) => {
@@ -45,38 +58,21 @@ export const getOperationName = (query: string) => {
 };
 
 export const createOperation = function <TQuery extends Query>(
-  query: ConcreteRequest | string,
+  query: ConcreteRequest,
   variables: Variables<TQuery>
 ): OperationDescriptor<TQuery> {
-  if (typeof query === "string") {
-    const { operationName, operationKind } = getOperationName(query);
+  if (query.fragment === null) {
     return {
       request: {
-        node: {
-          kind: "Request",
-          fragment: null,
-          operation: null,
-          params: {
-            operationKind: operationKind,
-            name: operationName,
-            id: operationName,
-            text: query,
-            metadata: {},
-          },
-          // @ts-ignore
-          query: query,
-        },
+        node: query,
         variables: variables,
-        identifier: operationName,
+        identifier: query.params.name,
       },
       response: {},
       fragment: null,
       root: null,
     };
   } else {
-    if (!query.operation && !query.fragment) {
-      throw new Error("Use babel plugin");
-    }
     return createOperationDescriptor(query, variables) as any;
   }
 };

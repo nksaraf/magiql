@@ -2,24 +2,24 @@ import React, { Suspense } from "react";
 
 import { GraphQLDevtoolsProps } from "./Devtools";
 
-let Devtools: React.FC<GraphQLDevtoolsProps>;
+export let GraphQLDevtools: React.FC<GraphQLDevtoolsProps>;
 
 if (typeof window !== "undefined") {
-  const GraphQLDevtools: any = React.lazy(() => import("./Devtools"));
-  GraphQLDevtools.displayName = "Devtools";
-  Devtools = (props: any) => {
+  const LazyGraphQLDevtools: any = React.lazy(() => import("./Devtools"));
+  LazyGraphQLDevtools.displayName = "GraphQLDevtools";
+  GraphQLDevtools = (props: any) => {
     return (
       <Suspense fallback={null}>
-        <GraphQLDevtools {...props} />
+        <LazyGraphQLDevtools {...props} />
       </Suspense>
     );
   };
 } else {
-  Devtools = () => {
+  GraphQLDevtools = () => {
     return null as any;
   };
 }
 
-Devtools.displayName = "Devtools";
+GraphQLDevtools.displayName = "GraphQLDevtools";
 
-export default Devtools;
+export default GraphQLDevtools;

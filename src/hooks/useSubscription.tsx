@@ -14,6 +14,7 @@ export function useSubscription<TSubscription extends Query, TError = Error>(
   }: UseQueryOptions<TSubscription, TError> = {}
 ): UseQueryResult<TSubscription, TError> {
   const client = useClient();
+  const store = client.useStore();
   const rerender = useRerenderer();
   const node = getRequest(subscription);
   const operation = client.buildOperation(node, variables);

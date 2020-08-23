@@ -88,7 +88,7 @@ export function createClient({
         const observable = subscriptions?.client.request({
           query: (operation.request.node as any).query,
           variables: operation.request.variables,
-          operationName: operation.request.node.operation.name,
+          operationName: operation.request.node.params.name,
         });
 
         if (!observable) {
@@ -124,7 +124,7 @@ export function createClient({
   ): Promise<Response<TQuery>> {
     const data = await fetch<TQuery>({
       query: (operation.request.node as any).query,
-      operationName: operation.request.node.operation.name,
+      operationName: operation.request.node.params.name,
       operationKind: operation.request.node.params
         .operationKind as OperationKind,
       variables: operation.request.variables,
@@ -136,7 +136,7 @@ export function createClient({
     operation: OperationDescriptor<TQuery>
   ): QueryKey<TQuery> {
     return [
-      operation.request.node.operation.name,
+      operation.request.node.params.name,
       operation.request.variables ?? {},
     ];
   }
@@ -145,13 +145,13 @@ export function createClient({
     operation: OperationDescriptor<TQuery>
   ): InfiniteQueryKey<TQuery> {
     return [
-      operation.request.node.operation.name,
+      operation.request.node.params.name,
       operation.request.variables ?? {},
     ] as any;
   }
 
   function buildOperation<TQuery extends Query>(
-    node: ConcreteRequest | string,
+    node: ConcreteRequest,
     variables: Variables<TQuery>
   ) {
     return createOperation(node, variables) as OperationDescriptor<TQuery>;

@@ -9,11 +9,9 @@ import {
   Variables,
   Response,
   Query,
-  QueryStatus,
   Store,
   OperationDescriptor,
 } from "../types";
-import { createState, Stated } from "../utils";
 import { useClient } from "./useClient";
 
 export interface UseQueryOptions<TQuery extends Query, TError = Error>
@@ -22,11 +20,10 @@ export interface UseQueryOptions<TQuery extends Query, TError = Error>
   operationName?: string;
 }
 
-export type UseQueryResult<TQuery extends Query, TError> = Omit<
-  QueryResult<Response<TQuery>, TError>,
-  "status"
+export type UseQueryResult<TQuery extends Query, TError> = QueryResult<
+  Response<TQuery>,
+  TError
 > & {
-  status: Stated<QueryStatus>;
   client: ReturnType<typeof useClient>;
   store: Store;
   operation: OperationDescriptor<TQuery>;
@@ -55,14 +52,13 @@ export function useQuery<TQuery extends Query, TError = Error>(
     options
   );
 
-  const snapshot = store.useOperation(operation);
+  const data = store.useOperation(operation);
 
   return {
     ...baseQuery,
-    data: snapshot,
+    data,
     client,
     operation,
     store,
-    status: createState(baseQuery.status as QueryStatus),
   };
 }

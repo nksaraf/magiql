@@ -273,6 +273,7 @@ export function createNormalizedQueryCacheStore(
 
     React.useEffect(() => {
       const next = dataIDs;
+      //@ts-ignore
       const prev = [...subscribedRecordsRef.current.keys()];
       for (var i = 0; i < prev.length; i++) {
         if (!next.find((id) => id === prev[i])) {
@@ -307,18 +308,31 @@ export function createNormalizedQueryCacheStore(
 
     const dataReader = createReader(get);
     const snaphot = dataReader.read<TData>(selector as SingularReaderSelector);
+    // @ts-ignore
     useSubscriptions([...dataReader.seenRecords.values()]);
 
     return snaphot;
   }
 
   const {
-    useFragment = (fragmentNode, fragmentRef) =>
-      useSelector(getSelector(fragmentNode, fragmentRef)),
+    useFragment = (fragmentNode, fragmentRef) => {
+      if (!fragmentNode) {
+        throw new Error("Use babel plugin");
+      }
+
+      console.log(getSelector(fragmentNode, fragmentRef));
+      return useSelector(getSelector(fragmentNode, fragmentRef));
+    },
     useOperation = (operation) => {
+      if (!operation.fragment) {
+        throw new Error("Use babel plugin");
+      }
       return useSelector(operation.fragment);
     },
     commit = (operation, data) => {
+      if (!operation.request.node.fragment) {
+        throw new Error("Use babel plugin");
+      }
       const recordSource = normalizer.normalizeResponse(
         operation.request.node,
         data,
@@ -365,6 +379,7 @@ export function createNormalizedQueryCacheStore(
       return snapshot;
     });
 
+    // @ts-ignore
     useSubscriptions([...dataReader.seenRecords.values()]);
 
     return data;

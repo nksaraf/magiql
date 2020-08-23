@@ -12,11 +12,9 @@ import {
   Response,
   OperationDescriptor,
   Query,
-  QueryStatus,
   InfiniteQueryKey,
   Store,
 } from "../types";
-import { createState, Stated } from "../utils";
 import { useClient } from "./useClient";
 
 export interface UseInfiniteQueryOptions<TQuery extends Query, TError = Error>
@@ -25,18 +23,17 @@ export interface UseInfiniteQueryOptions<TQuery extends Query, TError = Error>
   operationName?: string;
 }
 
-export type UseInfiniteQueryResult<TQuery extends Query, TError> = Omit<
-  InfiniteQueryResult<Response<TQuery>, TError>,
-  "status"
-> & {
-  status: Stated<QueryStatus>;
+export type UseInfiniteQueryResult<
+  TQuery extends Query,
+  TError
+> = InfiniteQueryResult<Response<TQuery>, TError> & {
   client: GraphQLClient;
   store: Store;
   operation: OperationDescriptor<TQuery>;
 };
 
 export function useInfiniteQuery<TQuery extends Query, TError = Error>(
-  query: GraphQLTaggedNode,
+  query: GraphQLTaggedNode | string,
   {
     variables = {} as Variables<TQuery>,
     ...options
@@ -56,7 +53,7 @@ export function useInfiniteQuery<TQuery extends Query, TError = Error>(
         ...(fetchMoreVariables ?? {}),
       });
 
-      const data = await client.execute(fetchMoreOperation);
+      const data = await client.request(fetchMoreOperation);
       store.commit(fetchMoreOperation, data);
       return data;
     },
@@ -93,6 +90,5 @@ export function useInfiniteQuery<TQuery extends Query, TError = Error>(
     canFetchMore,
     fetchMore,
     store,
-    status: createState(baseQuery.status as QueryStatus),
   };
 }

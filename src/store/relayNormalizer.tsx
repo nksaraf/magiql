@@ -15,7 +15,7 @@ import {
   NormalizationInlineFragment,
 } from "relay-runtime/lib/util/NormalizationNode";
 
-import { constants, GetDataID } from "../types";
+import { constants, GetDataID, Record } from "../types";
 
 export type NormalizationNode =
   | NormalizationClientExtension
@@ -26,10 +26,6 @@ export type NormalizationNode =
   | NormalizationOperation
   | NormalizationSplitOperation
   | NormalizationStream;
-
-const DEBUG = false;
-
-type Record = { [key: string]: any };
 
 const PREFIX = "client:";
 
