@@ -15,24 +15,8 @@
     "test:codegen": "NODE_ENV=test node ./dist/cjs/cli.js"
   },
   "devDependencies": {
-    "@babel/cli": "^7.8.4",
-    "@babel/preset-react": "^7.9.4",
-    "@babel/preset-typescript": "^7.9.0",
-    "@babel/standalone": "^7.9.6",
-    "@types/node": "^13.13.5",
-    "@types/react": "^16.9.34",
-    "auto-bind": "^4.0.0",
-    "chokidar-cli": "^2.1.0",
-    "dedent": "^0.7.0",
-    "graphql": "^15.0.0",
-    "magic-components": "^0.0.2-beta.30",
-    "next": "^9.3.6",
-    "next-monaco-editor": "^0.0.1-beta.22",
-    "prettier": "^2.0.5",
     "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "react-query-devtools": "^2.0.0",
-    "typescript": "^3.8.3"
+    "react-dom": "^16.13.1"
   },
   "pkger": {
     "target": "browser",
@@ -56,27 +40,19 @@
     ]
   },
   "dependencies": {
-    "@babel/plugin-syntax-jsx": "^7.8.3",
-    "@graphql-codegen/cli": "^1.13.5",
-    "@graphql-codegen/plugin-helpers": "1.13.5",
-    "@graphql-codegen/typescript": "^1.13.5",
-    "@graphql-codegen/typescript-operations": "^1.13.5",
-    "@graphql-codegen/visitor-plugin-common": "1.13.5",
-    "camel-case": "^4.1.1",
-    "graphql-ast-types": "^1.0.2",
-    "graphql-config": "^3.0.1",
+    "@types/relay-runtime": "^10.0.3",
+    "babel-plugin-relay": "^10.0.1",
     "isomorphic-unfetch": "^3.0.0",
-    "pascal-case": "^3.1.1",
-    "path": "^0.12.7",
-    "subscriptions-transport-ws": "^0.9.16",
-    "use-debounce": "^3.4.2"
+    "match-sorter": "^4.2.0",
+    "react-draggable": "^4.4.3",
+    "react-query": "^2.10.0",
+    "react-query-devtools": "^2.4.4",
+    "recoil": "^0.0.10",
+    "relay-config": "^10.0.1",
+    "relay-runtime": "^10.0.1",
+    "subscriptions-transport-ws": "^0.9.18"
   },
-  "peerDependencies": {
-    "graphql": "^15.0.0",
-    "react": "^16.13",
-    "react-query": "^2.0",
-    "react-query-devtools": "^2.0"
-  },
+  "peerDependencies": {},
   "bin": {
     "magiql": "dist/cjs/cli.js"
   },
