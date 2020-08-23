@@ -176,7 +176,7 @@ export interface GraphQLClient {
     operation: OperationDescriptor<TQuery>
   ): Promise<Response<TQuery>>;
   buildOperation<TQuery extends Query>(
-    node: ConcreteRequest,
+    node: ConcreteRequest | string,
     variables: Variables<TQuery>
   ): OperationDescriptor<TQuery>;
   buildSubscription<TQuery extends Query>(

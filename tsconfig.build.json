@@ -9,6 +9,7 @@
     "declaration": true,
     "declarationDir": "dist/types",
     "emitDeclarationOnly": true,
+    "downlevelIteration": true,
     "jsx": "react",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,

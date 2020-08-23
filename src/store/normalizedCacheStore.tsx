@@ -1,6 +1,6 @@
 import React from "react";
 // @ts-ignore
-import { unstable_batchedUpdates } from "react-native";
+import { batchedUpdates } from "./batchedUpdates";
 import { stableStringify, makeQueryCache } from "react-query";
 import { getSelector, getStorageKey, SelectorData } from "relay-runtime";
 
@@ -255,7 +255,7 @@ export function createNormalizedQueryCacheStore(
       }));
     },
     update = (recordSource: RecordSource) => {
-      unstable_batchedUpdates(() => {
+      batchedUpdates(() => {
         Object.keys(recordSource).forEach((id) => {
           updateRecord(id, recordSource[id]);
         });

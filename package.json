@@ -15,8 +15,11 @@
     "test:codegen": "NODE_ENV=test node ./dist/cjs/cli.js"
   },
   "devDependencies": {
+    "@types/react": "^16.9.46",
+    "@types/react-dom": "^16.9.8",
     "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react-dom": "^16.13.1",
+    "tsup": "^3.6.1"
   },
   "pkger": {
     "target": "browser",

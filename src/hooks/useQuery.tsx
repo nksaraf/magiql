@@ -3,7 +3,7 @@ import {
   QueryConfig,
   QueryResult,
 } from "react-query";
-import { getRequest, GraphQLTaggedNode } from "relay-runtime";
+import { getRequest, GraphQLTaggedNode } from "../graphql-tag";
 
 import {
   Variables,
@@ -33,7 +33,7 @@ export type UseQueryResult<TQuery extends Query, TError> = Omit<
 };
 
 export function useQuery<TQuery extends Query, TError = Error>(
-  query: GraphQLTaggedNode,
+  query: GraphQLTaggedNode | string,
   {
     variables = {} as Variables<TQuery>,
     ...options
@@ -45,15 +45,10 @@ export function useQuery<TQuery extends Query, TError = Error>(
   const operation = client.buildOperation(node, variables);
   const queryKey = client.getQueryKey(operation);
 
-  const { refetch, ...baseQuery } = useBaseQuery<
-    Response<TQuery>,
-    TError,
-    typeof queryKey
-  >(
+  const baseQuery = useBaseQuery<Response<TQuery>, TError, typeof queryKey>(
     queryKey,
     async () => {
       const data = await client.request(operation);
-
       store.commit(operation, data);
       return data;
     },
@@ -64,7 +59,6 @@ export function useQuery<TQuery extends Query, TError = Error>(
 
   return {
     ...baseQuery,
-    refetch,
     data: snapshot,
     client,
     operation,

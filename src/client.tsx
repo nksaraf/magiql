@@ -3,7 +3,7 @@ import { SubscriptionClient } from "subscriptions-transport-ws";
 
 import { fetchGraphQL, resolveFetchOptions } from "./fetch";
 import { createOperation } from "./graphql-tag";
-import { createQueryCacheStore } from "./store";
+import { createQueryCacheStore } from "./store/cacheStore";
 import {
   FetchOperation,
   GraphQLClient,
@@ -151,7 +151,7 @@ export function createClient({
   }
 
   function buildOperation<TQuery extends Query>(
-    node: ConcreteRequest,
+    node: ConcreteRequest | string,
     variables: Variables<TQuery>
   ) {
     return createOperation(node, variables) as OperationDescriptor<TQuery>;

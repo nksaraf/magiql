@@ -62,8 +62,6 @@ export function createRelayNormalizer({
     storageKey: string,
     fieldValue: any
   ) {
-    DEBUG &&
-      console.log("normalizeLink", { field, record, storageKey, fieldValue });
     const type = field.concreteType ?? fieldValue[constants.TYPENAME_KEY];
     const linkId =
       getDataID(fieldValue, type) ??
@@ -92,13 +90,6 @@ export function createRelayNormalizer({
     storageKey: string,
     fieldValue: any
   ) {
-    DEBUG &&
-      console.log("normalizePluralLink", {
-        field,
-        record,
-        storageKey,
-        fieldValue,
-      });
     const type = field.concreteType;
     const ids: (string | null)[] = [];
     fieldValue.forEach((item: any, index: number) => {
@@ -135,8 +126,6 @@ export function createRelayNormalizer({
     record: Record,
     data: any
   ) {
-    DEBUG && console.log("normalizeField", { selection, record, node, data });
-
     const responseKey = selection.alias ?? selection.name;
     const storageKey = getStorageKey(selection as any, variables);
     // const storageKey = getStorageKey(selection, this._variables);
@@ -173,8 +162,6 @@ export function createRelayNormalizer({
     record: Record,
     data: any
   ) {
-    DEBUG && console.log("traversing", { node, record, data }, recordSource);
-
     // go thru selections
     node.selections.forEach((selection) => {
       switch (selection.kind) {
@@ -198,6 +185,10 @@ export function createRelayNormalizer({
       [constants.ID_KEY]: constants.ROOT_ID,
       [constants.TYPENAME_KEY]: constants.ROOT_TYPE,
     };
+
+    if (!node.operation) {
+      throw new Error("Use babel plugin for normalization");
+    }
     recordSource[constants.ROOT_ID] = record;
     traverseSelections(node.operation, record, data);
     return recordSource;

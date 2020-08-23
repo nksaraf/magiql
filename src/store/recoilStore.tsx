@@ -387,6 +387,9 @@ export function createRecoilStore(
   const useOperation = function <TQuery extends Query>(
     operation: OperationDescriptor<TQuery>
   ) {
+    if (!operation.fragment) {
+      throw new Error("Use babel plugin for fragment normalization");
+    }
     return useSelector(operation.fragment);
   };
 
