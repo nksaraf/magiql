@@ -19,7 +19,7 @@
     "@babel/preset-react": "^7.9.4",
     "@babel/preset-typescript": "^7.9.0",
     "@babel/standalone": "^7.9.6",
-    "@types/node": "^13.13.5",
+    "@types/node": "^14.6.2",
     "@types/react": "^16.9.34",
     "auto-bind": "^4.0.0",
     "chokidar-cli": "^2.1.0",
