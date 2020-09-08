@@ -1,17 +1,15 @@
-import { getFragment, GraphQLTaggedNode } from "../graphql-tag";
-import { $Call, KeyType, KeyReturnType } from "../types";
-import { useClient } from "./useClient";
+import { getFragment, GraphQLTaggedNode } from "../core/graphql-tag";
+import { $Call, KeyType, KeyReturnType } from "../core/types";
+import { assertBabelPlugin } from "../utils";
+import { useStore } from "./useStore";
 
 export function useFragment<TKey extends KeyType>(
   fragmentNode: GraphQLTaggedNode | string,
   fragmentRef: TKey
 ): $Call<KeyReturnType<TKey>> {
-  if (typeof fragmentNode === "string") {
-    throw new Error("Use Babel plugin");
-  }
+  assertBabelPlugin(typeof fragmentNode !== "string");
   const node = getFragment(fragmentNode);
-  const client = useClient();
-  const store = client.useStore();
-  const data = store.useFragment(node, fragmentRef);
+  const store = useStore();
+  const data = store.useFragment(node as any, fragmentRef);
   return data;
 }

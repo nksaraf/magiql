@@ -3,16 +3,17 @@ import {
   QueryConfig,
   QueryResult,
 } from "react-query";
-import { getRequest, GraphQLTaggedNode } from "../graphql-tag";
 
+import { getRequest, GraphQLTaggedNode } from "../core/graphql-tag";
 import {
   Variables,
   Response,
   Query,
   Store,
   OperationDescriptor,
-} from "../types";
+} from "../core/types";
 import { useClient } from "./useClient";
+import { useStore } from "./useStore";
 
 export interface UseQueryOptions<TQuery extends Query, TError = Error>
   extends QueryConfig<Response<TQuery>, TError> {
@@ -37,7 +38,7 @@ export function useQuery<TQuery extends Query, TError = Error>(
   }: UseQueryOptions<TQuery, TError> = {}
 ): UseQueryResult<TQuery, TError> {
   const client = useClient();
-  const store = client.useStore();
+  const store = useStore();
   const node = getRequest(query);
   const operation = client.buildOperation(node, variables);
   const queryKey = client.getQueryKey(operation);
@@ -45,7 +46,7 @@ export function useQuery<TQuery extends Query, TError = Error>(
   const baseQuery = useBaseQuery<Response<TQuery>, TError, typeof queryKey>(
     queryKey,
     async () => {
-      const data = await client.request(operation);
+      const data = await client.execute(operation);
       store.commit(operation, data);
       return data;
     },
@@ -56,7 +57,7 @@ export function useQuery<TQuery extends Query, TError = Error>(
 
   return {
     ...baseQuery,
-    data,
+    data: baseQuery.status === "loading" ? null : data,
     client,
     operation,
     store,

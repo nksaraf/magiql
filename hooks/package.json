@@ -1,7 +1,0 @@
-{
-  "name": "magiql/hooks",
-  "private": true,
-  "main": "../dist/cjs/hooks.js",
-  "module": "../dist/esm/hooks.js",
-  "types": "../dist/types"
-}

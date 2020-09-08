@@ -1,1 +1,1 @@
-export { default, GraphQLDevtools } from "./devtools/index";
+export { default, GraphQLDevtools } from "./devtools/web";

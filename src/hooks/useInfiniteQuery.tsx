@@ -5,7 +5,7 @@ import {
   InfiniteQueryResult,
 } from "react-query";
 
-import { getRequest, GraphQLTaggedNode } from "../graphql-tag";
+import { getRequest, GraphQLTaggedNode } from "../core/graphql-tag";
 import {
   GraphQLClient,
   Variables,
@@ -14,8 +14,9 @@ import {
   Query,
   InfiniteQueryKey,
   Store,
-} from "../types";
+} from "../core/types";
 import { useClient } from "./useClient";
+import { useStore } from "./useStore";
 
 export interface UseInfiniteQueryOptions<TQuery extends Query, TError = Error>
   extends InfiniteQueryConfig<Response<TQuery>, TError> {
@@ -43,7 +44,8 @@ export function useInfiniteQuery<TQuery extends Query, TError = Error>(
   const client = useClient();
   const node = getRequest(query);
   const operation = client.buildOperation(node, variables);
-  const store = client.useStore();
+  const store = useStore();
+
   const queryKey = client.getInfinteQueryKey(operation);
   const baseQuery = useBaseInfiniteQuery<TData, TError, typeof queryKey>(
     queryKey,
@@ -53,7 +55,7 @@ export function useInfiniteQuery<TQuery extends Query, TError = Error>(
         ...(fetchMoreVariables ?? {}),
       });
 
-      const data = await client.request(fetchMoreOperation);
+      const data = await client.execute(fetchMoreOperation);
       store.commit(fetchMoreOperation, data);
       return data;
     },

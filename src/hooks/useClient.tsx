@@ -1,12 +1,18 @@
 import React from "react";
 import { ReactQueryCacheProvider, ReactQueryConfigProvider } from "react-query";
 
-import { GraphQLClient } from "../types";
+import { GraphQLClient } from "../core/client";
 
-const GraphQLClientContext = React.createContext<GraphQLClient | null>(null);
+export const GraphQLClientContext = React.createContext<GraphQLClient | null>(
+  null
+);
 
 export function useClient() {
-  return React.useContext(GraphQLClientContext) as GraphQLClient;
+  const client = React.useContext(GraphQLClientContext);
+  if (!client) {
+    throw new Error("No GraphQL Client found!");
+  }
+  return client;
 }
 
 export const GraphQLClientProvider = ({
@@ -15,7 +21,8 @@ export const GraphQLClientProvider = ({
 }: React.PropsWithChildren<{
   client: GraphQLClient;
 }>) => {
-  return (
+  const store = client.useStore();
+  const clientProvider = (
     <ReactQueryCacheProvider queryCache={client.cache}>
       <ReactQueryConfigProvider config={client.queryConfig}>
         <GraphQLClientContext.Provider value={client}>
@@ -23,5 +30,10 @@ export const GraphQLClientProvider = ({
         </GraphQLClientContext.Provider>
       </ReactQueryConfigProvider>
     </ReactQueryCacheProvider>
+  );
+  return store.Provider ? (
+    <store.Provider>{clientProvider}</store.Provider>
+  ) : (
+    clientProvider
   );
 };

@@ -7,7 +7,7 @@ import {
   createNormalizedQueryCacheStore,
   createQueryCacheStore,
 } from "../src";
-import { RecoilRoot } from "../src/recoil";
+import { createRecoilStore, RecoilRoot } from "../src/recoil";
 import { dataKeys } from "../examples/dataId";
 import GraphQLDevtools from "../src/devtools";
 
@@ -19,7 +19,7 @@ const client = createClient({
       retry: false,
     },
   },
-  useStore: createQueryCacheStore({
+  useStore: createRecoilStore({
     getDataID: (record, type: keyof typeof dataKeys) => {
       try {
         return `${type}:${dataKeys[type]

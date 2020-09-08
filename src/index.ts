@@ -1,17 +1,20 @@
-import { setConsole } from "react-query";
 import { unstable_batchedUpdates } from "react-dom";
-import { setBatch } from "./store/batchedUpdates";
-export * from "./client";
-export * from "./fetch";
-export * from "./store/cacheStore";
-export * from "./store/normalizedCacheStore";
-export * from "./hooks";
-export * from "./graphql-tag";
+import { setConsole } from "react-query";
 
-setBatch(unstable_batchedUpdates);
+import { setBatch } from "./core/store/batchedUpdates";
+
+export * from "./core/client";
+export * from "./core/fetch";
+export * from "./core/store/cacheStore";
+export * from "./core/store/normalizedCacheStore";
+export * from "./hooks";
+export * from "./core/store/batchedUpdates";
+export * from "./core/graphql-tag";
 
 setConsole({
   log: console.log,
   warn: console.log,
   error: console.log,
 });
+
+setBatch(unstable_batchedUpdates);

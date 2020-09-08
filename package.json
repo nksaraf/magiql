@@ -8,7 +8,7 @@
   "types": "dist/types",
   "scripts": {
     "prepublishOnly": "yarn build",
-    "build": "yarn tsup src/node.ts src/index.ts src/recoil.ts src/devtools.ts --format esm,cjs",
+    "build": "yarn tsup src/node.ts src/cli/cli.ts src/index.ts src/recoil.ts src/devtools.ts --format esm,cjs",
     "pub": "bump && yarn publish --access public --non-interactive",
     "dev": "yarn test && chokidar \"src/**/*\" \"test/test.tsx\" -c \"yarn test\"",
     "test": "yarn babel test/test.tsx -o test/test.out.tsx --extensions=tsx --presets next/babel --plugins=./dist/cjs/babel.js",
@@ -25,38 +25,18 @@
     "tsup": "^3.6.1",
     "typescript": "^4.0.2"
   },
-  "pkger": {
-    "target": "browser",
-    "entries": [
-      "client",
-      "hooks",
-      "fetch",
-      "devtools",
-      {
-        "name": "babel",
-        "target": "node"
-      },
-      {
-        "name": "codegen"
-      },
-      {
-        "name": "cli",
-        "target": "cli",
-        "cmd": "magiql"
-      }
-    ]
-  },
   "dependencies": {
     "@types/relay-runtime": "^10.0.3",
     "babel-plugin-relay": "^10.0.1",
+    "cosmiconfig": "^7.0.0",
     "isomorphic-unfetch": "^3.0.0",
     "match-sorter": "^4.2.0",
+    "prettier": "^2.1.1",
     "react-draggable": "^4.4.3",
     "react-query": "^2.10.0",
     "react-query-devtools": "^2.4.4",
     "recoil": "^0.0.10",
     "relay-compiler": "^10.0.1",
-    "relay-compiler-language-typescript": "file:.yalc/relay-compiler-language-typescript",
     "relay-config": "^10.0.1",
     "relay-runtime": "^10.0.1",
     "subscriptions-transport-ws": "^0.9.18"

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Layout from "../examples/components/Layout";
 import { useQuery, graphql, usePaginatedQuery, useInfiniteQuery } from "../src";
-import { questionsQuery } from "../generated/questionsQuery.graphql";
+import { questionsQuery } from "../generated/graphql/questionsQuery.graphql";
 import { People } from "../examples/components/People";
 import React, { Fragment } from "react";
 
@@ -19,6 +19,9 @@ const AboutPage = () => {
           order_by: { createdAt: desc } # where: { communities: { community: { communityId: { _eq: 5818 } } } }
         ) {
           createdAt
+          answer {
+            body
+          }
           ...People_person
         }
       }

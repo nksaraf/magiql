@@ -1,3 +1,2 @@
-export * from "./index";
-export * from "./store/recoilStore";
+export * from "./core/store/recoilStore";
 export { RecoilRoot } from "recoil";

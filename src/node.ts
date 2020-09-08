@@ -1,3 +1,3 @@
-export * from "./fetch";
-export * from "./graphql-tag";
-export * from "./types";
+export * from "./core/fetch";
+export * from "./core/graphql-tag";
+export * from "./core/types";

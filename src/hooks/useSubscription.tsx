@@ -1,20 +1,24 @@
 import React from "react";
 import { getRequest, GraphQLTaggedNode } from "relay-runtime";
 
-import { Query, Variables } from "../types";
-import { useRerenderer } from "../utils";
+import { Query, Variables } from "../core/types";
+import { useRerenderer } from "./useRerenderer";
 import { useClient } from "./useClient";
 import { UseQueryOptions, UseQueryResult } from "./useQuery";
+import { useStore } from "./useStore";
 
-export function useSubscription<TSubscription extends Query, TError = Error>(
+export function useSubscription<
+  TSubscription extends Query,
+  TError extends Error = Error
+>(
   subscription: GraphQLTaggedNode,
   {
     variables = {} as Variables<TSubscription>,
     ...options
-  }: UseQueryOptions<TSubscription, TError> = {}
+  }: UseQueryOptions<TSubscription, Error> = {}
 ): UseQueryResult<TSubscription, TError> {
   const client = useClient();
-  const store = client.useStore();
+  const store = useStore();
   const rerender = useRerenderer();
   const node = getRequest(subscription);
   const operation = client.buildOperation(node, variables);
