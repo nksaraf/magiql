@@ -1,6 +1,6 @@
 {
   "name": "magiql",
-  "version": "0.0.4-alpha.3",
+  "version": "0.0.4-alpha.4",
   "description": "",
   "repository": "Nikhil Saraf",
   "license": "MIT",
@@ -9,8 +9,8 @@
   "scripts": {
     "prepublishOnly": "yarn build",
     "clean": "rm -rf dist",
-    "build:common": "yarn tsup src/babel.ts src/cli.ts --format cjs",
-    "build:node": "yarn tsup src/index.ts src/node.ts src/recoil.ts src/devtools.ts --format esm,cjs --legacy-output --dts",
+    "build:node": "yarn tsup src/babel.ts src/cli.ts --format cjs",
+    "build:common": "yarn tsup src/index.ts src/node.ts src/recoil.ts src/devtools.ts --format esm,cjs --legacy-output --dts --external react --external react-dom --external react-native",
     "build": "yarn clean && yarn build:common && yarn build:node",
     "pub": "bump && yarn publish --access public --non-interactive",
     "dev": "yarn clean && yarn build:common --watch && yarn build:node --watch",
