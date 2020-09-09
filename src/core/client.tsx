@@ -1,17 +1,12 @@
 import {
-  makeQueryCache,
+  queryCache as rootQueryCache,
   QueryCache,
   QueryConfig,
   ReactQueryConfig,
 } from "react-query";
 import { SubscriptionClient, Observable } from "subscriptions-transport-ws";
 
-import {
-  fetchGraphQL,
-  FetchOptions,
-  FetchResult,
-  resolveFetchOptions,
-} from "./fetch";
+import { fetchGraphQL, resolveFetchOptions } from "./fetch";
 import { createOperation } from "./graphql-tag";
 import { createQueryCacheStore } from "./store/cacheStore";
 import {
@@ -25,6 +20,8 @@ import {
   Response,
   ConcreteRequest,
   Store,
+  FetchOptions,
+  FetchResult,
 } from "./types";
 
 export interface GraphQLClientOptions {
@@ -56,7 +53,7 @@ export class GraphQLClient {
     endpoint = "/graphql",
     fetchOptions = () => ({}),
     queryConfig = {},
-    queryCache = makeQueryCache(),
+    queryCache = rootQueryCache,
     useStore = createQueryCacheStore(),
     subscriptions,
   }: Partial<GraphQLClientOptions>) {
@@ -191,7 +188,10 @@ export class GraphQLClient {
     variables = {} as Variables<TQuery>,
     operationName = undefined,
     operationKind = "query",
-  }: FetchOperation<Variables<TQuery>>): Promise<FetchResult<TQuery>> {
+  }: Omit<
+    FetchOperation<Variables<TQuery>>,
+    "endpoint" | "fetchOptions"
+  >): Promise<FetchResult<TQuery>> {
     return await fetchGraphQL({
       endpoint: this.endpoint,
       query,

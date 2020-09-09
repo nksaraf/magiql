@@ -1,7 +1,7 @@
 {
   "name": "magiql/devtools",
   "private": true,
-  "main": "../dist/cjs/devtools.js",
+  "main": "../dist/devtools.js",
   "module": "../dist/esm/devtools.js",
-  "types": "../dist/types"
+  "types": "../dist/devtools.d.ts"
 }

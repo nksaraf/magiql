@@ -2,48 +2,31 @@
 
 import React from "react";
 import {
-  createClient,
+  GraphQLClient,
   GraphQLClientProvider,
   createNormalizedQueryCacheStore,
   createQueryCacheStore,
 } from "../src";
-import { createRecoilStore, RecoilRoot } from "../src/recoil";
-import { dataKeys } from "../examples/dataId";
+// import { createRecoilStore, RecoilRoot } from "../../src/recoil";
 import GraphQLDevtools from "../src/devtools";
+import { createRecoilStore } from "../src/recoil";
 
-const client = createClient({
-  endpoint: "https://qwerty-ts.herokuapp.com/v1/graphql",
+const client = new GraphQLClient({
+  endpoint: "https://swapi-graphql.netlify.app/.netlify/functions/index",
   queryConfig: {
     queries: {
       refetchOnWindowFocus: false,
       retry: false,
     },
   },
-  useStore: createRecoilStore({
-    getDataID: (record, type: keyof typeof dataKeys) => {
-      try {
-        return `${type}:${dataKeys[type]
-          .map((d) => {
-            if (!record[d]) throw new Error();
-            return record[d];
-          })
-          .join(":")}`;
-      } catch (e) {
-        return null;
-      }
-    },
-  }),
+  useStore: createRecoilStore(),
 });
 
-function MyApp({ Component, pageProps }) {
+export default function App({ Component, pageProps }) {
   return (
-    <RecoilRoot>
-      <GraphQLClientProvider client={client}>
-        <Component {...pageProps} />
-        <GraphQLDevtools />
-      </GraphQLClientProvider>
-    </RecoilRoot>
+    <GraphQLClientProvider client={client}>
+      <Component {...pageProps} />
+      <GraphQLDevtools />
+    </GraphQLClientProvider>
   );
 }
-
-export default MyApp;

@@ -45,8 +45,11 @@ export function generateClientID(
   return key;
 }
 
+export const defaultGetDataId = (record, type) =>
+  record.id ? `${type}:${record.id}` : null;
+
 export function createRelayNormalizer({
-  getDataID = (record, type) => `${type}:${record.id}`,
+  getDataID = defaultGetDataId,
 }: {
   getDataID: GetDataID;
 }) {

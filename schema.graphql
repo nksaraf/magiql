@@ -1,4024 +1,1490 @@
 schema {
-  query: query_root
-  mutation: mutation_root
-  subscription: subscription_root
+  query: Root
 }
 
 """
-columns and relationships of "announcements"
+A single film.
 """
-type announcements {
-  actionDescription: String!
-  announcementId: Int!
-  body: String!
-  createdAt: timestamptz!
-
-  """An object relationship"""
-  post: posts
-  updatedAt: timestamptz!
-}
+type Film implements Node {
+  """
+  The title of this film.
+  """
+  title: String
 
-"""
-Boolean expression to filter rows from the table "announcements". All fields are combined with a logical 'AND'.
-"""
-input announcements_bool_exp {
-  _and: [announcements_bool_exp]
-  _not: announcements_bool_exp
-  _or: [announcements_bool_exp]
-  actionDescription: String_comparison_exp
-  announcementId: Int_comparison_exp
-  body: String_comparison_exp
-  createdAt: timestamptz_comparison_exp
-  post: posts_bool_exp
-  updatedAt: timestamptz_comparison_exp
-}
+  """
+  The episode number of this film.
+  """
+  episodeID: Int
 
-"""
-ordering options when selecting data from "announcements"
-"""
-input announcements_order_by {
-  actionDescription: order_by
-  announcementId: order_by
-  body: order_by
-  createdAt: order_by
-  post: posts_order_by
-  updatedAt: order_by
-}
+  """
+  The opening paragraphs at the beginning of this film.
+  """
+  openingCrawl: String
 
-"""
-primary key columns input for table: "announcements"
-"""
-input announcements_pk_columns_input {
-  announcementId: Int!
-}
+  """
+  The name of the director of this film.
+  """
+  director: String
 
-"""
-select columns of table "announcements"
-"""
-enum announcements_select_column {
-  """column name"""
-  actionDescription
+  """
+  The name(s) of the producer(s) of this film.
+  """
+  producers: [String]
 
-  """column name"""
-  announcementId
+  """
+  The ISO 8601 date format of film release at original creator country.
+  """
+  releaseDate: String
+  speciesConnection(
+    after: String
+    first: Int
+    before: String
+    last: Int
+  ): FilmSpeciesConnection
+  starshipConnection(
+    after: String
+    first: Int
+    before: String
+    last: Int
+  ): FilmStarshipsConnection
+  vehicleConnection(
+    after: String
+    first: Int
+    before: String
+    last: Int
+  ): FilmVehiclesConnection
+  characterConnection(
+    after: String
+    first: Int
+    before: String
+    last: Int
+  ): FilmCharactersConnection
+  planetConnection(
+    after: String
+    first: Int
+    before: String
+    last: Int
+  ): FilmPlanetsConnection
 
-  """column name"""
-  body
+  """
+  The ISO 8601 date format of the time that this resource was created.
+  """
+  created: String
 
-  """column name"""
-  createdAt
+  """
+  The ISO 8601 date format of the time that this resource was edited.
+  """
+  edited: String
 
-  """column name"""
-  updatedAt
+  """
+  The ID of an object
+  """
+  id: ID!
 }
 
 """
-columns and relationships of "answers"
+A connection to a list of items.
 """
-type answers {
-  answerId: Int!
-  body: String!
-  createdAt: timestamptz!
+type FilmCharactersConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
 
-  """An object relationship"""
-  post: posts
-  updatedAt: timestamptz!
+  """
+  A list of edges.
+  """
+  edges: [FilmCharactersEdge]
 
-  """An object relationship"""
-  userProfile: profiles!
-  userProfileId: Int!
+  """
+  A count of the total number of objects in this connection, ignoring pagination.
+  This allows a client to fetch the first five objects by passing "5" as the
+  argument to "first", then fetch the total count so it could display "5 of 83",
+  for example.
+  """
+  totalCount: Int
+  """
+  A list of all of the objects returned in the connection. This is a convenience
+  field provided for quickly exploring the API; rather than querying for
+  "{ edges { node } }" when no edge data is needed, this field can be be used
+  instead. Note that when clients like Relay need to fetch the "cursor" field on
+  the edge to enable efficient pagination, this shortcut cannot be used, and the
+  full "{ edges { node } }" version should be used instead.
+  """
+  characters: [Person]
 }
-
 """
-Boolean expression to filter rows from the table "answers". All fields are combined with a logical 'AND'.
-"""
-input answers_bool_exp {
-  _and: [answers_bool_exp]
-  _not: answers_bool_exp
-  _or: [answers_bool_exp]
-  answerId: Int_comparison_exp
-  body: String_comparison_exp
-  createdAt: timestamptz_comparison_exp
-  post: posts_bool_exp
-  updatedAt: timestamptz_comparison_exp
-  userProfile: profiles_bool_exp
-  userProfileId: Int_comparison_exp
-}
-
+An edge in a connection.
 """
-ordering options when selecting data from "answers"
-"""
-input answers_order_by {
-  answerId: order_by
-  body: order_by
-  createdAt: order_by
-  post: posts_order_by
-  updatedAt: order_by
-  userProfile: profiles_order_by
-  userProfileId: order_by
+type FilmCharactersEdge {
+  """
+  The item at the end of the edge
+  """
+  node: Person
+  """
+  A cursor for use in pagination
+  """
+  cursor: String!
 }
-
 """
-primary key columns input for table: "answers"
+A connection to a list of items.
 """
-input answers_pk_columns_input {
-  answerId: Int!
+type FilmPlanetsConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  A list of edges.
+  """
+  edges: [FilmPlanetsEdge]
+  """
+  A count of the total number of objects in this connection, ignoring pagination.
+  This allows a client to fetch the first five objects by passing "5" as the
+  argument to "first", then fetch the total count so it could display "5 of 83",
+  for example.
+  """
+  totalCount: Int
+  """
+  A list of all of the objects returned in the connection. This is a convenience
+  field provided for quickly exploring the API; rather than querying for
+  "{ edges { node } }" when no edge data is needed, this field can be be used
+  instead. Note that when clients like Relay need to fetch the "cursor" field on
+  the edge to enable efficient pagination, this shortcut cannot be used, and the
+  full "{ edges { node } }" version should be used instead.
+  """
+  planets: [Planet]
 }
-
 """
-select columns of table "answers"
+An edge in a connection.
 """
-enum answers_select_column {
-  """column name"""
-  answerId
-
-  """column name"""
-  body
-
-  """column name"""
-  createdAt
-
-  """column name"""
-  updatedAt
-
-  """column name"""
-  userProfileId
+type FilmPlanetsEdge {
+  """
+  The item at the end of the edge
+  """
+  node: Planet
+  """
+  A cursor for use in pagination
+  """
+  cursor: String!
 }
-
+"""
+A connection to a list of items.
 """
-expression to compare columns of type Boolean. All fields are combined with logical 'AND'.
-"""
-input Boolean_comparison_exp {
-  _eq: Boolean
-  _gt: Boolean
-  _gte: Boolean
-  _in: [Boolean!]
-  _is_null: Boolean
-  _lt: Boolean
-  _lte: Boolean
-  _neq: Boolean
-  _nin: [Boolean!]
+type FilmsConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  A list of edges.
+  """
+  edges: [FilmsEdge]
+  """
+  A count of the total number of objects in this connection, ignoring pagination.
+  This allows a client to fetch the first five objects by passing "5" as the
+  argument to "first", then fetch the total count so it could display "5 of 83",
+  for example.
+  """
+  totalCount: Int
+  """
+  A list of all of the objects returned in the connection. This is a convenience
+  field provided for quickly exploring the API; rather than querying for
+  "{ edges { node } }" when no edge data is needed, this field can be be used
+  instead. Note that when clients like Relay need to fetch the "cursor" field on
+  the edge to enable efficient pagination, this shortcut cannot be used, and the
+  full "{ edges { node } }" version should be used instead.
+  """
+  films: [Film]
 }
-
 """
-columns and relationships of "communities"
+An edge in a connection.
 """
-type communities {
-  communityId: Int!
-  communityType: community_types_enum!
-
-  """An object relationship"""
-  course: courses
-  courseId: Int
-  createdAt: timestamptz!
-
-  """An array relationship"""
-  posts(
-    """distinct select on columns"""
-    distinct_on: [community_posts_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [community_posts_order_by!]
-
-    """filter the rows returned"""
-    where: community_posts_bool_exp
-  ): [community_posts!]!
-
-  """An object relationship"""
-  professionalArea: professional_areas
-  professionalAreaId: Int
-
-  """An object relationship"""
-  school: schools
-  schoolId: Int
-
-  """An object relationship"""
-  subjectArea: subject_areas
-  subjectAreaId: Int
-  updatedAt: timestamptz!
-
-  """An array relationship"""
-  users(
-    """distinct select on columns"""
-    distinct_on: [community_users_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [community_users_order_by!]
-
-    """filter the rows returned"""
-    where: community_users_bool_exp
-  ): [community_users!]!
-
-  """An aggregated array relationship"""
-  users_aggregate(
-    """distinct select on columns"""
-    distinct_on: [community_users_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [community_users_order_by!]
-
-    """filter the rows returned"""
-    where: community_users_bool_exp
-  ): community_users_aggregate!
+type FilmsEdge {
+  """
+  The item at the end of the edge
+  """
+  node: Film
+  """
+  A cursor for use in pagination
+  """
+  cursor: String!
 }
-
 """
-Boolean expression to filter rows from the table "communities". All fields are combined with a logical 'AND'.
-"""
-input communities_bool_exp {
-  _and: [communities_bool_exp]
-  _not: communities_bool_exp
-  _or: [communities_bool_exp]
-  communityId: Int_comparison_exp
-  communityType: community_types_enum_comparison_exp
-  course: courses_bool_exp
-  courseId: Int_comparison_exp
-  createdAt: timestamptz_comparison_exp
-  posts: community_posts_bool_exp
-  professionalArea: professional_areas_bool_exp
-  professionalAreaId: Int_comparison_exp
-  school: schools_bool_exp
-  schoolId: Int_comparison_exp
-  subjectArea: subject_areas_bool_exp
-  subjectAreaId: Int_comparison_exp
-  updatedAt: timestamptz_comparison_exp
-  users: community_users_bool_exp
-}
-
+A connection to a list of items.
 """
-ordering options when selecting data from "communities"
-"""
-input communities_order_by {
-  communityId: order_by
-  communityType: order_by
-  course: courses_order_by
-  courseId: order_by
-  createdAt: order_by
-  professionalArea: professional_areas_order_by
-  professionalAreaId: order_by
-  school: schools_order_by
-  schoolId: order_by
-  subjectArea: subject_areas_order_by
-  subjectAreaId: order_by
-  updatedAt: order_by
-  users_aggregate: community_users_aggregate_order_by
+type FilmSpeciesConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  A list of edges.
+  """
+  edges: [FilmSpeciesEdge]
+  """
+  A count of the total number of objects in this connection, ignoring pagination.
+  This allows a client to fetch the first five objects by passing "5" as the
+  argument to "first", then fetch the total count so it could display "5 of 83",
+  for example.
+  """
+  totalCount: Int
+  """
+  A list of all of the objects returned in the connection. This is a convenience
+  field provided for quickly exploring the API; rather than querying for
+  "{ edges { node } }" when no edge data is needed, this field can be be used
+  instead. Note that when clients like Relay need to fetch the "cursor" field on
+  the edge to enable efficient pagination, this shortcut cannot be used, and the
+  full "{ edges { node } }" version should be used instead.
+  """
+  species: [Species]
 }
-
 """
-primary key columns input for table: "communities"
+An edge in a connection.
 """
-input communities_pk_columns_input {
-  communityId: Int!
+type FilmSpeciesEdge {
+  """
+  The item at the end of the edge
+  """
+  node: Species
+  """
+  A cursor for use in pagination
+  """
+  cursor: String!
 }
-
 """
-select columns of table "communities"
+A connection to a list of items.
 """
-enum communities_select_column {
-  """column name"""
-  communityId
-
-  """column name"""
-  communityType
-
-  """column name"""
-  courseId
-
-  """column name"""
-  createdAt
-
-  """column name"""
-  professionalAreaId
-
-  """column name"""
-  schoolId
-
-  """column name"""
-  subjectAreaId
-
-  """column name"""
-  updatedAt
+type FilmStarshipsConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  A list of edges.
+  """
+  edges: [FilmStarshipsEdge]
+  """
+  A count of the total number of objects in this connection, ignoring pagination.
+  This allows a client to fetch the first five objects by passing "5" as the
+  argument to "first", then fetch the total count so it could display "5 of 83",
+  for example.
+  """
+  totalCount: Int
+  """
+  A list of all of the objects returned in the connection. This is a convenience
+  field provided for quickly exploring the API; rather than querying for
+  "{ edges { node } }" when no edge data is needed, this field can be be used
+  instead. Note that when clients like Relay need to fetch the "cursor" field on
+  the edge to enable efficient pagination, this shortcut cannot be used, and the
+  full "{ edges { node } }" version should be used instead.
+  """
+  starships: [Starship]
 }
-
 """
-columns and relationships of "community_posts"
+An edge in a connection.
 """
-type community_posts {
-  """An object relationship"""
-  community: communities!
-  communityId: Int!
-  createdAt: timestamptz!
-
-  """An object relationship"""
-  post: posts!
-  postId: Int!
-  updatedAt: timestamptz!
+type FilmStarshipsEdge {
+  """
+  The item at the end of the edge
+  """
+  node: Starship
+  """
+  A cursor for use in pagination
+  """
+  cursor: String!
 }
-
 """
-Boolean expression to filter rows from the table "community_posts". All fields are combined with a logical 'AND'.
-"""
-input community_posts_bool_exp {
-  _and: [community_posts_bool_exp]
-  _not: community_posts_bool_exp
-  _or: [community_posts_bool_exp]
-  community: communities_bool_exp
-  communityId: Int_comparison_exp
-  createdAt: timestamptz_comparison_exp
-  post: posts_bool_exp
-  postId: Int_comparison_exp
-  updatedAt: timestamptz_comparison_exp
-}
-
+A connection to a list of items.
 """
-ordering options when selecting data from "community_posts"
-"""
-input community_posts_order_by {
-  community: communities_order_by
-  communityId: order_by
-  createdAt: order_by
-  post: posts_order_by
-  postId: order_by
-  updatedAt: order_by
+type FilmVehiclesConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  A list of edges.
+  """
+  edges: [FilmVehiclesEdge]
+  """
+  A count of the total number of objects in this connection, ignoring pagination.
+  This allows a client to fetch the first five objects by passing "5" as the
+  argument to "first", then fetch the total count so it could display "5 of 83",
+  for example.
+  """
+  totalCount: Int
+  """
+  A list of all of the objects returned in the connection. This is a convenience
+  field provided for quickly exploring the API; rather than querying for
+  "{ edges { node } }" when no edge data is needed, this field can be be used
+  instead. Note that when clients like Relay need to fetch the "cursor" field on
+  the edge to enable efficient pagination, this shortcut cannot be used, and the
+  full "{ edges { node } }" version should be used instead.
+  """
+  vehicles: [Vehicle]
 }
-
 """
-primary key columns input for table: "community_posts"
+An edge in a connection.
 """
-input community_posts_pk_columns_input {
-  communityId: Int!
-  postId: Int!
+type FilmVehiclesEdge {
+  """
+  The item at the end of the edge
+  """
+  node: Vehicle
+  """
+  A cursor for use in pagination
+  """
+  cursor: String!
 }
-
 """
-select columns of table "community_posts"
+An object with an ID
 """
-enum community_posts_select_column {
-  """column name"""
-  communityId
-
-  """column name"""
-  createdAt
-
-  """column name"""
-  postId
-
-  """column name"""
-  updatedAt
-}
-
-enum community_types_enum {
-  COURSE
-  PROFESSIONAL_AREA
-  SUBJECT_AREA
+interface Node {
+  """
+  The id of the object.
+  """
+  id: ID!
 }
-
 """
-expression to compare columns of type community_types_enum. All fields are combined with logical 'AND'.
-"""
-input community_types_enum_comparison_exp {
-  _eq: community_types_enum
-  _in: [community_types_enum!]
-  _is_null: Boolean
-  _neq: community_types_enum
-  _nin: [community_types_enum!]
-}
-
+Information about pagination in a connection.
 """
-columns and relationships of "community_users"
-"""
-type community_users {
-  """An object relationship"""
-  community: communities!
-  communityId: Int!
-  createdAt: timestamptz!
-  updatedAt: timestamptz!
-
-  """An object relationship"""
-  userProfile: profiles!
-  userProfileId: Int!
+type PageInfo {
+  """
+  When paginating forwards, are there more items?
+  """
+  hasNextPage: Boolean!
+  """
+  When paginating backwards, are there more items?
+  """
+  hasPreviousPage: Boolean!
+  """
+  When paginating backwards, the cursor to continue.
+  """
+  startCursor: String
+  """
+  When paginating forwards, the cursor to continue.
+  """
+  endCursor: String
 }
-
 """
-aggregated selection of "community_users"
+A connection to a list of items.
 """
-type community_users_aggregate {
-  aggregate: community_users_aggregate_fields
-  nodes: [community_users!]!
+type PeopleConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  A list of edges.
+  """
+  edges: [PeopleEdge]
+  """
+  A count of the total number of objects in this connection, ignoring pagination.
+  This allows a client to fetch the first five objects by passing "5" as the
+  argument to "first", then fetch the total count so it could display "5 of 83",
+  for example.
+  """
+  totalCount: Int
+  """
+  A list of all of the objects returned in the connection. This is a convenience
+  field provided for quickly exploring the API; rather than querying for
+  "{ edges { node } }" when no edge data is needed, this field can be be used
+  instead. Note that when clients like Relay need to fetch the "cursor" field on
+  the edge to enable efficient pagination, this shortcut cannot be used, and the
+  full "{ edges { node } }" version should be used instead.
+  """
+  people: [Person]
 }
-
 """
-aggregate fields of "community_users"
-"""
-type community_users_aggregate_fields {
-  avg: community_users_avg_fields
-  count(columns: [community_users_select_column!], distinct: Boolean): Int
-  max: community_users_max_fields
-  min: community_users_min_fields
-  stddev: community_users_stddev_fields
-  stddev_pop: community_users_stddev_pop_fields
-  stddev_samp: community_users_stddev_samp_fields
-  sum: community_users_sum_fields
-  var_pop: community_users_var_pop_fields
-  var_samp: community_users_var_samp_fields
-  variance: community_users_variance_fields
-}
-
+An edge in a connection.
 """
-order by aggregate values of table "community_users"
-"""
-input community_users_aggregate_order_by {
-  avg: community_users_avg_order_by
-  count: order_by
-  max: community_users_max_order_by
-  min: community_users_min_order_by
-  stddev: community_users_stddev_order_by
-  stddev_pop: community_users_stddev_pop_order_by
-  stddev_samp: community_users_stddev_samp_order_by
-  sum: community_users_sum_order_by
-  var_pop: community_users_var_pop_order_by
-  var_samp: community_users_var_samp_order_by
-  variance: community_users_variance_order_by
-}
-
-"""aggregate avg on columns"""
-type community_users_avg_fields {
-  communityId: Float
-  userProfileId: Float
+type PeopleEdge {
+  """
+  The item at the end of the edge
+  """
+  node: Person
+  """
+  A cursor for use in pagination
+  """
+  cursor: String!
 }
-
 """
-order by avg() on columns of table "community_users"
+An individual person or character within the Star Wars universe.
 """
-input community_users_avg_order_by {
-  communityId: order_by
-  userProfileId: order_by
-}
+type Person implements Node {
+  """
+  The name of this person.
+  """
+  name: String
+  """
+  The birth year of the person, using the in-universe standard of BBY or ABY -
+  Before the Battle of Yavin or After the Battle of Yavin. The Battle of Yavin is
+  a battle that occurs at the end of Star Wars episode IV: A New Hope.
+  """
+  birthYear: String
 
-"""
-Boolean expression to filter rows from the table "community_users". All fields are combined with a logical 'AND'.
-"""
-input community_users_bool_exp {
-  _and: [community_users_bool_exp]
-  _not: community_users_bool_exp
-  _or: [community_users_bool_exp]
-  community: communities_bool_exp
-  communityId: Int_comparison_exp
-  createdAt: timestamptz_comparison_exp
-  updatedAt: timestamptz_comparison_exp
-  userProfile: profiles_bool_exp
-  userProfileId: Int_comparison_exp
-}
+  """
+  The eye color of this person. Will be "unknown" if not known or "n/a" if the
+  person does not have an eye.
+  """
+  eyeColor: String
 
-"""aggregate max on columns"""
-type community_users_max_fields {
-  communityId: Int
-  createdAt: timestamptz
-  updatedAt: timestamptz
-  userProfileId: Int
+  """
+  The gender of this person. Either "Male", "Female" or "unknown",
+  "n/a" if the person does not have a gender.
+  """
+  gender: String
+  """
+  The hair color of this person. Will be "unknown" if not known or "n/a" if the
+  person does not have hair.
+  """
+  hairColor: String
+  """
+  The height of the person in centimeters.
+  """
+  height: Int
+  """
+  The mass of the person in kilograms.
+  """
+  mass: Float
+  """
+  The skin color of this person.
+  """
+  skinColor: String
+  """
+  A planet that this person was born on or inhabits.
+  """
+  homeworld: Planet
+  filmConnection(
+    after: String
+    first: Int
+    before: String
+    last: Int
+  ): PersonFilmsConnection
+  """
+  The species that this person belongs to, or null if unknown.
+  """
+  species: Species
+  starshipConnection(
+    after: String
+    first: Int
+    before: String
+    last: Int
+  ): PersonStarshipsConnection
+  vehicleConnection(
+    after: String
+    first: Int
+    before: String
+    last: Int
+  ): PersonVehiclesConnection
+  """
+  The ISO 8601 date format of the time that this resource was created.
+  """
+  created: String
+  """
+  The ISO 8601 date format of the time that this resource was edited.
+  """
+  edited: String
+  """
+  The ID of an object
+  """
+  id: ID!
 }
-
 """
-order by max() on columns of table "community_users"
+A connection to a list of items.
 """
-input community_users_max_order_by {
-  communityId: order_by
-  createdAt: order_by
-  updatedAt: order_by
-  userProfileId: order_by
-}
-
-"""aggregate min on columns"""
-type community_users_min_fields {
-  communityId: Int
-  createdAt: timestamptz
-  updatedAt: timestamptz
-  userProfileId: Int
+type PersonFilmsConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  A list of edges.
+  """
+  edges: [PersonFilmsEdge]
+  """
+  A count of the total number of objects in this connection, ignoring pagination.
+  This allows a client to fetch the first five objects by passing "5" as the
+  argument to "first", then fetch the total count so it could display "5 of 83",
+  for example.
+  """
+  totalCount: Int
+  """
+  A list of all of the objects returned in the connection. This is a convenience
+  field provided for quickly exploring the API; rather than querying for
+  "{ edges { node } }" when no edge data is needed, this field can be be used
+  instead. Note that when clients like Relay need to fetch the "cursor" field on
+  the edge to enable efficient pagination, this shortcut cannot be used, and the
+  full "{ edges { node } }" version should be used instead.
+  """
+  films: [Film]
 }
-
 """
-order by min() on columns of table "community_users"
-"""
-input community_users_min_order_by {
-  communityId: order_by
-  createdAt: order_by
-  updatedAt: order_by
-  userProfileId: order_by
-}
-
+An edge in a connection.
 """
-ordering options when selecting data from "community_users"
-"""
-input community_users_order_by {
-  community: communities_order_by
-  communityId: order_by
-  createdAt: order_by
-  updatedAt: order_by
-  userProfile: profiles_order_by
-  userProfileId: order_by
+type PersonFilmsEdge {
+  """
+  The item at the end of the edge
+  """
+  node: Film
+  """
+  A cursor for use in pagination
+  """
+  cursor: String!
 }
-
 """
-primary key columns input for table: "community_users"
+A connection to a list of items.
 """
-input community_users_pk_columns_input {
-  communityId: Int!
-  userProfileId: Int!
+type PersonStarshipsConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  A list of edges.
+  """
+  edges: [PersonStarshipsEdge]
+  """
+  A count of the total number of objects in this connection, ignoring pagination.
+  This allows a client to fetch the first five objects by passing "5" as the
+  argument to "first", then fetch the total count so it could display "5 of 83",
+  for example.
+  """
+  totalCount: Int
+  """
+  A list of all of the objects returned in the connection. This is a convenience
+  field provided for quickly exploring the API; rather than querying for
+  "{ edges { node } }" when no edge data is needed, this field can be be used
+  instead. Note that when clients like Relay need to fetch the "cursor" field on
+  the edge to enable efficient pagination, this shortcut cannot be used, and the
+  full "{ edges { node } }" version should be used instead.
+  """
+  starships: [Starship]
 }
-
 """
-select columns of table "community_users"
+An edge in a connection.
 """
-enum community_users_select_column {
-  """column name"""
-  communityId
-
-  """column name"""
-  createdAt
-
-  """column name"""
-  updatedAt
-
-  """column name"""
-  userProfileId
-}
-
-"""aggregate stddev on columns"""
-type community_users_stddev_fields {
-  communityId: Float
-  userProfileId: Float
+type PersonStarshipsEdge {
+  """
+  The item at the end of the edge
+  """
+  node: Starship
+  """
+  A cursor for use in pagination
+  """
+  cursor: String!
 }
-
 """
-order by stddev() on columns of table "community_users"
+A connection to a list of items.
 """
-input community_users_stddev_order_by {
-  communityId: order_by
-  userProfileId: order_by
-}
-
-"""aggregate stddev_pop on columns"""
-type community_users_stddev_pop_fields {
-  communityId: Float
-  userProfileId: Float
-}
-
-"""
-order by stddev_pop() on columns of table "community_users"
-"""
-input community_users_stddev_pop_order_by {
-  communityId: order_by
-  userProfileId: order_by
-}
-
-"""aggregate stddev_samp on columns"""
-type community_users_stddev_samp_fields {
-  communityId: Float
-  userProfileId: Float
-}
-
-"""
-order by stddev_samp() on columns of table "community_users"
-"""
-input community_users_stddev_samp_order_by {
-  communityId: order_by
-  userProfileId: order_by
-}
-
-"""aggregate sum on columns"""
-type community_users_sum_fields {
-  communityId: Int
-  userProfileId: Int
-}
-
-"""
-order by sum() on columns of table "community_users"
-"""
-input community_users_sum_order_by {
-  communityId: order_by
-  userProfileId: order_by
-}
-
-"""aggregate var_pop on columns"""
-type community_users_var_pop_fields {
-  communityId: Float
-  userProfileId: Float
-}
-
-"""
-order by var_pop() on columns of table "community_users"
-"""
-input community_users_var_pop_order_by {
-  communityId: order_by
-  userProfileId: order_by
-}
-
-"""aggregate var_samp on columns"""
-type community_users_var_samp_fields {
-  communityId: Float
-  userProfileId: Float
-}
-
-"""
-order by var_samp() on columns of table "community_users"
-"""
-input community_users_var_samp_order_by {
-  communityId: order_by
-  userProfileId: order_by
-}
-
-"""aggregate variance on columns"""
-type community_users_variance_fields {
-  communityId: Float
-  userProfileId: Float
-}
-
-"""
-order by variance() on columns of table "community_users"
-"""
-input community_users_variance_order_by {
-  communityId: order_by
-  userProfileId: order_by
-}
-
-"""
-columns and relationships of "courses"
-"""
-type courses {
-  """An object relationship"""
-  community: communities
-  courseId: Int!
-  courseNumber: Int!
-  createdAt: timestamptz!
-  description: String
-  name: String!
-
-  """An object relationship"""
-  school: schools
-  schoolId: Int
-
-  """An object relationship"""
-  subjectArea: subject_areas
-  subjectAreaId: Int
-  subjectCode: String!
-  updatedAt: timestamptz!
-}
-
-"""
-Boolean expression to filter rows from the table "courses". All fields are combined with a logical 'AND'.
-"""
-input courses_bool_exp {
-  _and: [courses_bool_exp]
-  _not: courses_bool_exp
-  _or: [courses_bool_exp]
-  community: communities_bool_exp
-  courseId: Int_comparison_exp
-  courseNumber: Int_comparison_exp
-  createdAt: timestamptz_comparison_exp
-  description: String_comparison_exp
-  name: String_comparison_exp
-  school: schools_bool_exp
-  schoolId: Int_comparison_exp
-  subjectArea: subject_areas_bool_exp
-  subjectAreaId: Int_comparison_exp
-  subjectCode: String_comparison_exp
-  updatedAt: timestamptz_comparison_exp
-}
-
-"""
-ordering options when selecting data from "courses"
-"""
-input courses_order_by {
-  community: communities_order_by
-  courseId: order_by
-  courseNumber: order_by
-  createdAt: order_by
-  description: order_by
-  name: order_by
-  school: schools_order_by
-  schoolId: order_by
-  subjectArea: subject_areas_order_by
-  subjectAreaId: order_by
-  subjectCode: order_by
-  updatedAt: order_by
-}
-
-"""
-primary key columns input for table: "courses"
-"""
-input courses_pk_columns_input {
-  courseId: Int!
-}
-
-"""
-select columns of table "courses"
-"""
-enum courses_select_column {
-  """column name"""
-  courseId
-
-  """column name"""
-  courseNumber
-
-  """column name"""
-  createdAt
-
-  """column name"""
-  description
-
-  """column name"""
-  name
-
-  """column name"""
-  schoolId
-
-  """column name"""
-  subjectAreaId
-
-  """column name"""
-  subjectCode
-
-  """column name"""
-  updatedAt
-}
-
-input CreateImagePDFUrlInput {
-  imgS3Key: String!
-}
-
-type CreateImagePDFUrlOutput {
-  pdfS3Key: String!
-}
-
-input CreateThumbnailUrlInput {
-  s3key: String!
-}
-
-type CreateThumbnailUrlOutput {
-  thumbnailUrl: String!
-}
-
-input CreateUploadUrlInput {
-  contentType: String!
-}
-
-type CreateUploadUrlOutput {
-  presignedPost: String!
-}
-
-"""
-columns and relationships of "downvotes"
-"""
-type downvotes {
-  createdAt: timestamptz!
-
-  """An object relationship"""
-  post: posts!
-  postId: Int!
-  updatedAt: timestamptz!
-
-  """An object relationship"""
-  userProfile: profiles!
-  userProfileId: Int!
-}
-
-"""
-aggregated selection of "downvotes"
-"""
-type downvotes_aggregate {
-  aggregate: downvotes_aggregate_fields
-  nodes: [downvotes!]!
-}
-
-"""
-aggregate fields of "downvotes"
-"""
-type downvotes_aggregate_fields {
-  avg: downvotes_avg_fields
-  count(columns: [downvotes_select_column!], distinct: Boolean): Int
-  max: downvotes_max_fields
-  min: downvotes_min_fields
-  stddev: downvotes_stddev_fields
-  stddev_pop: downvotes_stddev_pop_fields
-  stddev_samp: downvotes_stddev_samp_fields
-  sum: downvotes_sum_fields
-  var_pop: downvotes_var_pop_fields
-  var_samp: downvotes_var_samp_fields
-  variance: downvotes_variance_fields
-}
-
-"""
-order by aggregate values of table "downvotes"
-"""
-input downvotes_aggregate_order_by {
-  avg: downvotes_avg_order_by
-  count: order_by
-  max: downvotes_max_order_by
-  min: downvotes_min_order_by
-  stddev: downvotes_stddev_order_by
-  stddev_pop: downvotes_stddev_pop_order_by
-  stddev_samp: downvotes_stddev_samp_order_by
-  sum: downvotes_sum_order_by
-  var_pop: downvotes_var_pop_order_by
-  var_samp: downvotes_var_samp_order_by
-  variance: downvotes_variance_order_by
-}
-
-"""aggregate avg on columns"""
-type downvotes_avg_fields {
-  postId: Float
-  userProfileId: Float
-}
-
-"""
-order by avg() on columns of table "downvotes"
-"""
-input downvotes_avg_order_by {
-  postId: order_by
-  userProfileId: order_by
-}
-
-"""
-Boolean expression to filter rows from the table "downvotes". All fields are combined with a logical 'AND'.
-"""
-input downvotes_bool_exp {
-  _and: [downvotes_bool_exp]
-  _not: downvotes_bool_exp
-  _or: [downvotes_bool_exp]
-  createdAt: timestamptz_comparison_exp
-  post: posts_bool_exp
-  postId: Int_comparison_exp
-  updatedAt: timestamptz_comparison_exp
-  userProfile: profiles_bool_exp
-  userProfileId: Int_comparison_exp
-}
-
-"""aggregate max on columns"""
-type downvotes_max_fields {
-  createdAt: timestamptz
-  postId: Int
-  updatedAt: timestamptz
-  userProfileId: Int
-}
-
-"""
-order by max() on columns of table "downvotes"
-"""
-input downvotes_max_order_by {
-  createdAt: order_by
-  postId: order_by
-  updatedAt: order_by
-  userProfileId: order_by
-}
-
-"""aggregate min on columns"""
-type downvotes_min_fields {
-  createdAt: timestamptz
-  postId: Int
-  updatedAt: timestamptz
-  userProfileId: Int
-}
-
-"""
-order by min() on columns of table "downvotes"
-"""
-input downvotes_min_order_by {
-  createdAt: order_by
-  postId: order_by
-  updatedAt: order_by
-  userProfileId: order_by
-}
-
-"""
-ordering options when selecting data from "downvotes"
-"""
-input downvotes_order_by {
-  createdAt: order_by
-  post: posts_order_by
-  postId: order_by
-  updatedAt: order_by
-  userProfile: profiles_order_by
-  userProfileId: order_by
-}
-
-"""
-primary key columns input for table: "downvotes"
-"""
-input downvotes_pk_columns_input {
-  postId: Int!
-  userProfileId: Int!
-}
-
-"""
-select columns of table "downvotes"
-"""
-enum downvotes_select_column {
-  """column name"""
-  createdAt
-
-  """column name"""
-  postId
-
-  """column name"""
-  updatedAt
-
-  """column name"""
-  userProfileId
-}
-
-"""aggregate stddev on columns"""
-type downvotes_stddev_fields {
-  postId: Float
-  userProfileId: Float
-}
-
-"""
-order by stddev() on columns of table "downvotes"
-"""
-input downvotes_stddev_order_by {
-  postId: order_by
-  userProfileId: order_by
-}
-
-"""aggregate stddev_pop on columns"""
-type downvotes_stddev_pop_fields {
-  postId: Float
-  userProfileId: Float
-}
-
-"""
-order by stddev_pop() on columns of table "downvotes"
-"""
-input downvotes_stddev_pop_order_by {
-  postId: order_by
-  userProfileId: order_by
-}
-
-"""aggregate stddev_samp on columns"""
-type downvotes_stddev_samp_fields {
-  postId: Float
-  userProfileId: Float
-}
-
-"""
-order by stddev_samp() on columns of table "downvotes"
-"""
-input downvotes_stddev_samp_order_by {
-  postId: order_by
-  userProfileId: order_by
-}
-
-"""aggregate sum on columns"""
-type downvotes_sum_fields {
-  postId: Int
-  userProfileId: Int
-}
-
-"""
-order by sum() on columns of table "downvotes"
-"""
-input downvotes_sum_order_by {
-  postId: order_by
-  userProfileId: order_by
-}
-
-"""aggregate var_pop on columns"""
-type downvotes_var_pop_fields {
-  postId: Float
-  userProfileId: Float
-}
-
-"""
-order by var_pop() on columns of table "downvotes"
-"""
-input downvotes_var_pop_order_by {
-  postId: order_by
-  userProfileId: order_by
-}
-
-"""aggregate var_samp on columns"""
-type downvotes_var_samp_fields {
-  postId: Float
-  userProfileId: Float
-}
-
-"""
-order by var_samp() on columns of table "downvotes"
-"""
-input downvotes_var_samp_order_by {
-  postId: order_by
-  userProfileId: order_by
-}
-
-"""aggregate variance on columns"""
-type downvotes_variance_fields {
-  postId: Float
-  userProfileId: Float
-}
-
-"""
-order by variance() on columns of table "downvotes"
-"""
-input downvotes_variance_order_by {
-  postId: order_by
-  userProfileId: order_by
-}
-
-"""
-expression to compare columns of type Int. All fields are combined with logical 'AND'.
-"""
-input Int_comparison_exp {
-  _eq: Int
-  _gt: Int
-  _gte: Int
-  _in: [Int!]
-  _is_null: Boolean
-  _lt: Int
-  _lte: Int
-  _neq: Int
-  _nin: [Int!]
-}
-
-scalar json
-
-"""
-expression to compare columns of type json. All fields are combined with logical 'AND'.
-"""
-input json_comparison_exp {
-  _eq: json
-  _gt: json
-  _gte: json
-  _in: [json!]
-  _is_null: Boolean
-  _lt: json
-  _lte: json
-  _neq: json
-  _nin: [json!]
-}
-
-"""mutation root"""
-type mutation_root {
-  """
-  perform the action: "signIn"
-  """
-  signIn(data: SignInInput!): SignInOutput
-
-  """
-  perform the action: "signInWithGoogle"
-  """
-  signInWithGoogle(data: SignInWithGoogleInput!): SignInWithGoogleOutput
-
-  """
-  perform the action: "signUp"
-  """
-  signUp(data: SignUpInput!): SignUpOutput
-}
-
-enum note_categories_enum {
-  LECTURE_NOTES
-  READING_NOTES
-  STUDY_GUIDE
-}
-
-"""
-expression to compare columns of type note_categories_enum. All fields are combined with logical 'AND'.
-"""
-input note_categories_enum_comparison_exp {
-  _eq: note_categories_enum
-  _in: [note_categories_enum!]
-  _is_null: Boolean
-  _neq: note_categories_enum
-  _nin: [note_categories_enum!]
-}
-
-"""
-columns and relationships of "notes"
-"""
-type notes {
-  category: note_categories_enum!
-  createdAt: timestamptz!
-  description: String!
-  noteId: Int!
-  noteUrl: String!
-  previewThumbnailUrl: String!
-  title: String!
-  updatedAt: timestamptz!
-
-  """An object relationship"""
-  upload: uploads
-}
-
-"""
-Boolean expression to filter rows from the table "notes". All fields are combined with a logical 'AND'.
-"""
-input notes_bool_exp {
-  _and: [notes_bool_exp]
-  _not: notes_bool_exp
-  _or: [notes_bool_exp]
-  category: note_categories_enum_comparison_exp
-  createdAt: timestamptz_comparison_exp
-  description: String_comparison_exp
-  noteId: Int_comparison_exp
-  noteUrl: String_comparison_exp
-  previewThumbnailUrl: String_comparison_exp
-  title: String_comparison_exp
-  updatedAt: timestamptz_comparison_exp
-  upload: uploads_bool_exp
-}
-
-"""
-ordering options when selecting data from "notes"
-"""
-input notes_order_by {
-  category: order_by
-  createdAt: order_by
-  description: order_by
-  noteId: order_by
-  noteUrl: order_by
-  previewThumbnailUrl: order_by
-  title: order_by
-  updatedAt: order_by
-  upload: uploads_order_by
-}
-
-"""
-primary key columns input for table: "notes"
-"""
-input notes_pk_columns_input {
-  noteId: Int!
-}
-
-"""
-select columns of table "notes"
-"""
-enum notes_select_column {
-  """column name"""
-  category
-
-  """column name"""
-  createdAt
-
-  """column name"""
-  description
-
-  """column name"""
-  noteId
-
-  """column name"""
-  noteUrl
-
-  """column name"""
-  previewThumbnailUrl
-
-  """column name"""
-  title
-
-  """column name"""
-  updatedAt
-}
-
-"""column ordering options"""
-enum order_by {
-  """in the ascending order, nulls last"""
-  asc
-
-  """in the ascending order, nulls first"""
-  asc_nulls_first
-
-  """in the ascending order, nulls last"""
-  asc_nulls_last
-
-  """in the descending order, nulls first"""
-  desc
-
-  """in the descending order, nulls first"""
-  desc_nulls_first
-
-  """in the descending order, nulls last"""
-  desc_nulls_last
-}
-
-enum post_types_enum {
-  ANNOUNCEMENT
-  ANSWER
-  QUESTION
-  UPLOAD
-}
-
-"""
-expression to compare columns of type post_types_enum. All fields are combined with logical 'AND'.
-"""
-input post_types_enum_comparison_exp {
-  _eq: post_types_enum
-  _in: [post_types_enum!]
-  _is_null: Boolean
-  _neq: post_types_enum
-  _nin: [post_types_enum!]
-}
-
-"""
-columns and relationships of "posts"
-"""
-type posts {
-  """An object relationship"""
-  announcement: announcements
-  announcementId: Int
-
-  """An object relationship"""
-  answer: answers
-  answerId: Int
-
-  """An array relationship"""
-  communities(
-    """distinct select on columns"""
-    distinct_on: [community_posts_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [community_posts_order_by!]
-
-    """filter the rows returned"""
-    where: community_posts_bool_exp
-  ): [community_posts!]!
-  createdAt: timestamptz!
-
-  """An array relationship"""
-  downvotes(
-    """distinct select on columns"""
-    distinct_on: [downvotes_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [downvotes_order_by!]
-
-    """filter the rows returned"""
-    where: downvotes_bool_exp
-  ): [downvotes!]!
-
-  """An aggregated array relationship"""
-  downvotes_aggregate(
-    """distinct select on columns"""
-    distinct_on: [downvotes_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [downvotes_order_by!]
-
-    """filter the rows returned"""
-    where: downvotes_bool_exp
-  ): downvotes_aggregate!
-
-  """
-  A computed field, executes function "post_liked_by_me"
-  """
-  likedByMe: Boolean
-  postId: Int!
-  postType: post_types_enum!
-
-  """An object relationship"""
-  question: questions
-  questionId: Int
-
-  """An object relationship"""
-  responseTo: responses
-  updatedAt: timestamptz!
-
-  """An object relationship"""
-  upload: uploads
-  uploadId: Int
-
-  """An array relationship"""
-  upvotes(
-    """distinct select on columns"""
-    distinct_on: [upvotes_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [upvotes_order_by!]
-
-    """filter the rows returned"""
-    where: upvotes_bool_exp
-  ): [upvotes!]!
-
-  """An aggregated array relationship"""
-  upvotes_aggregate(
-    """distinct select on columns"""
-    distinct_on: [upvotes_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [upvotes_order_by!]
-
-    """filter the rows returned"""
-    where: upvotes_bool_exp
-  ): upvotes_aggregate!
-}
-
-"""
-Boolean expression to filter rows from the table "posts". All fields are combined with a logical 'AND'.
-"""
-input posts_bool_exp {
-  _and: [posts_bool_exp]
-  _not: posts_bool_exp
-  _or: [posts_bool_exp]
-  announcement: announcements_bool_exp
-  announcementId: Int_comparison_exp
-  answer: answers_bool_exp
-  answerId: Int_comparison_exp
-  communities: community_posts_bool_exp
-  createdAt: timestamptz_comparison_exp
-  downvotes: downvotes_bool_exp
-  postId: Int_comparison_exp
-  postType: post_types_enum_comparison_exp
-  question: questions_bool_exp
-  questionId: Int_comparison_exp
-  responseTo: responses_bool_exp
-  updatedAt: timestamptz_comparison_exp
-  upload: uploads_bool_exp
-  uploadId: Int_comparison_exp
-  upvotes: upvotes_bool_exp
-}
-
-"""
-ordering options when selecting data from "posts"
-"""
-input posts_order_by {
-  announcement: announcements_order_by
-  announcementId: order_by
-  answer: answers_order_by
-  answerId: order_by
-  createdAt: order_by
-  downvotes_aggregate: downvotes_aggregate_order_by
-  postId: order_by
-  postType: order_by
-  question: questions_order_by
-  questionId: order_by
-  responseTo: responses_order_by
-  updatedAt: order_by
-  upload: uploads_order_by
-  uploadId: order_by
-  upvotes_aggregate: upvotes_aggregate_order_by
-}
-
-"""
-primary key columns input for table: "posts"
-"""
-input posts_pk_columns_input {
-  postId: Int!
-}
-
-"""
-select columns of table "posts"
-"""
-enum posts_select_column {
-  """column name"""
-  announcementId
-
-  """column name"""
-  answerId
-
-  """column name"""
-  createdAt
-
-  """column name"""
-  postId
-
-  """column name"""
-  postType
-
-  """column name"""
-  questionId
-
-  """column name"""
-  updatedAt
-
-  """column name"""
-  uploadId
-}
-
-"""
-columns and relationships of "professional_areas"
-"""
-type professional_areas {
-  """An array relationship"""
-  communities(
-    """distinct select on columns"""
-    distinct_on: [communities_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [communities_order_by!]
-
-    """filter the rows returned"""
-    where: communities_bool_exp
-  ): [communities!]!
-  createdAt: timestamptz!
-  description: String
-  name: String!
-  professionalAreaId: Int!
-  shortName: String!
-  updatedAt: timestamptz!
-}
-
-"""
-Boolean expression to filter rows from the table "professional_areas". All fields are combined with a logical 'AND'.
-"""
-input professional_areas_bool_exp {
-  _and: [professional_areas_bool_exp]
-  _not: professional_areas_bool_exp
-  _or: [professional_areas_bool_exp]
-  communities: communities_bool_exp
-  createdAt: timestamptz_comparison_exp
-  description: String_comparison_exp
-  name: String_comparison_exp
-  professionalAreaId: Int_comparison_exp
-  shortName: String_comparison_exp
-  updatedAt: timestamptz_comparison_exp
-}
-
-"""
-ordering options when selecting data from "professional_areas"
-"""
-input professional_areas_order_by {
-  createdAt: order_by
-  description: order_by
-  name: order_by
-  professionalAreaId: order_by
-  shortName: order_by
-  updatedAt: order_by
-}
-
-"""
-primary key columns input for table: "professional_areas"
-"""
-input professional_areas_pk_columns_input {
-  professionalAreaId: Int!
-}
-
-"""
-select columns of table "professional_areas"
-"""
-enum professional_areas_select_column {
-  """column name"""
-  createdAt
-
-  """column name"""
-  description
-
-  """column name"""
-  name
-
-  """column name"""
-  professionalAreaId
-
-  """column name"""
-  shortName
-
-  """column name"""
-  updatedAt
-}
-
-"""
-columns and relationships of "profiles"
-"""
-type profiles {
-  """An array relationship"""
-  answers(
-    """distinct select on columns"""
-    distinct_on: [answers_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [answers_order_by!]
-
-    """filter the rows returned"""
-    where: answers_bool_exp
-  ): [answers!]!
-  avatarUrl: String
-
-  """An array relationship"""
-  communities(
-    """distinct select on columns"""
-    distinct_on: [community_users_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [community_users_order_by!]
-
-    """filter the rows returned"""
-    where: community_users_bool_exp
-  ): [community_users!]!
-
-  """An aggregated array relationship"""
-  communities_aggregate(
-    """distinct select on columns"""
-    distinct_on: [community_users_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [community_users_order_by!]
-
-    """filter the rows returned"""
-    where: community_users_bool_exp
-  ): community_users_aggregate!
-  createdAt: timestamptz!
-  description: String
-
-  """An array relationship"""
-  downvotedPosts(
-    """distinct select on columns"""
-    distinct_on: [downvotes_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [downvotes_order_by!]
-
-    """filter the rows returned"""
-    where: downvotes_bool_exp
-  ): [downvotes!]!
-
-  """An aggregated array relationship"""
-  downvotedPosts_aggregate(
-    """distinct select on columns"""
-    distinct_on: [downvotes_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [downvotes_order_by!]
-
-    """filter the rows returned"""
-    where: downvotes_bool_exp
-  ): downvotes_aggregate!
-
-  """
-  A computed field, executes function "profile_feed_posts"
-  """
-  feedPosts(
-    """distinct select on columns"""
-    distinct_on: [community_posts_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [community_posts_order_by!]
-
-    """filter the rows returned"""
-    where: community_posts_bool_exp
-  ): [community_posts!]
-  firstName: String
-  lastName: String
-  penName: String
-  profileId: Int!
-
-  """An array relationship"""
-  questions(
-    """distinct select on columns"""
-    distinct_on: [questions_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [questions_order_by!]
-
-    """filter the rows returned"""
-    where: questions_bool_exp
-  ): [questions!]!
-
-  """An object relationship"""
-  school: schools!
-  schoolId: Int!
-  updatedAt: timestamptz!
-
-  """An array relationship"""
-  uploads(
-    """distinct select on columns"""
-    distinct_on: [uploads_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [uploads_order_by!]
-
-    """filter the rows returned"""
-    where: uploads_bool_exp
-  ): [uploads!]!
-
-  """An array relationship"""
-  upvotedPosts(
-    """distinct select on columns"""
-    distinct_on: [upvotes_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [upvotes_order_by!]
-
-    """filter the rows returned"""
-    where: upvotes_bool_exp
-  ): [upvotes!]!
-
-  """An aggregated array relationship"""
-  upvotedPosts_aggregate(
-    """distinct select on columns"""
-    distinct_on: [upvotes_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [upvotes_order_by!]
-
-    """filter the rows returned"""
-    where: upvotes_bool_exp
-  ): upvotes_aggregate!
-  usePenName: Boolean
-  userId: Int!
-
-  """
-  A computed field, executes function "profile_user_name"
-  """
-  userName: String
-}
-
-"""
-Boolean expression to filter rows from the table "profiles". All fields are combined with a logical 'AND'.
-"""
-input profiles_bool_exp {
-  _and: [profiles_bool_exp]
-  _not: profiles_bool_exp
-  _or: [profiles_bool_exp]
-  answers: answers_bool_exp
-  avatarUrl: String_comparison_exp
-  communities: community_users_bool_exp
-  createdAt: timestamptz_comparison_exp
-  description: String_comparison_exp
-  downvotedPosts: downvotes_bool_exp
-  firstName: String_comparison_exp
-  lastName: String_comparison_exp
-  penName: String_comparison_exp
-  profileId: Int_comparison_exp
-  questions: questions_bool_exp
-  school: schools_bool_exp
-  schoolId: Int_comparison_exp
-  updatedAt: timestamptz_comparison_exp
-  uploads: uploads_bool_exp
-  upvotedPosts: upvotes_bool_exp
-  usePenName: Boolean_comparison_exp
-  userId: Int_comparison_exp
-}
-
-"""
-ordering options when selecting data from "profiles"
-"""
-input profiles_order_by {
-  avatarUrl: order_by
-  communities_aggregate: community_users_aggregate_order_by
-  createdAt: order_by
-  description: order_by
-  downvotedPosts_aggregate: downvotes_aggregate_order_by
-  firstName: order_by
-  lastName: order_by
-  penName: order_by
-  profileId: order_by
-  school: schools_order_by
-  schoolId: order_by
-  updatedAt: order_by
-  upvotedPosts_aggregate: upvotes_aggregate_order_by
-  usePenName: order_by
-  userId: order_by
-}
-
-"""
-primary key columns input for table: "profiles"
-"""
-input profiles_pk_columns_input {
-  profileId: Int!
-}
-
-"""
-select columns of table "profiles"
-"""
-enum profiles_select_column {
-  """column name"""
-  avatarUrl
-
-  """column name"""
-  createdAt
-
-  """column name"""
-  description
-
-  """column name"""
-  firstName
-
-  """column name"""
-  lastName
-
-  """column name"""
-  penName
-
-  """column name"""
-  profileId
-
-  """column name"""
-  schoolId
-
-  """column name"""
-  updatedAt
-
-  """column name"""
-  usePenName
-
-  """column name"""
-  userId
-}
-
-"""query root"""
-type query_root {
-  """fetch data from the table: "announcements" using primary key columns"""
-  announcement(announcementId: Int!): announcements
-
-  """
-  fetch data from the table: "announcements"
-  """
-  announcements(
-    """distinct select on columns"""
-    distinct_on: [announcements_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [announcements_order_by!]
-
-    """filter the rows returned"""
-    where: announcements_bool_exp
-  ): [announcements!]!
-
-  """fetch data from the table: "answers" using primary key columns"""
-  answer(answerId: Int!): answers
-
-  """
-  fetch data from the table: "answers"
-  """
-  answers(
-    """distinct select on columns"""
-    distinct_on: [answers_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [answers_order_by!]
-
-    """filter the rows returned"""
-    where: answers_bool_exp
-  ): [answers!]!
-
-  """
-  fetch data from the table: "communities"
-  """
-  communities(
-    """distinct select on columns"""
-    distinct_on: [communities_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [communities_order_by!]
-
-    """filter the rows returned"""
-    where: communities_bool_exp
-  ): [communities!]!
-
-  """fetch data from the table: "communities" using primary key columns"""
-  community(communityId: Int!): communities
-
-  """fetch data from the table: "community_posts" using primary key columns"""
-  communityPost(communityId: Int!, postId: Int!): community_posts
-
-  """
-  fetch data from the table: "community_posts"
-  """
-  communityPosts(
-    """distinct select on columns"""
-    distinct_on: [community_posts_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [community_posts_order_by!]
-
-    """filter the rows returned"""
-    where: community_posts_bool_exp
-  ): [community_posts!]!
-
-  """fetch data from the table: "community_users" using primary key columns"""
-  communityUser(communityId: Int!, userProfileId: Int!): community_users
-
-  """
-  fetch data from the table: "community_users"
-  """
-  communityUsers(
-    """distinct select on columns"""
-    distinct_on: [community_users_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [community_users_order_by!]
-
-    """filter the rows returned"""
-    where: community_users_bool_exp
-  ): [community_users!]!
-
-  """
-  fetch aggregated fields from the table: "community_users"
-  """
-  communityUsersAggregate(
-    """distinct select on columns"""
-    distinct_on: [community_users_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [community_users_order_by!]
-
-    """filter the rows returned"""
-    where: community_users_bool_exp
-  ): community_users_aggregate!
-
-  """fetch data from the table: "courses" using primary key columns"""
-  course(courseId: Int!): courses
-
-  """
-  fetch data from the table: "courses"
-  """
-  courses(
-    """distinct select on columns"""
-    distinct_on: [courses_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [courses_order_by!]
-
-    """filter the rows returned"""
-    where: courses_bool_exp
-  ): [courses!]!
-
-  """fetch data from the table: "downvotes" using primary key columns"""
-  downvote(postId: Int!, userProfileId: Int!): downvotes
-
-  """
-  fetch data from the table: "downvotes"
-  """
-  downvotes(
-    """distinct select on columns"""
-    distinct_on: [downvotes_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [downvotes_order_by!]
-
-    """filter the rows returned"""
-    where: downvotes_bool_exp
-  ): [downvotes!]!
-
-  """
-  fetch aggregated fields from the table: "downvotes"
-  """
-  downvotesAggregate(
-    """distinct select on columns"""
-    distinct_on: [downvotes_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [downvotes_order_by!]
-
-    """filter the rows returned"""
-    where: downvotes_bool_exp
-  ): downvotes_aggregate!
-
-  """fetch data from the table: "notes" using primary key columns"""
-  note(noteId: Int!): notes
-
-  """
-  fetch data from the table: "notes"
-  """
-  notes(
-    """distinct select on columns"""
-    distinct_on: [notes_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [notes_order_by!]
-
-    """filter the rows returned"""
-    where: notes_bool_exp
-  ): [notes!]!
-
-  """fetch data from the table: "posts" using primary key columns"""
-  post(postId: Int!): posts
-
-  """
-  fetch data from the table: "posts"
-  """
-  posts(
-    """distinct select on columns"""
-    distinct_on: [posts_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [posts_order_by!]
-
-    """filter the rows returned"""
-    where: posts_bool_exp
-  ): [posts!]!
-
-  """
-  fetch data from the table: "professional_areas" using primary key columns
-  """
-  professionalArea(professionalAreaId: Int!): professional_areas
-
-  """
-  fetch data from the table: "professional_areas"
-  """
-  professionalAreas(
-    """distinct select on columns"""
-    distinct_on: [professional_areas_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [professional_areas_order_by!]
-
-    """filter the rows returned"""
-    where: professional_areas_bool_exp
-  ): [professional_areas!]!
-
-  """fetch data from the table: "profiles" using primary key columns"""
-  profile(profileId: Int!): profiles
-
-  """
-  fetch data from the table: "profiles"
-  """
-  profiles(
-    """distinct select on columns"""
-    distinct_on: [profiles_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [profiles_order_by!]
-
-    """filter the rows returned"""
-    where: profiles_bool_exp
-  ): [profiles!]!
-
-  """fetch data from the table: "questions" using primary key columns"""
-  question(questionId: Int!): questions
-
-  """
-  fetch data from the table: "questions"
-  """
-  questions(
-    """distinct select on columns"""
-    distinct_on: [questions_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [questions_order_by!]
-
-    """filter the rows returned"""
-    where: questions_bool_exp
-  ): [questions!]!
-
-  """fetch data from the table: "responses" using primary key columns"""
-  response(questionId: Int!, responsePostId: Int!): responses
-
-  """
-  fetch data from the table: "responses"
-  """
-  responses(
-    """distinct select on columns"""
-    distinct_on: [responses_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [responses_order_by!]
-
-    """filter the rows returned"""
-    where: responses_bool_exp
-  ): [responses!]!
-
-  """
-  fetch aggregated fields from the table: "responses"
-  """
-  responsesAggregate(
-    """distinct select on columns"""
-    distinct_on: [responses_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [responses_order_by!]
-
-    """filter the rows returned"""
-    where: responses_bool_exp
-  ): responses_aggregate!
-
-  """fetch data from the table: "schools" using primary key columns"""
-  school(schoolId: Int!): schools
-
-  """fetch data from the table: "school_domains" using primary key columns"""
-  schoolDomain(domain: String!): school_domains
-
-  """
-  fetch data from the table: "school_domains"
-  """
-  schoolDomains(
-    """distinct select on columns"""
-    distinct_on: [school_domains_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [school_domains_order_by!]
-
-    """filter the rows returned"""
-    where: school_domains_bool_exp
-  ): [school_domains!]!
-
-  """
-  fetch data from the table: "schools"
-  """
-  schools(
-    """distinct select on columns"""
-    distinct_on: [schools_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [schools_order_by!]
-
-    """filter the rows returned"""
-    where: schools_bool_exp
-  ): [schools!]!
-
-  """fetch data from the table: "semesters" using primary key columns"""
-  semester(semesterId: Int!): semesters
-
-  """
-  fetch data from the table: "semesters"
-  """
-  semesters(
-    """distinct select on columns"""
-    distinct_on: [semesters_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [semesters_order_by!]
-
-    """filter the rows returned"""
-    where: semesters_bool_exp
-  ): [semesters!]!
-
-  """
-  execute function "signedInUser" which returns "profiles"
-  """
-  signedInUser(
-    """distinct select on columns"""
-    distinct_on: [profiles_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [profiles_order_by!]
-
-    """filter the rows returned"""
-    where: profiles_bool_exp
-  ): [profiles!]!
-
-  """fetch data from the table: "subject_areas" using primary key columns"""
-  subjectArea(subjectAreaId: Int!): subject_areas
-
-  """
-  fetch data from the table: "subject_areas"
-  """
-  subjectAreas(
-    """distinct select on columns"""
-    distinct_on: [subject_areas_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [subject_areas_order_by!]
-
-    """filter the rows returned"""
-    where: subject_areas_bool_exp
-  ): [subject_areas!]!
-
-  """fetch data from the table: "uploads" using primary key columns"""
-  upload(uploadId: Int!): uploads
-
-  """
-  fetch data from the table: "uploads"
+type PersonVehiclesConnection {
   """
-  uploads(
-    """distinct select on columns"""
-    distinct_on: [uploads_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [uploads_order_by!]
-
-    """filter the rows returned"""
-    where: uploads_bool_exp
-  ): [uploads!]!
-
-  """fetch data from the table: "upvotes" using primary key columns"""
-  upvote(postId: Int!, userProfileId: Int!): upvotes
-
+  Information to aid in pagination.
   """
-  fetch data from the table: "upvotes"
+  pageInfo: PageInfo!
   """
-  upvotes(
-    """distinct select on columns"""
-    distinct_on: [upvotes_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [upvotes_order_by!]
-
-    """filter the rows returned"""
-    where: upvotes_bool_exp
-  ): [upvotes!]!
-
+  A list of edges.
   """
-  fetch aggregated fields from the table: "upvotes"
+  edges: [PersonVehiclesEdge]
   """
-  upvotesAggregate(
-    """distinct select on columns"""
-    distinct_on: [upvotes_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [upvotes_order_by!]
-
-    """filter the rows returned"""
-    where: upvotes_bool_exp
-  ): upvotes_aggregate!
-}
-
-"""
-columns and relationships of "questions"
-"""
-type questions {
-  body: String!
-  createdAt: timestamptz!
-
-  """An object relationship"""
-  post: posts
-  questionId: Int!
-
-  """An array relationship"""
-  responses(
-    """distinct select on columns"""
-    distinct_on: [responses_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [responses_order_by!]
-
-    """filter the rows returned"""
-    where: responses_bool_exp
-  ): [responses!]!
-
-  """An aggregated array relationship"""
-  responses_aggregate(
-    """distinct select on columns"""
-    distinct_on: [responses_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [responses_order_by!]
-
-    """filter the rows returned"""
-    where: responses_bool_exp
-  ): responses_aggregate!
-  updatedAt: timestamptz!
-
-  """An object relationship"""
-  userProfile: profiles!
-  userProfileId: Int!
-}
-
-"""
-Boolean expression to filter rows from the table "questions". All fields are combined with a logical 'AND'.
-"""
-input questions_bool_exp {
-  _and: [questions_bool_exp]
-  _not: questions_bool_exp
-  _or: [questions_bool_exp]
-  body: String_comparison_exp
-  createdAt: timestamptz_comparison_exp
-  post: posts_bool_exp
-  questionId: Int_comparison_exp
-  responses: responses_bool_exp
-  updatedAt: timestamptz_comparison_exp
-  userProfile: profiles_bool_exp
-  userProfileId: Int_comparison_exp
-}
-
-"""
-ordering options when selecting data from "questions"
-"""
-input questions_order_by {
-  body: order_by
-  createdAt: order_by
-  post: posts_order_by
-  questionId: order_by
-  responses_aggregate: responses_aggregate_order_by
-  updatedAt: order_by
-  userProfile: profiles_order_by
-  userProfileId: order_by
-}
-
-"""
-primary key columns input for table: "questions"
-"""
-input questions_pk_columns_input {
-  questionId: Int!
-}
-
-"""
-select columns of table "questions"
-"""
-enum questions_select_column {
-  """column name"""
-  body
-
-  """column name"""
-  createdAt
-
-  """column name"""
-  questionId
-
-  """column name"""
-  updatedAt
-
-  """column name"""
-  userProfileId
-}
-
-"""
-columns and relationships of "responses"
-"""
-type responses {
-  createdAt: timestamptz!
-
-  """An object relationship"""
-  question: questions!
-  questionId: Int!
-
-  """An object relationship"""
-  responsePost: posts!
-  responsePostId: Int!
-  updatedAt: timestamptz!
-}
-
-"""
-aggregated selection of "responses"
-"""
-type responses_aggregate {
-  aggregate: responses_aggregate_fields
-  nodes: [responses!]!
-}
-
-"""
-aggregate fields of "responses"
-"""
-type responses_aggregate_fields {
-  avg: responses_avg_fields
-  count(columns: [responses_select_column!], distinct: Boolean): Int
-  max: responses_max_fields
-  min: responses_min_fields
-  stddev: responses_stddev_fields
-  stddev_pop: responses_stddev_pop_fields
-  stddev_samp: responses_stddev_samp_fields
-  sum: responses_sum_fields
-  var_pop: responses_var_pop_fields
-  var_samp: responses_var_samp_fields
-  variance: responses_variance_fields
-}
-
-"""
-order by aggregate values of table "responses"
-"""
-input responses_aggregate_order_by {
-  avg: responses_avg_order_by
-  count: order_by
-  max: responses_max_order_by
-  min: responses_min_order_by
-  stddev: responses_stddev_order_by
-  stddev_pop: responses_stddev_pop_order_by
-  stddev_samp: responses_stddev_samp_order_by
-  sum: responses_sum_order_by
-  var_pop: responses_var_pop_order_by
-  var_samp: responses_var_samp_order_by
-  variance: responses_variance_order_by
-}
-
-"""aggregate avg on columns"""
-type responses_avg_fields {
-  questionId: Float
-  responsePostId: Float
-}
-
-"""
-order by avg() on columns of table "responses"
-"""
-input responses_avg_order_by {
-  questionId: order_by
-  responsePostId: order_by
-}
-
-"""
-Boolean expression to filter rows from the table "responses". All fields are combined with a logical 'AND'.
-"""
-input responses_bool_exp {
-  _and: [responses_bool_exp]
-  _not: responses_bool_exp
-  _or: [responses_bool_exp]
-  createdAt: timestamptz_comparison_exp
-  question: questions_bool_exp
-  questionId: Int_comparison_exp
-  responsePost: posts_bool_exp
-  responsePostId: Int_comparison_exp
-  updatedAt: timestamptz_comparison_exp
-}
-
-"""aggregate max on columns"""
-type responses_max_fields {
-  createdAt: timestamptz
-  questionId: Int
-  responsePostId: Int
-  updatedAt: timestamptz
-}
-
-"""
-order by max() on columns of table "responses"
-"""
-input responses_max_order_by {
-  createdAt: order_by
-  questionId: order_by
-  responsePostId: order_by
-  updatedAt: order_by
-}
-
-"""aggregate min on columns"""
-type responses_min_fields {
-  createdAt: timestamptz
-  questionId: Int
-  responsePostId: Int
-  updatedAt: timestamptz
-}
-
-"""
-order by min() on columns of table "responses"
-"""
-input responses_min_order_by {
-  createdAt: order_by
-  questionId: order_by
-  responsePostId: order_by
-  updatedAt: order_by
-}
-
-"""
-ordering options when selecting data from "responses"
-"""
-input responses_order_by {
-  createdAt: order_by
-  question: questions_order_by
-  questionId: order_by
-  responsePost: posts_order_by
-  responsePostId: order_by
-  updatedAt: order_by
-}
-
-"""
-primary key columns input for table: "responses"
-"""
-input responses_pk_columns_input {
-  questionId: Int!
-  responsePostId: Int!
-}
-
-"""
-select columns of table "responses"
-"""
-enum responses_select_column {
-  """column name"""
-  createdAt
-
-  """column name"""
-  questionId
-
-  """column name"""
-  responsePostId
-
-  """column name"""
-  updatedAt
-}
-
-"""aggregate stddev on columns"""
-type responses_stddev_fields {
-  questionId: Float
-  responsePostId: Float
-}
-
-"""
-order by stddev() on columns of table "responses"
-"""
-input responses_stddev_order_by {
-  questionId: order_by
-  responsePostId: order_by
-}
-
-"""aggregate stddev_pop on columns"""
-type responses_stddev_pop_fields {
-  questionId: Float
-  responsePostId: Float
-}
-
-"""
-order by stddev_pop() on columns of table "responses"
-"""
-input responses_stddev_pop_order_by {
-  questionId: order_by
-  responsePostId: order_by
-}
-
-"""aggregate stddev_samp on columns"""
-type responses_stddev_samp_fields {
-  questionId: Float
-  responsePostId: Float
-}
-
-"""
-order by stddev_samp() on columns of table "responses"
-"""
-input responses_stddev_samp_order_by {
-  questionId: order_by
-  responsePostId: order_by
-}
-
-"""aggregate sum on columns"""
-type responses_sum_fields {
-  questionId: Int
-  responsePostId: Int
-}
-
-"""
-order by sum() on columns of table "responses"
-"""
-input responses_sum_order_by {
-  questionId: order_by
-  responsePostId: order_by
-}
-
-"""aggregate var_pop on columns"""
-type responses_var_pop_fields {
-  questionId: Float
-  responsePostId: Float
-}
-
-"""
-order by var_pop() on columns of table "responses"
-"""
-input responses_var_pop_order_by {
-  questionId: order_by
-  responsePostId: order_by
-}
-
-"""aggregate var_samp on columns"""
-type responses_var_samp_fields {
-  questionId: Float
-  responsePostId: Float
-}
-
-"""
-order by var_samp() on columns of table "responses"
-"""
-input responses_var_samp_order_by {
-  questionId: order_by
-  responsePostId: order_by
-}
-
-"""aggregate variance on columns"""
-type responses_variance_fields {
-  questionId: Float
-  responsePostId: Float
-}
-
-"""
-order by variance() on columns of table "responses"
-"""
-input responses_variance_order_by {
-  questionId: order_by
-  responsePostId: order_by
-}
-
-"""
-columns and relationships of "school_domains"
-"""
-type school_domains {
-  domain: String!
-
-  """An object relationship"""
-  school: schools!
-  schoolId: Int!
-}
-
-"""
-Boolean expression to filter rows from the table "school_domains". All fields are combined with a logical 'AND'.
-"""
-input school_domains_bool_exp {
-  _and: [school_domains_bool_exp]
-  _not: school_domains_bool_exp
-  _or: [school_domains_bool_exp]
-  domain: String_comparison_exp
-  school: schools_bool_exp
-  schoolId: Int_comparison_exp
-}
-
-"""
-ordering options when selecting data from "school_domains"
-"""
-input school_domains_order_by {
-  domain: order_by
-  school: schools_order_by
-  schoolId: order_by
-}
-
-"""
-primary key columns input for table: "school_domains"
-"""
-input school_domains_pk_columns_input {
-  domain: String!
-}
-
-"""
-select columns of table "school_domains"
-"""
-enum school_domains_select_column {
-  """column name"""
-  domain
-
-  """column name"""
-  schoolId
+  A count of the total number of objects in this connection, ignoring pagination.
+  This allows a client to fetch the first five objects by passing "5" as the
+  argument to "first", then fetch the total count so it could display "5 of 83",
+  for example.
+  """
+  totalCount: Int
+  """
+  A list of all of the objects returned in the connection. This is a convenience
+  field provided for quickly exploring the API; rather than querying for
+  "{ edges { node } }" when no edge data is needed, this field can be be used
+  instead. Note that when clients like Relay need to fetch the "cursor" field on
+  the edge to enable efficient pagination, this shortcut cannot be used, and the
+  full "{ edges { node } }" version should be used instead.
+  """
+  vehicles: [Vehicle]
 }
-
 """
-columns and relationships of "schools"
-"""
-type schools {
-  """An array relationship"""
-  communities(
-    """distinct select on columns"""
-    distinct_on: [communities_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [communities_order_by!]
-
-    """filter the rows returned"""
-    where: communities_bool_exp
-  ): [communities!]!
-
-  """An array relationship"""
-  courses(
-    """distinct select on columns"""
-    distinct_on: [courses_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [courses_order_by!]
-
-    """filter the rows returned"""
-    where: courses_bool_exp
-  ): [courses!]!
-  createdAt: timestamptz!
-
-  """An array relationship"""
-  domains(
-    """distinct select on columns"""
-    distinct_on: [school_domains_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [school_domains_order_by!]
-
-    """filter the rows returned"""
-    where: school_domains_bool_exp
-  ): [school_domains!]!
-  name: String!
-  schoolId: Int!
-  updatedAt: timestamptz!
-
-  """An array relationship"""
-  users(
-    """distinct select on columns"""
-    distinct_on: [profiles_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [profiles_order_by!]
-
-    """filter the rows returned"""
-    where: profiles_bool_exp
-  ): [profiles!]!
-}
-
+An edge in a connection.
 """
-Boolean expression to filter rows from the table "schools". All fields are combined with a logical 'AND'.
-"""
-input schools_bool_exp {
-  _and: [schools_bool_exp]
-  _not: schools_bool_exp
-  _or: [schools_bool_exp]
-  communities: communities_bool_exp
-  courses: courses_bool_exp
-  createdAt: timestamptz_comparison_exp
-  domains: school_domains_bool_exp
-  name: String_comparison_exp
-  schoolId: Int_comparison_exp
-  updatedAt: timestamptz_comparison_exp
-  users: profiles_bool_exp
+type PersonVehiclesEdge {
+  """
+  The item at the end of the edge
+  """
+  node: Vehicle
+  """
+  A cursor for use in pagination
+  """
+  cursor: String!
 }
-
 """
-ordering options when selecting data from "schools"
+A large mass, planet or planetoid in the Star Wars Universe, at the time of
+0 ABY.
 """
-input schools_order_by {
-  createdAt: order_by
-  name: order_by
-  schoolId: order_by
-  updatedAt: order_by
+type Planet implements Node {
+  """
+  The name of this planet.
+  """
+  name: String
+  """
+  The diameter of this planet in kilometers.
+  """
+  diameter: Int
+  """
+  The number of standard hours it takes for this planet to complete a single
+  rotation on its axis.
+  """
+  rotationPeriod: Int
+  """
+  The number of standard days it takes for this planet to complete a single orbit
+  of its local star.
+  """
+  orbitalPeriod: Int
+  """
+  A number denoting the gravity of this planet, where "1" is normal or 1 standard
+  G. "2" is twice or 2 standard Gs. "0.5" is half or 0.5 standard Gs.
+  """
+  gravity: String
+  """
+  The average population of sentient beings inhabiting this planet.
+  """
+  population: Float
+  """
+  The climates of this planet.
+  """
+  climates: [String]
+  """
+  The terrains of this planet.
+  """
+  terrains: [String]
+  """
+  The percentage of the planet surface that is naturally occuring water or bodies
+  of water.
+  """
+  surfaceWater: Float
+  residentConnection(
+    after: String
+    first: Int
+    before: String
+    last: Int
+  ): PlanetResidentsConnection
+  filmConnection(
+    after: String
+    first: Int
+    before: String
+    last: Int
+  ): PlanetFilmsConnection
+  """
+  The ISO 8601 date format of the time that this resource was created.
+  """
+  created: String
+  """
+  The ISO 8601 date format of the time that this resource was edited.
+  """
+  edited: String
+  """
+  The ID of an object
+  """
+  id: ID!
 }
-
 """
-primary key columns input for table: "schools"
+A connection to a list of items.
 """
-input schools_pk_columns_input {
-  schoolId: Int!
+type PlanetFilmsConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  A list of edges.
+  """
+  edges: [PlanetFilmsEdge]
+  """
+  A count of the total number of objects in this connection, ignoring pagination.
+  This allows a client to fetch the first five objects by passing "5" as the
+  argument to "first", then fetch the total count so it could display "5 of 83",
+  for example.
+  """
+  totalCount: Int
+  """
+  A list of all of the objects returned in the connection. This is a convenience
+  field provided for quickly exploring the API; rather than querying for
+  "{ edges { node } }" when no edge data is needed, this field can be be used
+  instead. Note that when clients like Relay need to fetch the "cursor" field on
+  the edge to enable efficient pagination, this shortcut cannot be used, and the
+  full "{ edges { node } }" version should be used instead.
+  """
+  films: [Film]
 }
-
 """
-select columns of table "schools"
+An edge in a connection.
 """
-enum schools_select_column {
-  """column name"""
-  createdAt
-
-  """column name"""
-  name
-
-  """column name"""
-  schoolId
-
-  """column name"""
-  updatedAt
+type PlanetFilmsEdge {
+  """
+  The item at the end of the edge
+  """
+  node: Film
+  """
+  A cursor for use in pagination
+  """
+  cursor: String!
 }
-
-"""
-columns and relationships of "semesters"
 """
-type semesters {
-  createdAt: timestamptz!
-  semesterId: Int!
-  updatedAt: timestamptz!
-}
-
+A connection to a list of items.
 """
-Boolean expression to filter rows from the table "semesters". All fields are combined with a logical 'AND'.
-"""
-input semesters_bool_exp {
-  _and: [semesters_bool_exp]
-  _not: semesters_bool_exp
-  _or: [semesters_bool_exp]
-  createdAt: timestamptz_comparison_exp
-  semesterId: Int_comparison_exp
-  updatedAt: timestamptz_comparison_exp
+type PlanetResidentsConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  A list of edges.
+  """
+  edges: [PlanetResidentsEdge]
+  """
+  A count of the total number of objects in this connection, ignoring pagination.
+  This allows a client to fetch the first five objects by passing "5" as the
+  argument to "first", then fetch the total count so it could display "5 of 83",
+  for example.
+  """
+  totalCount: Int
+  """
+  A list of all of the objects returned in the connection. This is a convenience
+  field provided for quickly exploring the API; rather than querying for
+  "{ edges { node } }" when no edge data is needed, this field can be be used
+  instead. Note that when clients like Relay need to fetch the "cursor" field on
+  the edge to enable efficient pagination, this shortcut cannot be used, and the
+  full "{ edges { node } }" version should be used instead.
+  """
+  residents: [Person]
 }
-
 """
-ordering options when selecting data from "semesters"
+An edge in a connection.
 """
-input semesters_order_by {
-  createdAt: order_by
-  semesterId: order_by
-  updatedAt: order_by
+type PlanetResidentsEdge {
+  """
+  The item at the end of the edge
+  """
+  node: Person
+  """
+  A cursor for use in pagination
+  """
+  cursor: String!
 }
-
 """
-primary key columns input for table: "semesters"
+A connection to a list of items.
 """
-input semesters_pk_columns_input {
-  semesterId: Int!
+type PlanetsConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  A list of edges.
+  """
+  edges: [PlanetsEdge]
+  """
+  A count of the total number of objects in this connection, ignoring pagination.
+  This allows a client to fetch the first five objects by passing "5" as the
+  argument to "first", then fetch the total count so it could display "5 of 83",
+  for example.
+  """
+  totalCount: Int
+  """
+  A list of all of the objects returned in the connection. This is a convenience
+  field provided for quickly exploring the API; rather than querying for
+  "{ edges { node } }" when no edge data is needed, this field can be be used
+  instead. Note that when clients like Relay need to fetch the "cursor" field on
+  the edge to enable efficient pagination, this shortcut cannot be used, and the
+  full "{ edges { node } }" version should be used instead.
+  """
+  planets: [Planet]
 }
-
 """
-select columns of table "semesters"
+An edge in a connection.
 """
-enum semesters_select_column {
-  """column name"""
-  createdAt
-
-  """column name"""
-  semesterId
-
-  """column name"""
-  updatedAt
-}
-
-input SignInInput {
-  email: String!
-  password: String!
-}
-
-type SignInOutput {
-  token: String!
-}
-
-input SignInWithGoogleInput {
-  token: String!
-}
-
-type SignInWithGoogleOutput {
-  token: String!
-}
-
-input SignUpInput {
-  confirmPassword: String!
-  email: String!
-  firstName: String!
-  lastName: String!
-  password: String!
-}
-
-type SignUpOutput {
-  token: String!
+type PlanetsEdge {
+  """
+  The item at the end of the edge
+  """
+  node: Planet
+  """
+  A cursor for use in pagination
+  """
+  cursor: String!
 }
-
-"""
-expression to compare columns of type String. All fields are combined with logical 'AND'.
-"""
-input String_comparison_exp {
-  _eq: String
-  _gt: String
-  _gte: String
-  _ilike: String
-  _in: [String!]
-  _is_null: Boolean
-  _like: String
-  _lt: String
-  _lte: String
-  _neq: String
-  _nilike: String
-  _nin: [String!]
-  _nlike: String
-  _nsimilar: String
-  _similar: String
+type Root {
+  allFilms(
+    after: String
+    first: Int
+    before: String
+    last: Int
+  ): FilmsConnection
+  film(id: ID, filmID: ID): Film
+  allPeople(
+    after: String
+    first: Int
+    before: String
+    last: Int
+  ): PeopleConnection
+  person(id: ID, personID: ID): Person
+  allPlanets(
+    after: String
+    first: Int
+    before: String
+    last: Int
+  ): PlanetsConnection
+  planet(id: ID, planetID: ID): Planet
+  allSpecies(
+    after: String
+    first: Int
+    before: String
+    last: Int
+  ): SpeciesConnection
+  species(id: ID, speciesID: ID): Species
+  allStarships(
+    after: String
+    first: Int
+    before: String
+    last: Int
+  ): StarshipsConnection
+  starship(id: ID, starshipID: ID): Starship
+  allVehicles(
+    after: String
+    first: Int
+    before: String
+    last: Int
+  ): VehiclesConnection
+  vehicle(id: ID, vehicleID: ID): Vehicle
+  """
+  Fetches an object given its ID
+  """
+  node(
+    """
+    The ID of an object
+    """
+    id: ID!
+  ): Node
 }
-
 """
-columns and relationships of "subject_areas"
+A type of person or character within the Star Wars Universe.
 """
-type subject_areas {
-  """An array relationship"""
-  communities(
-    """distinct select on columns"""
-    distinct_on: [communities_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [communities_order_by!]
-
-    """filter the rows returned"""
-    where: communities_bool_exp
-  ): [communities!]!
-
-  """An array relationship"""
-  courses(
-    """distinct select on columns"""
-    distinct_on: [courses_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [courses_order_by!]
-
-    """filter the rows returned"""
-    where: courses_bool_exp
-  ): [courses!]!
-  createdAt: timestamptz!
-  description: String
-  name: String!
-  shortName: String!
-  subjectAreaId: Int!
-  updatedAt: timestamptz!
+type Species implements Node {
+  """
+  The name of this species.
+  """
+  name: String
+  """
+  The classification of this species, such as "mammal" or "reptile".
+  """
+  classification: String
+  """
+  The designation of this species, such as "sentient".
+  """
+  designation: String
+  """
+  The average height of this species in centimeters.
+  """
+  averageHeight: Float
+  """
+  The average lifespan of this species in years, null if unknown.
+  """
+  averageLifespan: Int
+  """
+  Common eye colors for this species, null if this species does not typically
+  have eyes.
+  """
+  eyeColors: [String]
+  """
+  Common hair colors for this species, null if this species does not typically
+  have hair.
+  """
+  hairColors: [String]
+  """
+  Common skin colors for this species, null if this species does not typically
+  have skin.
+  """
+  skinColors: [String]
+  """
+  The language commonly spoken by this species.
+  """
+  language: String
+  """
+  A planet that this species originates from.
+  """
+  homeworld: Planet
+  personConnection(
+    after: String
+    first: Int
+    before: String
+    last: Int
+  ): SpeciesPeopleConnection
+  filmConnection(
+    after: String
+    first: Int
+    before: String
+    last: Int
+  ): SpeciesFilmsConnection
+  """
+  The ISO 8601 date format of the time that this resource was created.
+  """
+  created: String
+  """
+  The ISO 8601 date format of the time that this resource was edited.
+  """
+  edited: String
+  """
+  The ID of an object
+  """
+  id: ID!
 }
-
 """
-Boolean expression to filter rows from the table "subject_areas". All fields are combined with a logical 'AND'.
-"""
-input subject_areas_bool_exp {
-  _and: [subject_areas_bool_exp]
-  _not: subject_areas_bool_exp
-  _or: [subject_areas_bool_exp]
-  communities: communities_bool_exp
-  courses: courses_bool_exp
-  createdAt: timestamptz_comparison_exp
-  description: String_comparison_exp
-  name: String_comparison_exp
-  shortName: String_comparison_exp
-  subjectAreaId: Int_comparison_exp
-  updatedAt: timestamptz_comparison_exp
-}
-
+A connection to a list of items.
 """
-ordering options when selecting data from "subject_areas"
-"""
-input subject_areas_order_by {
-  createdAt: order_by
-  description: order_by
-  name: order_by
-  shortName: order_by
-  subjectAreaId: order_by
-  updatedAt: order_by
+type SpeciesConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  A list of edges.
+  """
+  edges: [SpeciesEdge]
+  """
+  A count of the total number of objects in this connection, ignoring pagination.
+  This allows a client to fetch the first five objects by passing "5" as the
+  argument to "first", then fetch the total count so it could display "5 of 83",
+  for example.
+  """
+  totalCount: Int
+  """
+  A list of all of the objects returned in the connection. This is a convenience
+  field provided for quickly exploring the API; rather than querying for
+  "{ edges { node } }" when no edge data is needed, this field can be be used
+  instead. Note that when clients like Relay need to fetch the "cursor" field on
+  the edge to enable efficient pagination, this shortcut cannot be used, and the
+  full "{ edges { node } }" version should be used instead.
+  """
+  species: [Species]
 }
-
 """
-primary key columns input for table: "subject_areas"
+An edge in a connection.
 """
-input subject_areas_pk_columns_input {
-  subjectAreaId: Int!
+type SpeciesEdge {
+  """
+  The item at the end of the edge
+  """
+  node: Species
+  """
+  A cursor for use in pagination
+  """
+  cursor: String!
 }
-
 """
-select columns of table "subject_areas"
+A connection to a list of items.
 """
-enum subject_areas_select_column {
-  """column name"""
-  createdAt
-
-  """column name"""
-  description
-
-  """column name"""
-  name
-
-  """column name"""
-  shortName
-
-  """column name"""
-  subjectAreaId
-
-  """column name"""
-  updatedAt
-}
-
-"""subscription root"""
-type subscription_root {
-  """fetch data from the table: "announcements" using primary key columns"""
-  announcement(announcementId: Int!): announcements
-
+type SpeciesFilmsConnection {
   """
-  fetch data from the table: "announcements"
+  Information to aid in pagination.
   """
-  announcements(
-    """distinct select on columns"""
-    distinct_on: [announcements_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [announcements_order_by!]
-
-    """filter the rows returned"""
-    where: announcements_bool_exp
-  ): [announcements!]!
-
-  """fetch data from the table: "answers" using primary key columns"""
-  answer(answerId: Int!): answers
-
+  pageInfo: PageInfo!
   """
-  fetch data from the table: "answers"
+  A list of edges.
   """
-  answers(
-    """distinct select on columns"""
-    distinct_on: [answers_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [answers_order_by!]
-
-    """filter the rows returned"""
-    where: answers_bool_exp
-  ): [answers!]!
-
+  edges: [SpeciesFilmsEdge]
   """
-  fetch data from the table: "communities"
+  A count of the total number of objects in this connection, ignoring pagination.
+  This allows a client to fetch the first five objects by passing "5" as the
+  argument to "first", then fetch the total count so it could display "5 of 83",
+  for example.
   """
-  communities(
-    """distinct select on columns"""
-    distinct_on: [communities_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [communities_order_by!]
-
-    """filter the rows returned"""
-    where: communities_bool_exp
-  ): [communities!]!
-
-  """fetch data from the table: "communities" using primary key columns"""
-  community(communityId: Int!): communities
-
-  """fetch data from the table: "community_posts" using primary key columns"""
-  communityPost(communityId: Int!, postId: Int!): community_posts
-
+  totalCount: Int
   """
-  fetch data from the table: "community_posts"
+  A list of all of the objects returned in the connection. This is a convenience
+  field provided for quickly exploring the API; rather than querying for
+  "{ edges { node } }" when no edge data is needed, this field can be be used
+  instead. Note that when clients like Relay need to fetch the "cursor" field on
+  the edge to enable efficient pagination, this shortcut cannot be used, and the
+  full "{ edges { node } }" version should be used instead.
   """
-  communityPosts(
-    """distinct select on columns"""
-    distinct_on: [community_posts_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [community_posts_order_by!]
-
-    """filter the rows returned"""
-    where: community_posts_bool_exp
-  ): [community_posts!]!
-
-  """fetch data from the table: "community_users" using primary key columns"""
-  communityUser(communityId: Int!, userProfileId: Int!): community_users
-
+  films: [Film]
+}
+"""
+An edge in a connection.
+"""
+type SpeciesFilmsEdge {
   """
-  fetch data from the table: "community_users"
+  The item at the end of the edge
   """
-  communityUsers(
-    """distinct select on columns"""
-    distinct_on: [community_users_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [community_users_order_by!]
-
-    """filter the rows returned"""
-    where: community_users_bool_exp
-  ): [community_users!]!
-
+  node: Film
   """
-  fetch aggregated fields from the table: "community_users"
+  A cursor for use in pagination
   """
-  communityUsersAggregate(
-    """distinct select on columns"""
-    distinct_on: [community_users_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [community_users_order_by!]
-
-    """filter the rows returned"""
-    where: community_users_bool_exp
-  ): community_users_aggregate!
-
-  """fetch data from the table: "courses" using primary key columns"""
-  course(courseId: Int!): courses
-
+  cursor: String!
+}
+"""
+A connection to a list of items.
+"""
+type SpeciesPeopleConnection {
   """
-  fetch data from the table: "courses"
+  Information to aid in pagination.
   """
-  courses(
-    """distinct select on columns"""
-    distinct_on: [courses_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [courses_order_by!]
-
-    """filter the rows returned"""
-    where: courses_bool_exp
-  ): [courses!]!
-
-  """fetch data from the table: "downvotes" using primary key columns"""
-  downvote(postId: Int!, userProfileId: Int!): downvotes
-
+  pageInfo: PageInfo!
   """
-  fetch data from the table: "downvotes"
+  A list of edges.
   """
-  downvotes(
-    """distinct select on columns"""
-    distinct_on: [downvotes_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [downvotes_order_by!]
-
-    """filter the rows returned"""
-    where: downvotes_bool_exp
-  ): [downvotes!]!
-
+  edges: [SpeciesPeopleEdge]
   """
-  fetch aggregated fields from the table: "downvotes"
+  A count of the total number of objects in this connection, ignoring pagination.
+  This allows a client to fetch the first five objects by passing "5" as the
+  argument to "first", then fetch the total count so it could display "5 of 83",
+  for example.
   """
-  downvotesAggregate(
-    """distinct select on columns"""
-    distinct_on: [downvotes_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [downvotes_order_by!]
-
-    """filter the rows returned"""
-    where: downvotes_bool_exp
-  ): downvotes_aggregate!
-
-  """fetch data from the table: "notes" using primary key columns"""
-  note(noteId: Int!): notes
-
+  totalCount: Int
   """
-  fetch data from the table: "notes"
+  A list of all of the objects returned in the connection. This is a convenience
+  field provided for quickly exploring the API; rather than querying for
+  "{ edges { node } }" when no edge data is needed, this field can be be used
+  instead. Note that when clients like Relay need to fetch the "cursor" field on
+  the edge to enable efficient pagination, this shortcut cannot be used, and the
+  full "{ edges { node } }" version should be used instead.
   """
-  notes(
-    """distinct select on columns"""
-    distinct_on: [notes_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [notes_order_by!]
-
-    """filter the rows returned"""
-    where: notes_bool_exp
-  ): [notes!]!
-
-  """fetch data from the table: "posts" using primary key columns"""
-  post(postId: Int!): posts
-
+  people: [Person]
+}
+"""
+An edge in a connection.
+"""
+type SpeciesPeopleEdge {
+  """
+  The item at the end of the edge
+  """
+  node: Person
+  """
+  A cursor for use in pagination
+  """
+  cursor: String!
+}
+"""
+A single transport craft that has hyperdrive capability.
+"""
+type Starship implements Node {
+  """
+  The name of this starship. The common name, such as "Death Star".
   """
-  fetch data from the table: "posts"
+  name: String
   """
-  posts(
-    """distinct select on columns"""
-    distinct_on: [posts_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [posts_order_by!]
-
-    """filter the rows returned"""
-    where: posts_bool_exp
-  ): [posts!]!
-
+  The model or official name of this starship. Such as "T-65 X-wing" or "DS-1
+  Orbital Battle Station".
   """
-  fetch data from the table: "professional_areas" using primary key columns
+  model: String
   """
-  professionalArea(professionalAreaId: Int!): professional_areas
-
+  The class of this starship, such as "Starfighter" or "Deep Space Mobile
+  Battlestation"
   """
-  fetch data from the table: "professional_areas"
+  starshipClass: String
   """
-  professionalAreas(
-    """distinct select on columns"""
-    distinct_on: [professional_areas_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [professional_areas_order_by!]
-
-    """filter the rows returned"""
-    where: professional_areas_bool_exp
-  ): [professional_areas!]!
-
-  """fetch data from the table: "profiles" using primary key columns"""
-  profile(profileId: Int!): profiles
-
+  The manufacturers of this starship.
   """
-  fetch data from the table: "profiles"
+  manufacturers: [String]
   """
-  profiles(
-    """distinct select on columns"""
-    distinct_on: [profiles_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [profiles_order_by!]
-
-    """filter the rows returned"""
-    where: profiles_bool_exp
-  ): [profiles!]!
-
-  """fetch data from the table: "questions" using primary key columns"""
-  question(questionId: Int!): questions
-
+  The cost of this starship new, in galactic credits.
   """
-  fetch data from the table: "questions"
+  costInCredits: Float
   """
-  questions(
-    """distinct select on columns"""
-    distinct_on: [questions_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [questions_order_by!]
-
-    """filter the rows returned"""
-    where: questions_bool_exp
-  ): [questions!]!
-
-  """fetch data from the table: "responses" using primary key columns"""
-  response(questionId: Int!, responsePostId: Int!): responses
-
+  The length of this starship in meters.
   """
-  fetch data from the table: "responses"
+  length: Float
   """
-  responses(
-    """distinct select on columns"""
-    distinct_on: [responses_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [responses_order_by!]
-
-    """filter the rows returned"""
-    where: responses_bool_exp
-  ): [responses!]!
-
+  The number of personnel needed to run or pilot this starship.
   """
-  fetch aggregated fields from the table: "responses"
+  crew: String
   """
-  responsesAggregate(
-    """distinct select on columns"""
-    distinct_on: [responses_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [responses_order_by!]
-
-    """filter the rows returned"""
-    where: responses_bool_exp
-  ): responses_aggregate!
-
-  """fetch data from the table: "schools" using primary key columns"""
-  school(schoolId: Int!): schools
-
-  """fetch data from the table: "school_domains" using primary key columns"""
-  schoolDomain(domain: String!): school_domains
-
+  The number of non-essential people this starship can transport.
   """
-  fetch data from the table: "school_domains"
+  passengers: String
   """
-  schoolDomains(
-    """distinct select on columns"""
-    distinct_on: [school_domains_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [school_domains_order_by!]
-
-    """filter the rows returned"""
-    where: school_domains_bool_exp
-  ): [school_domains!]!
-
+  The maximum speed of this starship in atmosphere. null if this starship is
+  incapable of atmosphering flight.
   """
-  fetch data from the table: "schools"
+  maxAtmospheringSpeed: Int
   """
-  schools(
-    """distinct select on columns"""
-    distinct_on: [schools_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [schools_order_by!]
-
-    """filter the rows returned"""
-    where: schools_bool_exp
-  ): [schools!]!
-
-  """fetch data from the table: "semesters" using primary key columns"""
-  semester(semesterId: Int!): semesters
-
+  The class of this starships hyperdrive.
   """
-  fetch data from the table: "semesters"
+  hyperdriveRating: Float
   """
-  semesters(
-    """distinct select on columns"""
-    distinct_on: [semesters_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [semesters_order_by!]
-
-    """filter the rows returned"""
-    where: semesters_bool_exp
-  ): [semesters!]!
+  The Maximum number of Megalights this starship can travel in a standard hour.
+  A "Megalight" is a standard unit of distance and has never been defined before
+  within the Star Wars universe. This figure is only really useful for measuring
+  the difference in speed of starships. We can assume it is similar to AU, the
+  distance between our Sun (Sol) and Earth.
+  """
+  MGLT: Int
 
   """
-  execute function "signedInUser" which returns "profiles"
+  The maximum number of kilograms that this starship can transport.
   """
-  signedInUser(
-    """distinct select on columns"""
-    distinct_on: [profiles_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [profiles_order_by!]
-
-    """filter the rows returned"""
-    where: profiles_bool_exp
-  ): [profiles!]!
+  cargoCapacity: Float
 
-  """fetch data from the table: "subject_areas" using primary key columns"""
-  subjectArea(subjectAreaId: Int!): subject_areas
-
   """
-  fetch data from the table: "subject_areas"
+  The maximum length of time that this starship can provide consumables for its
+  entire crew without having to resupply.
   """
-  subjectAreas(
-    """distinct select on columns"""
-    distinct_on: [subject_areas_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [subject_areas_order_by!]
+  consumables: String
+  pilotConnection(
+    after: String
+    first: Int
+    before: String
+    last: Int
+  ): StarshipPilotsConnection
+  filmConnection(
+    after: String
+    first: Int
+    before: String
+    last: Int
+  ): StarshipFilmsConnection
 
-    """filter the rows returned"""
-    where: subject_areas_bool_exp
-  ): [subject_areas!]!
-
-  """fetch data from the table: "uploads" using primary key columns"""
-  upload(uploadId: Int!): uploads
-
   """
-  fetch data from the table: "uploads"
+  The ISO 8601 date format of the time that this resource was created.
   """
-  uploads(
-    """distinct select on columns"""
-    distinct_on: [uploads_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
+  created: String
 
-    """sort the rows by one or more columns"""
-    order_by: [uploads_order_by!]
-
-    """filter the rows returned"""
-    where: uploads_bool_exp
-  ): [uploads!]!
-
-  """fetch data from the table: "upvotes" using primary key columns"""
-  upvote(postId: Int!, userProfileId: Int!): upvotes
-
   """
-  fetch data from the table: "upvotes"
+  The ISO 8601 date format of the time that this resource was edited.
   """
-  upvotes(
-    """distinct select on columns"""
-    distinct_on: [upvotes_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
+  edited: String
 
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [upvotes_order_by!]
-
-    """filter the rows returned"""
-    where: upvotes_bool_exp
-  ): [upvotes!]!
-
   """
-  fetch aggregated fields from the table: "upvotes"
+  The ID of an object
   """
-  upvotesAggregate(
-    """distinct select on columns"""
-    distinct_on: [upvotes_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [upvotes_order_by!]
-
-    """filter the rows returned"""
-    where: upvotes_bool_exp
-  ): upvotes_aggregate!
-}
-
-scalar timestamptz
-
-"""
-expression to compare columns of type timestamptz. All fields are combined with logical 'AND'.
-"""
-input timestamptz_comparison_exp {
-  _eq: timestamptz
-  _gt: timestamptz
-  _gte: timestamptz
-  _in: [timestamptz!]
-  _is_null: Boolean
-  _lt: timestamptz
-  _lte: timestamptz
-  _neq: timestamptz
-  _nin: [timestamptz!]
-}
-
-"""
-columns and relationships of "uploads"
-"""
-type uploads {
-  createdAt: timestamptz!
-
-  """An object relationship"""
-  note: notes
-  noteId: Int
-
-  """An object relationship"""
-  post: posts
-  updatedAt: timestamptz!
-  uploadId: Int!
-
-  """An object relationship"""
-  userProfile: profiles!
-  userProfileId: Int!
-}
-
-"""
-Boolean expression to filter rows from the table "uploads". All fields are combined with a logical 'AND'.
-"""
-input uploads_bool_exp {
-  _and: [uploads_bool_exp]
-  _not: uploads_bool_exp
-  _or: [uploads_bool_exp]
-  createdAt: timestamptz_comparison_exp
-  note: notes_bool_exp
-  noteId: Int_comparison_exp
-  post: posts_bool_exp
-  updatedAt: timestamptz_comparison_exp
-  uploadId: Int_comparison_exp
-  userProfile: profiles_bool_exp
-  userProfileId: Int_comparison_exp
-}
-
-"""
-ordering options when selecting data from "uploads"
-"""
-input uploads_order_by {
-  createdAt: order_by
-  note: notes_order_by
-  noteId: order_by
-  post: posts_order_by
-  updatedAt: order_by
-  uploadId: order_by
-  userProfile: profiles_order_by
-  userProfileId: order_by
-}
-
-"""
-primary key columns input for table: "uploads"
-"""
-input uploads_pk_columns_input {
-  uploadId: Int!
+  id: ID!
 }
 
 """
-select columns of table "uploads"
+A connection to a list of items.
 """
-enum uploads_select_column {
-  """column name"""
-  createdAt
-
-  """column name"""
-  noteId
-
-  """column name"""
-  updatedAt
-
-  """column name"""
-  uploadId
-
-  """column name"""
-  userProfileId
-}
-
-"""
-columns and relationships of "upvotes"
-"""
-type upvotes {
-  createdAt: timestamptz!
-
-  """An object relationship"""
-  post: posts!
-  postId: Int!
-  updatedAt: timestamptz!
-
-  """An object relationship"""
-  userProfile: profiles!
-  userProfileId: Int!
-}
-
-"""
-aggregated selection of "upvotes"
-"""
-type upvotes_aggregate {
-  aggregate: upvotes_aggregate_fields
-  nodes: [upvotes!]!
-}
-
-"""
-aggregate fields of "upvotes"
-"""
-type upvotes_aggregate_fields {
-  avg: upvotes_avg_fields
-  count(columns: [upvotes_select_column!], distinct: Boolean): Int
-  max: upvotes_max_fields
-  min: upvotes_min_fields
-  stddev: upvotes_stddev_fields
-  stddev_pop: upvotes_stddev_pop_fields
-  stddev_samp: upvotes_stddev_samp_fields
-  sum: upvotes_sum_fields
-  var_pop: upvotes_var_pop_fields
-  var_samp: upvotes_var_samp_fields
-  variance: upvotes_variance_fields
-}
+type StarshipFilmsConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
 
-"""
-order by aggregate values of table "upvotes"
-"""
-input upvotes_aggregate_order_by {
-  avg: upvotes_avg_order_by
-  count: order_by
-  max: upvotes_max_order_by
-  min: upvotes_min_order_by
-  stddev: upvotes_stddev_order_by
-  stddev_pop: upvotes_stddev_pop_order_by
-  stddev_samp: upvotes_stddev_samp_order_by
-  sum: upvotes_sum_order_by
-  var_pop: upvotes_var_pop_order_by
-  var_samp: upvotes_var_samp_order_by
-  variance: upvotes_variance_order_by
-}
+  """
+  A list of edges.
+  """
+  edges: [StarshipFilmsEdge]
 
-"""aggregate avg on columns"""
-type upvotes_avg_fields {
-  postId: Float
-  userProfileId: Float
+  """
+  A count of the total number of objects in this connection, ignoring pagination.
+  This allows a client to fetch the first five objects by passing "5" as the
+  argument to "first", then fetch the total count so it could display "5 of 83",
+  for example.
+  """
+  totalCount: Int
+  """
+  A list of all of the objects returned in the connection. This is a convenience
+  field provided for quickly exploring the API; rather than querying for
+  "{ edges { node } }" when no edge data is needed, this field can be be used
+  instead. Note that when clients like Relay need to fetch the "cursor" field on
+  the edge to enable efficient pagination, this shortcut cannot be used, and the
+  full "{ edges { node } }" version should be used instead.
+  """
+  films: [Film]
 }
-
-"""
-order by avg() on columns of table "upvotes"
 """
-input upvotes_avg_order_by {
-  postId: order_by
-  userProfileId: order_by
-}
-
+An edge in a connection.
 """
-Boolean expression to filter rows from the table "upvotes". All fields are combined with a logical 'AND'.
-"""
-input upvotes_bool_exp {
-  _and: [upvotes_bool_exp]
-  _not: upvotes_bool_exp
-  _or: [upvotes_bool_exp]
-  createdAt: timestamptz_comparison_exp
-  post: posts_bool_exp
-  postId: Int_comparison_exp
-  updatedAt: timestamptz_comparison_exp
-  userProfile: profiles_bool_exp
-  userProfileId: Int_comparison_exp
-}
-
-"""aggregate max on columns"""
-type upvotes_max_fields {
-  createdAt: timestamptz
-  postId: Int
-  updatedAt: timestamptz
-  userProfileId: Int
+type StarshipFilmsEdge {
+  """
+  The item at the end of the edge
+  """
+  node: Film
+  """
+  A cursor for use in pagination
+  """
+  cursor: String!
 }
-
 """
-order by max() on columns of table "upvotes"
+A connection to a list of items.
 """
-input upvotes_max_order_by {
-  createdAt: order_by
-  postId: order_by
-  updatedAt: order_by
-  userProfileId: order_by
-}
-
-"""aggregate min on columns"""
-type upvotes_min_fields {
-  createdAt: timestamptz
-  postId: Int
-  updatedAt: timestamptz
-  userProfileId: Int
+type StarshipPilotsConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  A list of edges.
+  """
+  edges: [StarshipPilotsEdge]
+  """
+  A count of the total number of objects in this connection, ignoring pagination.
+  This allows a client to fetch the first five objects by passing "5" as the
+  argument to "first", then fetch the total count so it could display "5 of 83",
+  for example.
+  """
+  totalCount: Int
+  """
+  A list of all of the objects returned in the connection. This is a convenience
+  field provided for quickly exploring the API; rather than querying for
+  "{ edges { node } }" when no edge data is needed, this field can be be used
+  instead. Note that when clients like Relay need to fetch the "cursor" field on
+  the edge to enable efficient pagination, this shortcut cannot be used, and the
+  full "{ edges { node } }" version should be used instead.
+  """
+  pilots: [Person]
 }
-
 """
-order by min() on columns of table "upvotes"
-"""
-input upvotes_min_order_by {
-  createdAt: order_by
-  postId: order_by
-  updatedAt: order_by
-  userProfileId: order_by
-}
-
+An edge in a connection.
 """
-ordering options when selecting data from "upvotes"
-"""
-input upvotes_order_by {
-  createdAt: order_by
-  post: posts_order_by
-  postId: order_by
-  updatedAt: order_by
-  userProfile: profiles_order_by
-  userProfileId: order_by
+type StarshipPilotsEdge {
+  """
+  The item at the end of the edge
+  """
+  node: Person
+  """
+  A cursor for use in pagination
+  """
+  cursor: String!
 }
-
 """
-primary key columns input for table: "upvotes"
+A connection to a list of items.
 """
-input upvotes_pk_columns_input {
-  postId: Int!
-  userProfileId: Int!
+type StarshipsConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  A list of edges.
+  """
+  edges: [StarshipsEdge]
+  """
+  A count of the total number of objects in this connection, ignoring pagination.
+  This allows a client to fetch the first five objects by passing "5" as the
+  argument to "first", then fetch the total count so it could display "5 of 83",
+  for example.
+  """
+  totalCount: Int
+  """
+  A list of all of the objects returned in the connection. This is a convenience
+  field provided for quickly exploring the API; rather than querying for
+  "{ edges { node } }" when no edge data is needed, this field can be be used
+  instead. Note that when clients like Relay need to fetch the "cursor" field on
+  the edge to enable efficient pagination, this shortcut cannot be used, and the
+  full "{ edges { node } }" version should be used instead.
+  """
+  starships: [Starship]
 }
-
 """
-select columns of table "upvotes"
+An edge in a connection.
 """
-enum upvotes_select_column {
-  """column name"""
-  createdAt
-
-  """column name"""
-  postId
-
-  """column name"""
-  updatedAt
-
-  """column name"""
-  userProfileId
-}
-
-"""aggregate stddev on columns"""
-type upvotes_stddev_fields {
-  postId: Float
-  userProfileId: Float
+type StarshipsEdge {
+  """
+  The item at the end of the edge
+  """
+  node: Starship
+  """
+  A cursor for use in pagination
+  """
+  cursor: String!
 }
-
 """
-order by stddev() on columns of table "upvotes"
+A single transport craft that does not have hyperdrive capability
 """
-input upvotes_stddev_order_by {
-  postId: order_by
-  userProfileId: order_by
-}
-
-"""aggregate stddev_pop on columns"""
-type upvotes_stddev_pop_fields {
-  postId: Float
-  userProfileId: Float
+type Vehicle implements Node {
+  """
+  The name of this vehicle. The common name, such as "Sand Crawler" or "Speeder
+  bike".
+  """
+  name: String
+  """
+  The model or official name of this vehicle. Such as "All-Terrain Attack
+  Transport".
+  """
+  model: String
+  """
+  The class of this vehicle, such as "Wheeled" or "Repulsorcraft".
+  """
+  vehicleClass: String
+  """
+  The manufacturers of this vehicle.
+  """
+  manufacturers: [String]
+  """
+  The cost of this vehicle new, in Galactic Credits.
+  """
+  costInCredits: Float
+  """
+  The length of this vehicle in meters.
+  """
+  length: Float
+  """
+  The number of personnel needed to run or pilot this vehicle.
+  """
+  crew: String
+  """
+  The number of non-essential people this vehicle can transport.
+  """
+  passengers: String
+  """
+  The maximum speed of this vehicle in atmosphere.
+  """
+  maxAtmospheringSpeed: Int
+  """
+  The maximum number of kilograms that this vehicle can transport.
+  """
+  cargoCapacity: Float
+  """
+  The maximum length of time that this vehicle can provide consumables for its
+  entire crew without having to resupply.
+  """
+  consumables: String
+  pilotConnection(
+    after: String
+    first: Int
+    before: String
+    last: Int
+  ): VehiclePilotsConnection
+  filmConnection(
+    after: String
+    first: Int
+    before: String
+    last: Int
+  ): VehicleFilmsConnection
+  """
+  The ISO 8601 date format of the time that this resource was created.
+  """
+  created: String
+  """
+  The ISO 8601 date format of the time that this resource was edited.
+  """
+  edited: String
+  """
+  The ID of an object
+  """
+  id: ID!
 }
-
 """
-order by stddev_pop() on columns of table "upvotes"
+A connection to a list of items.
 """
-input upvotes_stddev_pop_order_by {
-  postId: order_by
-  userProfileId: order_by
-}
-
-"""aggregate stddev_samp on columns"""
-type upvotes_stddev_samp_fields {
-  postId: Float
-  userProfileId: Float
+type VehicleFilmsConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  A list of edges.
+  """
+  edges: [VehicleFilmsEdge]
+  """
+  A count of the total number of objects in this connection, ignoring pagination.
+  This allows a client to fetch the first five objects by passing "5" as the
+  argument to "first", then fetch the total count so it could display "5 of 83",
+  for example.
+  """
+  totalCount: Int
+  """
+  A list of all of the objects returned in the connection. This is a convenience
+  field provided for quickly exploring the API; rather than querying for
+  "{ edges { node } }" when no edge data is needed, this field can be be used
+  instead. Note that when clients like Relay need to fetch the "cursor" field on
+  the edge to enable efficient pagination, this shortcut cannot be used, and the
+  full "{ edges { node } }" version should be used instead.
+  """
+  films: [Film]
 }
-
 """
-order by stddev_samp() on columns of table "upvotes"
+An edge in a connection.
 """
-input upvotes_stddev_samp_order_by {
-  postId: order_by
-  userProfileId: order_by
-}
-
-"""aggregate sum on columns"""
-type upvotes_sum_fields {
-  postId: Int
-  userProfileId: Int
+type VehicleFilmsEdge {
+  """
+  The item at the end of the edge
+  """
+  node: Film
+  """
+  A cursor for use in pagination
+  """
+  cursor: String!
 }
-
 """
-order by sum() on columns of table "upvotes"
+A connection to a list of items.
 """
-input upvotes_sum_order_by {
-  postId: order_by
-  userProfileId: order_by
-}
-
-"""aggregate var_pop on columns"""
-type upvotes_var_pop_fields {
-  postId: Float
-  userProfileId: Float
+type VehiclePilotsConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  A list of edges.
+  """
+  edges: [VehiclePilotsEdge]
+  """
+  A count of the total number of objects in this connection, ignoring pagination.
+  This allows a client to fetch the first five objects by passing "5" as the
+  argument to "first", then fetch the total count so it could display "5 of 83",
+  for example.
+  """
+  totalCount: Int
+  """
+  A list of all of the objects returned in the connection. This is a convenience
+  field provided for quickly exploring the API; rather than querying for
+  "{ edges { node } }" when no edge data is needed, this field can be be used
+  instead. Note that when clients like Relay need to fetch the "cursor" field on
+  the edge to enable efficient pagination, this shortcut cannot be used, and the
+  full "{ edges { node } }" version should be used instead.
+  """
+  pilots: [Person]
 }
-
 """
-order by var_pop() on columns of table "upvotes"
+An edge in a connection.
 """
-input upvotes_var_pop_order_by {
-  postId: order_by
-  userProfileId: order_by
-}
-
-"""aggregate var_samp on columns"""
-type upvotes_var_samp_fields {
-  postId: Float
-  userProfileId: Float
+type VehiclePilotsEdge {
+  """
+  The item at the end of the edge
+  """
+  node: Person
+  """
+  A cursor for use in pagination
+  """
+  cursor: String!
 }
-
 """
-order by var_samp() on columns of table "upvotes"
+A connection to a list of items.
 """
-input upvotes_var_samp_order_by {
-  postId: order_by
-  userProfileId: order_by
-}
-
-"""aggregate variance on columns"""
-type upvotes_variance_fields {
-  postId: Float
-  userProfileId: Float
+type VehiclesConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  A list of edges.
+  """
+  edges: [VehiclesEdge]
+  """
+  A count of the total number of objects in this connection, ignoring pagination.
+  This allows a client to fetch the first five objects by passing "5" as the
+  argument to "first", then fetch the total count so it could display "5 of 83",
+  for example.
+  """
+  totalCount: Int
+  """
+  A list of all of the objects returned in the connection. This is a convenience
+  field provided for quickly exploring the API; rather than querying for
+  "{ edges { node } }" when no edge data is needed, this field can be be used
+  instead. Note that when clients like Relay need to fetch the "cursor" field on
+  the edge to enable efficient pagination, this shortcut cannot be used, and the
+  full "{ edges { node } }" version should be used instead.
+  """
+  vehicles: [Vehicle]
 }
-
 """
-order by variance() on columns of table "upvotes"
+An edge in a connection.
 """
-input upvotes_variance_order_by {
-  postId: order_by
-  userProfileId: order_by
+type VehiclesEdge {
+  """
+  The item at the end of the edge
+  """
+  node: Vehicle
+  """
+  A cursor for use in pagination
+  """
+  cursor: String!
 }
-
-scalar uuid
-

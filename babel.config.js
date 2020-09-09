@@ -1,4 +1,4 @@
 module.exports = {
   presets: ["next/babel"],
-  plugins: ["relay"],
+  plugins: ["./dist/babel.js"],
 };

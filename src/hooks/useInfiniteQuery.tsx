@@ -3,6 +3,7 @@ import {
   useInfiniteQuery as useBaseInfiniteQuery,
   InfiniteQueryConfig,
   InfiniteQueryResult,
+  QueryConfig,
 } from "react-query";
 
 import { getRequest, GraphQLTaggedNode } from "../core/graphql-tag";
@@ -33,6 +34,20 @@ export type UseInfiniteQueryResult<
   operation: OperationDescriptor<TQuery>;
 };
 
+function getLastPage<TResult>(pages: TResult[], previous?: boolean): TResult {
+  return previous ? pages[0] : pages[pages.length - 1];
+}
+
+function hasMorePages<TResult, TError>(
+  config: QueryConfig<TResult, TError>,
+  pages: unknown,
+  previous?: boolean
+): boolean | undefined {
+  if (config.infinite && config.getFetchMore && Array.isArray(pages)) {
+    return Boolean(config.getFetchMore(getLastPage(pages, previous), pages));
+  }
+}
+
 export function useInfiniteQuery<TQuery extends Query, TError = Error>(
   query: GraphQLTaggedNode | string,
   {
@@ -47,7 +62,7 @@ export function useInfiniteQuery<TQuery extends Query, TError = Error>(
   const store = useStore();
 
   const queryKey = client.getInfinteQueryKey(operation);
-  const baseQuery = useBaseInfiniteQuery<TData, TError, typeof queryKey>(
+  const infiniteQuery = useBaseInfiniteQuery<TData, TError, typeof queryKey>(
     queryKey,
     async (queryKey, variables = {}, fetchMoreVariables) => {
       const fetchMoreOperation = client.buildOperation(node, {
@@ -62,18 +77,23 @@ export function useInfiniteQuery<TQuery extends Query, TError = Error>(
     options
   );
 
-  // const data = store.useOperation(operation);
-  const data = store.useOperationPages(
-    operation,
-    (baseQuery.query as any).pageVariables.map(
-      ([key, variables, fetchMore = {}]: InfiniteQueryKey<Query>) => ({
-        ...variables,
-        ...fetchMore,
-      })
-    )
-  );
+  const pageQueries = infiniteQuery.data?.map((page, index) => {
+    if (index === 0) return variables;
+    const fetchMoreVariable: any = options.getFetchMore(
+      infiniteQuery.data[index - 1],
+      infiniteQuery.data
+    );
+    return {
+      ...variables,
+      ...fetchMoreVariable,
+    };
+  }) ?? [variables];
 
-  const { canFetchMore, fetchMore: baseFetchMore } = baseQuery;
+  console.log(pageQueries);
+  // const data = store.useOperation(operation);
+  const data = store.useOperationPages(operation, pageQueries);
+
+  const { canFetchMore, fetchMore: baseFetchMore } = infiniteQuery;
 
   const fetchMore = React.useCallback(
     async (variables, options) => {
@@ -85,7 +105,7 @@ export function useInfiniteQuery<TQuery extends Query, TError = Error>(
   );
 
   return {
-    ...baseQuery,
+    ...infiniteQuery,
     data,
     operation,
     client,

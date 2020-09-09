@@ -1,5 +1,5 @@
 import React from "react";
-import { stableStringify } from "react-query";
+import { stableStringify } from "../../utils";
 import {
   atom,
   ReadWriteSelectorOptions,
@@ -33,7 +33,7 @@ import {
   ReaderScalarField,
   ReaderSelection,
 } from "../types";
-import { createRelayNormalizer } from "./relayNormalizer";
+import { createRelayNormalizer, defaultGetDataId } from "./relayNormalizer";
 
 function atomFamily<T, TParam>({
   default: defaultValue,
@@ -329,7 +329,7 @@ export function createRecoilStore(
   } = {}
 ): () => Store {
   const {
-    getDataID = (record, type) => `${type}:${record.id}`,
+    getDataID = defaultGetDataId,
     normalizer = createRelayNormalizer({ getDataID }),
     ref = (id) => ({ [constants.REF_KEY]: id }),
     refs = (ids) => ({

@@ -47,6 +47,7 @@ export function useQuery<TQuery extends Query, TError = Error>(
     queryKey,
     async () => {
       const data = await client.execute(operation);
+      console.log(data);
       store.commit(operation, data);
       return data;
     },

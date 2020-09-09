@@ -2,20 +2,24 @@ import fetch from "isomorphic-unfetch";
 
 import { CombinedError } from "./error";
 import { getRequest, GraphQLTaggedNode } from "./graphql-tag";
-import { OperationKind, Query, Response, Variables } from "./types";
+import {
+  FetchOperation,
+  FetchOptions,
+  FetchResult,
+  OperationKind,
+  Query,
+  Response,
+  Variables,
+} from "./types";
 
 export type BaseVariables = { [key: string]: any };
 
-export interface Options extends Omit<RequestInit, "body"> {
-  headers?: Record<string, any>;
-}
-
 export async function resolveFetchOptions<TVariables>(
   fetchOptions: FetchOptions<TVariables>,
-  operation: FetchOperation<TVariables>
+  operation: Partial<FetchOperation<TVariables>>
 ) {
   return typeof fetchOptions === "function"
-    ? await fetchOptions(operation)
+    ? await fetchOptions(operation as FetchOperation<TVariables>)
     : fetchOptions;
 }
 

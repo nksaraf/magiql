@@ -11,7 +11,7 @@ import { theme } from "./theme";
 export function StoreDevtools() {
   const client = useClient();
   const store = client.useStore();
-  const data = store.useEntities();
+  const entities = store.useEntities();
   const [input, setInput] = React.useState("");
   const [selected, setSelected] = React.useState(null);
 
@@ -54,7 +54,7 @@ export function StoreDevtools() {
           }}
         >
           <div>
-            {Object.entries(data).map(([key, val]) => {
+            {entities.map(([key, val]) => {
               if (key.includes(input) || key === selected) {
                 return (
                   <Explorer
@@ -111,12 +111,14 @@ export interface GraphQLDevtoolsProps {
   defaultIsOpen?: boolean;
   position?: string;
   defaultTab?: "queries" | "store";
+  style?: any;
 }
 
 export default function GraphQLDevtools({
   defaultIsOpen = false,
   defaultTab = "queries",
   position = "bottom-left",
+  style = {},
 }: GraphQLDevtoolsProps) {
   const [devtools, setDevtools] = React.useState(defaultTab);
   const [isOpen, setIsOpen] = React.useState(defaultIsOpen);
@@ -187,18 +189,29 @@ export default function GraphQLDevtools({
             <div
               style={{
                 display: "flex",
+                paddingTop: 8,
                 flexDirection: "column",
                 height: "100%",
               }}
             >
               <div style={{ display: "flex", flexDirection: "row" }}>
+                <div
+                  style={{
+                    display: "grid",
+                    placeItems: "flex-start",
+                    padding: "4px 12px",
+                  }}
+                >
+                  <Logo width={24} height={24} aria-hidden />
+                </div>
                 <button
                   style={{
                     flex: 1,
                     color: devtools === "queries" ? "white" : theme.gray,
-                    padding: "12px 0 8px 0",
+                    padding: "6px 0px",
                     fontSize: 14,
                     borderTopLeftRadius: 12,
+                    borderTopRightRadius: 12,
                     fontWeight: "bold",
                     backgroundColor:
                       devtools === "queries"
@@ -213,8 +226,10 @@ export default function GraphQLDevtools({
                 <button
                   style={{
                     flex: 1,
-                    padding: "12px 0 8px 0",
+                    padding: "6px 0px",
                     fontWeight: "bold",
+                    borderTopLeftRadius: 12,
+                    borderTopRightRadius: 12,
                     backgroundColor:
                       devtools === "store"
                         ? theme.backgroundAlt
@@ -227,27 +242,36 @@ export default function GraphQLDevtools({
                 >
                   🗄 Store
                 </button>
-                <button
+                <div
                   style={{
-                    color: devtools === "queries" ? "white" : theme.gray,
-                    padding: "12px 12px 8px 12px",
-                    fontSize: 14,
-                    fontWeight: "bold",
-                    borderTopRightRadius: 12,
-                    backgroundColor: theme.gray + "55",
-                    border: "none",
+                    display: "grid",
+                    placeItems: "flex-start",
+                    padding: "4px 12px",
                   }}
-                  onClick={() => setIsOpen(false)}
                 >
-                  <svg
-                    viewBox="0 0 512 512.001"
-                    width={12}
-                    height={12}
-                    fill="white"
+                  <button
+                    style={{
+                      color: devtools === "queries" ? "white" : theme.gray,
+                      padding: "4px",
+                      fontWeight: "bold",
+                      display: "grid",
+                      placeItems: "center",
+                      borderRadius: 100,
+                      backgroundColor: "#d32f2f",
+                      border: "none",
+                    }}
+                    onClick={() => setIsOpen(false)}
                   >
-                    <path d="M284.284 256L506.142 34.142c7.811-7.81 7.811-20.474 0-28.284-7.811-7.811-20.474-7.811-28.284 0L256 227.716 34.142 5.858c-7.811-7.811-20.474-7.811-28.284 0-7.811 7.81-7.811 20.474 0 28.284L227.716 256 5.858 477.858c-7.811 7.811-7.811 20.474 0 28.284 7.81 7.81 20.473 7.811 28.284 0L256 284.284l221.858 221.858c7.81 7.81 20.473 7.811 28.284 0s7.811-20.474 0-28.284L284.284 256z" />
-                  </svg>
-                </button>
+                    <svg
+                      viewBox="0 0 512 512"
+                      width={6}
+                      height={6}
+                      fill="white"
+                    >
+                      <path d="M284.284 256L506.142 34.142c7.811-7.81 7.811-20.474 0-28.284-7.811-7.811-20.474-7.811-28.284 0L256 227.716 34.142 5.858c-7.811-7.811-20.474-7.811-28.284 0-7.811 7.81-7.811 20.474 0 28.284L227.716 256 5.858 477.858c-7.811 7.811-7.811 20.474 0 28.284 7.81 7.81 20.473 7.811 28.284 0L256 284.284l221.858 221.858c7.81 7.81 20.473 7.811 28.284 0s7.811-20.474 0-28.284L284.284 256z" />
+                    </svg>
+                  </button>
+                </div>
               </div>
 
               {devtools === "queries" && <QueriesDevtools />}

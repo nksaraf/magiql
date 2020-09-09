@@ -6,6 +6,7 @@ import {
 } from "react-query";
 import {
   ConcreteRequest,
+  GraphQLTaggedNode,
   NormalizationSelector,
   SingularReaderSelector,
 } from "relay-runtime";
@@ -16,8 +17,7 @@ import {
   ReaderInlineFragment,
 } from "relay-runtime/lib/util/ReaderNode";
 import { SubscriptionClient } from "subscriptions-transport-ws";
-
-import { FetchOptions } from "./fetch";
+import { CombinedError } from "./error";
 
 export type {
   ConcreteRequest,
@@ -95,8 +95,12 @@ export interface OperationDescriptor<TQuery extends Query> {
   readonly response: Response<TQuery>;
 }
 
+export interface FetchRequestOptions extends Omit<RequestInit, "body"> {
+  headers?: { [key: string]: any };
+}
+
 export interface FetchOperation<TVariables> {
-  query?: string | GraphQLTaggedNode;
+  query: string | GraphQLTaggedNode;
   operationName?: string;
   operationKind?: OperationKind;
   variables?: TVariables;
@@ -105,9 +109,11 @@ export interface FetchOperation<TVariables> {
 }
 export type FetchOptionsFn<TVariables> = (
   operation: Omit<FetchOperation<TVariables>, "fetchOptions">
-) => Options | Promise<Options>;
+) => FetchRequestOptions | Promise<FetchRequestOptions>;
 
-export type FetchOptions<TVariables> = FetchOptionsFn<TVariables> | Options;
+export type FetchOptions<TVariables> =
+  | FetchOptionsFn<TVariables>
+  | FetchRequestOptions;
 
 export interface FetchResult<TQuery extends Query> {
   data: Response<TQuery> | undefined;

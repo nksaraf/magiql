@@ -1,10 +1,9 @@
 import React from "react";
 
-// @ts-ignore
-import { stableStringify, makeQueryCache } from "react-query";
+import { makeQueryCache } from "react-query";
 import { getSelector, getStorageKey, SelectorData } from "relay-runtime";
 
-import { assertBabelPlugin } from "../../utils";
+import { assertBabelPlugin, stableStringify } from "../../utils";
 import { useRerenderer } from "../../hooks/useRerenderer";
 import { createOperation } from "../graphql-tag";
 import {
@@ -27,7 +26,7 @@ import {
   OperationDescriptor,
 } from "../types";
 import { batchedUpdates } from "./batchedUpdates";
-import { createRelayNormalizer } from "./relayNormalizer";
+import { createRelayNormalizer, defaultGetDataId } from "./relayNormalizer";
 
 export function createReader(get: any) {
   let seenRecords = new Set<string>();
@@ -234,7 +233,7 @@ export function createNormalizedQueryCacheStore(
   const entities = new Set<string>();
 
   const {
-    getDataID = (record, type) => `${type}:${record.id}`,
+    getDataID = defaultGetDataId,
     normalizer = createRelayNormalizer({ getDataID }),
     cache = makeQueryCache(),
   } = options;
@@ -242,7 +241,8 @@ export function createNormalizedQueryCacheStore(
   const {
     get = (dataID: string) => {
       const queryHash = stableStringify([dataID]);
-      const record = cache.queries[queryHash]?.state.data ?? null;
+      const record = (cache as any).queries[queryHash]?.state.data ?? null;
+      console.log(record);
       return record;
     },
     updateRecord = (dataID: string, data: any) => {

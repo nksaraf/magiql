@@ -1,8 +1,7 @@
-import { queryCache } from "react-query";
-
 import { useClient } from "../../hooks";
 import { throwError } from "../../utils";
 import { Store, QueryCache } from "../types";
+import { queryCache } from "react-query";
 
 export function createQueryCacheStore(
   options: Partial<Store> & {
@@ -18,8 +17,9 @@ export function createQueryCacheStore(
   const useOperation: Store["useOperation"] = (operation) => {
     const client = useClient();
     const queryKey = client.getQueryKey(operation);
-    const query = cache.buildQuery(queryKey);
-    return query.state.data;
+    console.log((cache as any).queries);
+    console.log(cache.getQuery(queryKey));
+    return cache.getQueryData(queryKey);
   };
 
   const useOperationPages: Store["useOperationPages"] = (operation) => {
