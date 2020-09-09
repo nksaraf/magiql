@@ -8,14 +8,10 @@
     "declarationDir": "dist/types",
     "emitDeclarationOnly": true,
     "downlevelIteration": true,
-    "jsx": "preserve",
+    "jsx": "react",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "lib": [
-      "dom",
-      "esnext",
-      "esnext.asynciterable"
-    ],
+    "lib": ["dom", "esnext", "esnext.asynciterable"],
     "removeComments": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
@@ -23,13 +19,5 @@
     "isolatedModules": true,
     "strict": false,
     "noEmit": true
-  },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  }
 }

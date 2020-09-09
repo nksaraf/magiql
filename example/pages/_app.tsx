@@ -11,10 +11,10 @@ import {
   GraphQLClientProvider,
   createNormalizedQueryCacheStore,
   createQueryCacheStore,
-} from "../src";
+} from "../../src";
 // import { createRecoilStore, RecoilRoot } from "../../src/recoil";
-import GraphQLDevtools from "../src/devtools";
-import { createRecoilStore } from "../src/recoil";
+import GraphQLDevtools from "../../src/devtools";
+import { createRecoilStore } from "../../src/recoil";
 
 const client = new GraphQLClient({
   endpoint: "https://swapi-graphql.netlify.app/.netlify/functions/index",

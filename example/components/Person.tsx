@@ -1,5 +1,5 @@
 import React from "react";
-import { useFragment, graphql } from "../src";
+import { useFragment, graphql } from "../../src";
 import { Person_person } from "../generated/Person_person.graphql";
 // import ListItem from "./ListItem";
 

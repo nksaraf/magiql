@@ -1,7 +1,0 @@
-{
-  "name": "magiql/recoil",
-  "private": true,
-  "main": "../dist/recoil.js",
-  "module": "../dist/esm/recoil.js",
-  "types": "../dist/recoil.d.ts"
-}
