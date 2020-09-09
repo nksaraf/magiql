@@ -1,4 +1,9 @@
 // import App from 'next/app'
+import "react-notion/src/styles.css";
+import Prism from "prismjs";
+import "prismjs/themes/prism.css";
+import Head from "next/head";
+// import "prismjs/components/prism-javascript";
 
 import React from "react";
 import {

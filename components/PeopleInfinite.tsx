@@ -6,7 +6,13 @@ import Link from "next/link";
 import { infiniteQuery } from "./code";
 
 export function PeopleInfinite() {
-  const { data, fetchMore } = useInfiniteQuery<PeopleInfiniteQuery>(
+  const {
+    data,
+    fetchMore,
+    status,
+    isLoading,
+    isFetchingMore,
+  } = useInfiniteQuery<PeopleInfiniteQuery>(
     graphql`
       query PeopleInfiniteQuery($limit: Int = 10, $after: String) {
         allPeople(first: $limit, after: $after) {
@@ -41,6 +47,9 @@ export function PeopleInfinite() {
       <NavBar />
       <Header>useInfiniteQuery</Header>
       <main>
+        <code style={{ fontFamily: "Roboto Mono" }}>
+          <b>status:</b> {status}
+        </code>
         <Actions>
           <ActionButton
             onClick={() => {
@@ -50,19 +59,24 @@ export function PeopleInfinite() {
             Fetch more
           </ActionButton>
         </Actions>
-        <div>
-          {data?.map((page, index) => (
-            <React.Fragment key={index}>
-              {page
-                ? page.allPeople?.edges?.map((node) => (
-                    <People key={node.node.id} person={node.node} />
-                  ))
-                : null}
-            </React.Fragment>
-          ))}
+        <div style={{ display: "flex", flexDirection: "row" }}>
+          <div style={{ flex: 1 }}>
+            {data?.map((page, index) => (
+              <React.Fragment key={index}>
+                {page
+                  ? page.allPeople?.edges?.map((edge) => (
+                      <People key={edge.node.id} person={edge.node} />
+                    ))
+                  : null}
+              </React.Fragment>
+            ))}
+            {isFetchingMore && "Fetching more..."}
+          </div>
+          <pre style={{ fontFamily: "Roboto Mono", flex: 1 }}>
+            {infiniteQuery}
+          </pre>
         </div>
       </main>
-      <pre style={{ fontFamily: "Roboto Mono" }}>{infiniteQuery}</pre>
     </>
   );
 }

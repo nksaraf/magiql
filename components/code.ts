@@ -14,7 +14,6 @@ export function PeopleInfinite() {
               id
               ...Person_person
             }
-            cursor
           }
           pageInfo {
             hasNextPage

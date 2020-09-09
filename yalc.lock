@@ -1,0 +1,9 @@
+{
+  "version": "v1",
+  "packages": {
+    "magiql": {
+      "signature": "39e47501c84042741d2c8066c7384128",
+      "file": true
+    }
+  }
+}
