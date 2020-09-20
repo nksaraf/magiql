@@ -1,23 +1,24 @@
 {
   "compilerOptions": {
-    "target": "es2015",
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "node",
-    "declaration": true,
-    "declarationDir": "dist/types",
-    "emitDeclarationOnly": true,
-    "downlevelIteration": true,
-    "jsx": "react",
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "lib": ["dom", "esnext", "esnext.asynciterable"],
-    "removeComments": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "strict": false,
-    "noEmit": true
-  }
+    "jsx": "preserve",
+    "baseUrl": "./",
+    "paths": {
+      "magiql/*": ["./src/*"],
+      "magiql": ["./src/index.ts"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules", "recoil", "jotai", "dist"]
 }

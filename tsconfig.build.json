@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "es2015",
+    "allowJs": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "declaration": true,
+    "declarationDir": "dist/types",
+    "downlevelIteration": true,
+    "jsx": "react",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "lib": ["dom", "esnext", "esnext.asynciterable"],
+    "removeComments": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "strict": false
+  }
+}

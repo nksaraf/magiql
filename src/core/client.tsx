@@ -42,7 +42,7 @@ export class GraphQLClient {
   fetchOptions: FetchOptions<object>;
   queryConfig: ReactQueryConfig<unknown, unknown>;
   cache: QueryCache;
-  useStore: () => Store;
+  useStore: (() => Store) & { Provider?: React.FC<{}> };
   subscriptions?: {
     client: SubscriptionClient;
     endpoint: string;

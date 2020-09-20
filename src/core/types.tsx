@@ -152,8 +152,6 @@ export type $Call<Fn extends (...args: any[]) => any> = Fn extends (
 export interface Store {
   update(recordSource: any): void;
   updateRecord(id: string, record: any): void;
-  ref(id: string): { [key: string]: string };
-  refs(ids: string[]): { [key: string]: string[] };
   getDataID: GetDataID;
   get(dataID: string): any;
   commit<TQuery extends Query>(

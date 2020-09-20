@@ -1,5 +1,5 @@
 import React from "react";
-import { useInfiniteQuery, graphql, useQuery } from "../../src";
+import { useInfiniteQuery, graphql, useQuery } from "magiql";
 import { People } from "./Person";
 import { PeopleInfiniteQuery } from "../generated/PeopleInfiniteQuery.graphql";
 import Link from "next/link";

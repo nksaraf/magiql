@@ -21,7 +21,7 @@ export const GraphQLClientProvider = ({
 }: React.PropsWithChildren<{
   client: GraphQLClient;
 }>) => {
-  const store = client.useStore();
+  const useStore = client.useStore;
   const clientProvider = (
     <ReactQueryCacheProvider queryCache={client.cache}>
       <ReactQueryConfigProvider config={client.queryConfig}>
@@ -31,8 +31,8 @@ export const GraphQLClientProvider = ({
       </ReactQueryConfigProvider>
     </ReactQueryCacheProvider>
   );
-  return store.Provider ? (
-    <store.Provider>{clientProvider}</store.Provider>
+  return useStore.Provider ? (
+    <useStore.Provider>{clientProvider}</useStore.Provider>
   ) : (
     clientProvider
   );

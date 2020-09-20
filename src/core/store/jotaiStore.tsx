@@ -1,14 +1,6 @@
 import React from "react";
 import { stableStringify } from "../../utils";
-import {
-  atom,
-  ReadWriteSelectorOptions,
-  RecoilState,
-  selector,
-  useRecoilValueLoadable,
-  useSetRecoilState,
-  RecoilRoot,
-} from "recoil";
+import { Provider, atom, Atom, useAtom } from "jotai";
 import {
   getSelector,
   getStorageKey,
@@ -37,51 +29,16 @@ import { createRelayNormalizer, defaultGetDataId } from "./relayNormalizer";
 
 function atomFamily<T, TParam>({
   default: defaultValue,
-  key: rootKey,
-}: {
-  default: T;
-  key: (param: TParam) => string;
-}) {
-  const atomCache: {
-    [key: string]: { atom: RecoilState<T>; params: TParam };
-  } = {};
-  return Object.assign(
-    (param: TParam) => {
-      const key = rootKey(param);
-      const cachedAtom = atomCache[key];
-      if (cachedAtom != null) {
-        return cachedAtom.atom;
-      }
-
-      const newAtom = atom<T>({
-        key: rootKey(param),
-        default: defaultValue,
-      });
-
-      atomCache[key] = {
-        atom: newAtom,
-        params: param,
-      };
-
-      return newAtom;
-    },
-    {
-      cache: atomCache,
-    }
-  );
-}
-
-function selectorFamily<T, TParam>({
-  key: rootKey,
   get,
   set,
-}: {
-  key: (param: TParam) => string;
-  get: (param: TParam) => ReadWriteSelectorOptions<T>["get"];
-  set?: (param: TParam) => ReadWriteSelectorOptions<T>["set"];
+  key: rootKey,
+}: { key: (param: TParam) => string } & {
+  default?: any;
+  get?: any;
+  set?: any;
 }) {
   const atomCache: {
-    [key: string]: { atom: RecoilState<T>; params: TParam };
+    [key: string]: { atom: Atom<T>; params: TParam };
   } = {};
   return Object.assign(
     (param: TParam) => {
@@ -90,17 +47,20 @@ function selectorFamily<T, TParam>({
       if (cachedAtom != null) {
         return cachedAtom.atom;
       }
-
-      const newAtom = selector<T>({
-        key: rootKey(param),
-        get: get(param),
-        ...(set ? { set: set(param) } : {}),
-      }) as any;
+      let newAtom;
+      if (typeof defaultValue !== "undefined") {
+        newAtom = atom(defaultValue);
+      } else if (get) {
+        newAtom = atom(get(param), set ? set(param) : undefined);
+      } else {
+        throw new Error("either one of default or get should be defined");
+      }
 
       atomCache[key] = {
         atom: newAtom,
         params: param,
       };
+
       return newAtom;
     },
     {
@@ -108,6 +68,44 @@ function selectorFamily<T, TParam>({
     }
   );
 }
+
+// function selectorFamily<T, TParam>({
+//   key: rootKey,
+//   get,
+//   set,
+// }: {
+//   key: (param: TParam) => string;
+//   get: (param: TParam) => ReadWriteSelectorOptions<T>["get"];
+//   set?: (param: TParam) => ReadWriteSelectorOptions<T>["set"];
+// }) {
+//   const atomCache: {
+//     [key: string]: { atom: RecoilState<T>; params: TParam };
+//   } = {};
+//   return Object.assign(
+//     (param: TParam) => {
+//       const key = rootKey(param);
+//       const cachedAtom = atomCache[key];
+//       if (cachedAtom != null) {
+//         return cachedAtom.atom;
+//       }
+
+//       const newAtom = selector<T>({
+//         key: rootKey(param),
+//         get: get(param),
+//         ...(set ? { set: set(param) } : {}),
+//       }) as any;
+
+//       atomCache[key] = {
+//         atom: newAtom,
+//         params: param,
+//       };
+//       return newAtom;
+//     },
+//     {
+//       cache: atomCache,
+//     }
+//   );
+// }
 
 export const recordField = atomFamily<any, { id: string; field: string }>({
   default: null,
@@ -119,9 +117,9 @@ export const recordRoot = atomFamily<Set<string> | null, string>({
   key: (id) => `${id}`,
 });
 
-export const record = selectorFamily<any, any>({
+export const record = atomFamily<any, any>({
   key: (param) => `record/${param}`,
-  get: (param) => ({ get }) => {
+  get: (param) => (get) => {
     const root = get(recordRoot(param));
     if (root === null) {
       return null;
@@ -135,7 +133,7 @@ export const record = selectorFamily<any, any>({
 
     return data;
   },
-  set: (param) => ({ set, get }, recordData) => {
+  set: (param) => (get, set, recordData) => {
     let oldRoot = get(recordRoot(param));
 
     if (oldRoot === null) {
@@ -152,43 +150,44 @@ export const record = selectorFamily<any, any>({
   },
 });
 
-export const fragmentSelector = selectorFamily<any, any>({
+export const fragmentSelector = atomFamily<any, any>({
   key: (param) => `fragment/${stableStringify(param)}`,
-  get: (fragment) => ({ get }) => {
+  get: (fragment) => (get) => {
     return readFragmentFromStore(get, fragment);
   },
 });
 
-export const fragmentPagesSelector = selectorFamily<any, any>({
+export const fragmentPagesSelector = atomFamily<any, any>({
   key: (param) => `fragment/${stableStringify(param)}`,
-  get: ([node, pageVariables]) => ({ get }) => {
+  get: ([node, pageVariables]) => (get) => {
     return pageVariables.map((page: any) =>
       readFragmentFromStore(get, createOperation(node, page).fragment)
     );
   },
 });
 
-export const storeAtom = selector<any>({
-  key: "store",
-  get: ({ get }) => {
+export const storeAtom = atom<any>(
+  (get) => {
     return Object.entries(record.cache).map(([key, val]) => [
       val.params,
       get(val.atom),
     ]);
   },
-  set: () => {},
-});
+  // @ts-ignore
+  (_get, _set, _update) => {
+    return;
+  }
+);
 
-export const storeUpdater = selector({
-  key: "storeUpdater",
-  get: () => null as any,
-  set: ({ set }, recordSource) => {
+export const storeUpdater = atom(
+  () => null as any,
+  (get, set, recordSource: any) => {
     for (var id in recordSource) {
       set(record(id), recordSource[id]);
     }
     set(storeAtom, []);
-  },
-});
+  }
+);
 
 export function readFragmentFromStore<TData>(
   getter: any,
@@ -323,7 +322,7 @@ export function readFragmentFromStore<TData>(
   return traverse(node, dataID, null) as TData;
 }
 
-export function createRecoilStore(
+export function createJotaiStore(
   options: Partial<Store> & {
     normalizer?: { normalizeResponse: any };
   } = {}
@@ -342,7 +341,8 @@ export function createRecoilStore(
     if (!fragment) {
       throw new Error("no selector");
     }
-    return useRecoilValueLoadable(fragmentSelector(fragment)).contents as TData;
+    const [data, setData] = useAtom<TData>(fragmentSelector(fragment));
+    return data as TData;
   };
 
   const useOperation = function <TQuery extends Query>(
@@ -358,9 +358,9 @@ export function createRecoilStore(
     operation: OperationDescriptor<TQuery>,
     pageVariables: any[]
   ) {
-    const data = useRecoilValueLoadable(
+    const [data, setData] = useAtom<any>(
       fragmentPagesSelector([operation.request.node, pageVariables])
-    ).contents as any;
+    );
 
     return data;
   };
@@ -377,11 +377,12 @@ export function createRecoilStore(
   };
 
   function useEntities() {
-    return useRecoilValueLoadable(storeAtom).contents;
+    const [data, setData] = useAtom<any>(storeAtom);
+    return data;
   }
 
   function useStore() {
-    const updateStore = useSetRecoilState(storeUpdater);
+    const [_, updateStore] = useAtom(storeUpdater);
 
     const update = React.useCallback(
       function (recordSource: RecordSource) {
@@ -425,11 +426,10 @@ export function createRecoilStore(
       useOperationPages,
       commit,
       useEntities,
-      Provider: RecoilRoot as any,
     };
   }
 
   return Object.assign(useStore, {
-    Provider: RecoilRoot as any,
+    Provider: Provider as any,
   });
 }

@@ -1,5 +1,5 @@
 {
-  "name": "magiql/recoil",
+  "name": "magiql/recoil-store",
   "private": true,
   "main": "../dist/recoil.js",
   "module": "../dist/esm/recoil.js",

@@ -11,10 +11,11 @@ import {
   GraphQLClientProvider,
   createNormalizedQueryCacheStore,
   createQueryCacheStore,
-} from "../../src";
+} from "magiql";
 // import { createRecoilStore, RecoilRoot } from "../../src/recoil";
-import GraphQLDevtools from "../../src/devtools";
-import { createRecoilStore } from "../../src/recoil";
+import GraphQLDevtools from "magiql/devtools";
+// import { createRecoilStore } from "magiql/recoil";
+import { createJotaiStore } from "magiql/jotai";
 
 const client = new GraphQLClient({
   endpoint: "https://swapi-graphql.netlify.app/.netlify/functions/index",
@@ -24,7 +25,7 @@ const client = new GraphQLClient({
       retry: false,
     },
   },
-  useStore: createRecoilStore(),
+  useStore: createJotaiStore(),
 });
 
 export default function App({ Component, pageProps }) {

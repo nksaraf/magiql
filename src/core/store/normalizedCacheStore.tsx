@@ -333,10 +333,6 @@ export function createNormalizedQueryCacheStore(
       );
       update(recordSource);
     },
-    ref = (id) => ({ [constants.REF_KEY]: id }),
-    refs = (ids) => ({
-      [constants.REFS_KEY]: ids,
-    }),
   } = options;
 
   function useEntities() {
@@ -389,9 +385,7 @@ export function createNormalizedQueryCacheStore(
     useFragment,
     useOperation,
     useEntities,
-    ref,
     get,
-    refs,
   };
 
   return function useStore() {
