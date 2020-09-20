@@ -4,3 +4,4 @@ coverage
 .idea
 *.log
 .next
+.parcel-cache
