@@ -72,6 +72,7 @@ export function useInfiniteQuery<TQuery extends Query, TError = Error>(
 
       const data = await client.execute(fetchMoreOperation);
       store.commit(fetchMoreOperation, data);
+      console.log("commited");
       return data;
     },
     options
@@ -89,9 +90,8 @@ export function useInfiniteQuery<TQuery extends Query, TError = Error>(
     };
   }) ?? [variables];
 
-  console.log(pageQueries);
-  // const data = store.useOperation(operation);
   const data = store.useOperationPages(operation, pageQueries);
+  console.log({ infiniteQuery, pageQueries, data, operation });
 
   const { canFetchMore, fetchMore: baseFetchMore } = infiniteQuery;
 

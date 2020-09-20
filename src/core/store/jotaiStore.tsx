@@ -69,44 +69,6 @@ function atomFamily<T, TParam>({
   );
 }
 
-// function selectorFamily<T, TParam>({
-//   key: rootKey,
-//   get,
-//   set,
-// }: {
-//   key: (param: TParam) => string;
-//   get: (param: TParam) => ReadWriteSelectorOptions<T>["get"];
-//   set?: (param: TParam) => ReadWriteSelectorOptions<T>["set"];
-// }) {
-//   const atomCache: {
-//     [key: string]: { atom: RecoilState<T>; params: TParam };
-//   } = {};
-//   return Object.assign(
-//     (param: TParam) => {
-//       const key = rootKey(param);
-//       const cachedAtom = atomCache[key];
-//       if (cachedAtom != null) {
-//         return cachedAtom.atom;
-//       }
-
-//       const newAtom = selector<T>({
-//         key: rootKey(param),
-//         get: get(param),
-//         ...(set ? { set: set(param) } : {}),
-//       }) as any;
-
-//       atomCache[key] = {
-//         atom: newAtom,
-//         params: param,
-//       };
-//       return newAtom;
-//     },
-//     {
-//       cache: atomCache,
-//     }
-//   );
-// }
-
 export const recordField = atomFamily<any, { id: string; field: string }>({
   default: null,
   key: ({ id, field }) => `${id}/${field}`,

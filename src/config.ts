@@ -1,4 +1,4 @@
-import plugin from "./relay-compiler-language-typescript";
+import plugin from "./relay";
 import { cosmiconfigSync, defaultLoaders } from "cosmiconfig";
 
 var explorer = cosmiconfigSync("magiql", {
