@@ -1,19 +1,21 @@
 {
-  "include": ["src/**/*"],
-  "exclude": ["node_modules"],
   "compilerOptions": {
-    "target": "esnext",
+    "target": "es2015",
     "allowJs": true,
     "module": "esnext",
     "moduleResolution": "node",
     "declaration": true,
     "declarationDir": "dist/types",
-    "emitDeclarationOnly": true,
+    "downlevelIteration": true,
     "jsx": "react",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "lib": ["dom", "esnext", "esnext.asynciterable"],
     "removeComments": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "strict": false
   }
 }
