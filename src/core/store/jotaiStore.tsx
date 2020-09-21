@@ -156,6 +156,7 @@ export function readFragmentFromStore<TData>(
   selector: SingularReaderSelector
 ) {
   function traverse(node: ReaderNode, dataID: string, prevData: any) {
+    console.log(dataID);
     const data = prevData || {};
     traverseSelections(node.selections, dataID, data);
     return data;

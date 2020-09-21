@@ -1,6 +1,6 @@
 import React from "react";
 
-import { makeQueryCache } from "react-query";
+import { QueryCache } from "react-query";
 import { getSelector, getStorageKey, SelectorData } from "relay-runtime";
 
 import { assertBabelPlugin, stableStringify } from "../../utils";
@@ -17,7 +17,6 @@ import {
   ReaderLinkedField,
   ReaderScalarField,
   ReaderSelection,
-  QueryCache,
   ReaderNode,
   Record,
   ReaderSelector,
@@ -235,7 +234,7 @@ export function createNormalizedQueryCacheStore(
   const {
     getDataID = defaultGetDataId,
     normalizer = createRelayNormalizer({ getDataID }),
-    cache = makeQueryCache(),
+    cache = new QueryCache(),
   } = options;
 
   const {

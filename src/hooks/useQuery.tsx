@@ -55,7 +55,7 @@ export function useQuery<TQuery extends Query, TError = Error>(
   );
 
   const data = store.useOperation(operation);
-
+  console.log(data, baseQuery);
   return {
     ...baseQuery,
     data: baseQuery.status === "loading" ? null : data,

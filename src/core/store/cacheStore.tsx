@@ -1,7 +1,7 @@
 import { useClient } from "../../hooks";
 import { throwError } from "../../utils";
-import { Store, QueryCache } from "../types";
-import { queryCache } from "react-query";
+import { Store } from "../types";
+import { QueryCache } from "react-query";
 
 export function createQueryCacheStore(
   options: Partial<Store> & {
@@ -9,7 +9,7 @@ export function createQueryCacheStore(
   } = {}
 ): () => Store {
   const {
-    cache = queryCache,
+    cache = new QueryCache(),
     useFragment = (_, fragmentRef) => fragmentRef as any,
     commit = (_operation, _data) => {},
   } = options;

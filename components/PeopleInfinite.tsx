@@ -8,11 +8,11 @@ import { infiniteQuery } from "./code";
 export function PeopleInfinite() {
   const {
     data,
-    fetchMore,
+    // fetchMore,
     status,
     isLoading,
-    isFetchingMore,
-  } = useInfiniteQuery<PeopleInfiniteQuery>(
+    // isFetchingMore,
+  } = useQuery<PeopleInfiniteQuery>(
     graphql`
       query PeopleInfiniteQuery($limit: Int = 10, $after: String) {
         allPeople(first: $limit, after: $after) {
@@ -34,11 +34,11 @@ export function PeopleInfinite() {
       variables: {
         limit: 10,
       },
-      getFetchMore: (lastpage) => ({
-        after: lastpage.allPeople.pageInfo.hasNextPage
-          ? lastpage.allPeople.pageInfo.endCursor
-          : null,
-      }),
+      // getFetchMore: (lastpage) => ({
+      //   after: lastpage.allPeople.pageInfo.hasNextPage
+      //     ? lastpage.allPeople.pageInfo.endCursor
+      //     : null,
+      // }),
     }
   );
 
@@ -53,7 +53,7 @@ export function PeopleInfinite() {
         <Actions>
           <ActionButton
             onClick={() => {
-              fetchMore();
+              // fetchMore();
             }}
           >
             Fetch more
@@ -61,16 +61,16 @@ export function PeopleInfinite() {
         </Actions>
         <div style={{ display: "flex", flexDirection: "row" }}>
           <div style={{ flex: 1 }}>
-            {data?.map((page, index) => (
-              <React.Fragment key={index}>
-                {page
-                  ? page.allPeople?.edges?.map((edge) => (
-                      <People key={edge.node.id} person={edge.node} />
-                    ))
-                  : null}
-              </React.Fragment>
-            ))}
-            {isFetchingMore && "Fetching more..."}
+            {/* {data?.map((page, index) => ( */}
+            {/* <React.Fragment key={index}> */}
+            {data
+              ? data.allPeople?.edges?.map((edge) => (
+                  <People key={edge.node.id} person={edge.node} />
+                ))
+              : null}
+            {/* </React.Fragment> */}
+            {/* ))} */}
+            {/* {isFetchingMore && "Fetching more..."} */}
           </div>
           <pre style={{ fontFamily: "Roboto Mono", flex: 1 }}>
             {infiniteQuery}

@@ -21,14 +21,14 @@ const client = new GraphQLClient({
       retry: false,
     },
   },
-  useStore: createJotaiStore(),
+  useStore: createNormalizedQueryCacheStore(),
 });
 
 export default function App({ Component, pageProps }) {
   return (
     <GraphQLClientProvider client={client}>
       <Component {...pageProps} />
-      <GraphQLDevtools />
+      <GraphQLDevtools defaultIsOpen={true} defaultTab="store" />
     </GraphQLClientProvider>
   );
 }

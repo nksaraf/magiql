@@ -1,9 +1,4 @@
-import {
-  queryCache as rootQueryCache,
-  QueryCache,
-  QueryConfig,
-  ReactQueryConfig,
-} from "react-query";
+import { QueryCache, QueryConfig, ReactQueryConfig } from "react-query";
 import { SubscriptionClient, Observable } from "subscriptions-transport-ws";
 
 import { fetchGraphQL, resolveFetchOptions } from "./fetch";
@@ -53,7 +48,7 @@ export class GraphQLClient {
     endpoint = "/graphql",
     fetchOptions = () => ({}),
     queryConfig = {},
-    queryCache = rootQueryCache,
+    queryCache = new QueryCache(),
     useStore = createQueryCacheStore(),
     subscriptions,
   }: Partial<GraphQLClientOptions>) {
