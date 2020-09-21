@@ -8,12 +8,9 @@ export function createQueryCacheStore(
     cache?: QueryCache;
   } = {}
 ): () => Store {
-  const {
-    cache = new QueryCache(),
-    useFragment = (_, fragmentRef) => fragmentRef as any,
-    commit = (_operation, _data) => {},
-  } = options;
-
+  const { cache = new QueryCache() } = options;
+  const useFragment = (_, fragmentRef) => fragmentRef;
+  const commit = (_operation, _data) => {};
   const useOperation: Store["useOperation"] = (operation) => {
     const client = useClient();
     const queryKey = client.getQueryKey(operation);
@@ -30,17 +27,14 @@ export function createQueryCacheStore(
     return [];
   };
 
-  const store = {
+  const store: Store = {
     commit,
     useFragment,
     useOperation,
     getDataID: throwError(),
     update: throwError(),
     updateRecord: throwError(),
-    useSelector: throwError(),
-    ref: throwError(),
     get: throwError(),
-    refs: throwError(),
     useEntities,
     useOperationPages,
   };

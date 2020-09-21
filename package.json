@@ -32,7 +32,7 @@
     "react-dom": "^16.13.1",
     "react-notion": "^0.8.1",
     "tsup": "^3.6.1",
-    "typescript": "^4.0.2"
+    "typescript": "^4.1.0-beta"
   },
   "dependencies": {
     "@types/relay-runtime": "^10.0.3",
