@@ -5428,9 +5428,9 @@ typedarray@^0.0.6:
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
 typescript@^4.1.0-beta:
-  version "4.1.0-beta"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.1.0-beta.tgz#e4d054035d253b7a37bdc077dd71706508573e69"
-  integrity sha512-b/LAttdVl3G6FEmnMkDsK0xvfvaftXpSKrjXn+OVCRqrwz5WD/6QJOiN+dTorqDY+hkaH+r2gP5wI1jBDmdQ7A==
+  version "4.1.0-dev.20200921"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.1.0-dev.20200921.tgz#dc9fb6938b046a71cfbe09b3cecd420ce8414910"
+  integrity sha512-3QUfGlMtdcNEj+PzW8YrM9ERAF86BCyUfAPhRaA7ioTGCpXQ0y593FZcKC/kU5axwIIyiMSloMNbkm6X+Mf8BQ==
 
 ua-parser-js@^0.7.18:
   version "0.7.22"
