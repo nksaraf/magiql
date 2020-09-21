@@ -241,7 +241,6 @@ export function createNormalizedQueryCacheStore(
     get = (dataID: string) => {
       const queryHash = stableStringify([dataID]);
       const record = (cache as any).queries[queryHash]?.state.data ?? null;
-      console.log(record);
       return record;
     },
     updateRecord = (dataID: string, data: any) => {
