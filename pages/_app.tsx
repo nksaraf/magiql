@@ -15,12 +15,12 @@ import { createJotaiStore } from "magiql/jotai-store";
 
 const client = new GraphQLClient({
   endpoint: "https://swapi-graphql.netlify.app/.netlify/functions/index",
-  queryConfig: {
-    queries: {
-      refetchOnWindowFocus: false,
-      retry: false,
-    },
-  },
+  // queryConfig: {
+  //   queries: {
+  //     refetchOnWindowFocus: false,
+  //     retry: false,
+  //   },
+  // },
   useStore: createNormalizedQueryCacheStore(),
 });
 

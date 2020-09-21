@@ -156,10 +156,12 @@ const {
   validate,
   watchman,
   language,
+  languagePlugin,
   include,
   exclude,
 } = loadConfig();
 
+console.log(languagePlugin);
 // Start the application
 relayCompiler({
   schema,
@@ -171,7 +173,7 @@ relayCompiler({
   watch: process.argv.includes("--watch"),
   validate,
   watchman,
-  language,
+  language: languagePlugin,
   include,
   exclude,
 });

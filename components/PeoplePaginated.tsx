@@ -1,6 +1,6 @@
 import React from "react";
 import { graphql, usePaginatedQuery } from "magiql";
-import { People } from "./Person";
+import { Person } from "./Person";
 import { PeoplePaginatedQuery } from "../generated/PeoplePaginatedQuery.graphql";
 import Link from "next/link";
 
@@ -72,7 +72,7 @@ export function PeoplePaginated() {
       </button>
       <div>
         {resolvedData?.allPeople?.edges?.map((node) => (
-          <People key={node.node.id} person={node.node} />
+          <Person key={node.node.id} person={node.node} />
         ))}
       </div>
     </div>

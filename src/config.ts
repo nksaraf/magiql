@@ -30,14 +30,14 @@ export function loadConfig() {
     quiet = false,
     watchman = true,
     validate = false,
-    language = plugin({ keyFields }),
+    language = "typescript",
+    languagePlugin = plugin({ keyFields, language }),
     include = ["**"],
     exclude = [
       "**/node_modules/**",
       "**/__mocks__/**",
       `**/${artifactDirectory}/**`,
     ],
-
     ...rest
   } = config;
 
@@ -52,6 +52,7 @@ export function loadConfig() {
     watchman,
     validate,
     language,
+    languagePlugin,
     include,
     exclude,
     ...rest,

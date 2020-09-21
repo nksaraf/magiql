@@ -1,24 +1,20 @@
 import React from "react";
-import { useInfiniteQuery, graphql, useQuery } from "magiql";
-import { Person } from "./Person";
-import { PeopleInfiniteQuery } from "../generated/PeopleInfiniteQuery.graphql";
+import { graphql, useQuery } from "magiql";
 import Link from "next/link";
+import { PeopleQuery } from "generated/PeopleQuery.graphql";
 
-export function PeopleInfinite() {
-  const {
-    data,
-    fetchMore,
-    status,
-    isLoading,
-    isFetchingMore,
-  } = useInfiniteQuery<PeopleInfiniteQuery>(
+export function People() {
+  const { data, status } = useQuery<PeopleQuery>(
     graphql`
-      query PeopleInfiniteQuery($limit: Int = 10, $after: String) {
+      query PeopleQuery($limit: Int = 10, $after: String) {
         allPeople(first: $limit, after: $after) {
           edges {
             node {
               id
-              ...Person_person
+              name
+              homeworld {
+                name
+              }
             }
             cursor
           }
@@ -44,32 +40,23 @@ export function PeopleInfinite() {
   return (
     <>
       <NavBar />
-      <Header>useInfiniteQuery</Header>
+      <Header>useQuery</Header>
       <main>
         <code style={{ fontFamily: "Roboto Mono" }}>
           <b>status:</b> {status}
         </code>
         <Actions>
-          <ActionButton
-            onClick={() => {
-              fetchMore();
-            }}
-          >
-            Fetch more
-          </ActionButton>
+          <ActionButton onClick={() => {}}>Refresh</ActionButton>
         </Actions>
         <div style={{ display: "flex", flexDirection: "row" }}>
           <div style={{ flex: 1 }}>
-            {data?.map((page, index) => (
-              <React.Fragment key={index}>
-                {page
-                  ? page.allPeople?.edges?.map((edge) => (
-                      <Person key={edge.node.id} person={edge.node} />
-                    ))
-                  : null}
-              </React.Fragment>
-            ))}
-            {isFetchingMore && "Fetching more..."}
+            {data
+              ? data.allPeople?.edges?.map((edge) => (
+                  <div key={edge.node.id}>
+                    <b>{edge.node.name}</b> ({edge.node.homeworld?.name})
+                  </div>
+                ))
+              : null}
           </div>
         </div>
       </main>
@@ -95,6 +82,12 @@ function Header({ children }) {
 function NavBar() {
   return (
     <div style={{ display: "flex", flexDirection: "row" }}>
+      <code style={{ fontFamily: "Roboto Mono" }}>
+        <Link href="/paginated">
+          <a>useQuery</a>
+        </Link>
+      </code>
+      <div style={{ width: 8 }} />
       <code style={{ fontFamily: "Roboto Mono" }}>
         <Link href="/infinite">
           <a>useInfiniteQuery</a>
