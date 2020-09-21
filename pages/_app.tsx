@@ -11,7 +11,7 @@ import {
 // import { createRecoilStore, RecoilRoot } from "../../src/recoil";
 import GraphQLDevtools from "magiql/devtools";
 // import { createRecoilStore } from "magiql/recoil";
-import { createJotaiStore } from "magiql/jotai";
+import { createJotaiStore } from "magiql/jotai-store";
 
 const client = new GraphQLClient({
   endpoint: "https://swapi-graphql.netlify.app/.netlify/functions/index",

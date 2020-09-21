@@ -4,7 +4,7 @@
  * Adapted from https://github.com/facebook/relay/blob/master/packages/relay-compiler/bin/RelayCompilerBin.js
  */
 
-import { relayCompiler } from "magiql/relay/node_modules/relay-compiler";
+import { relayCompiler } from "relay-compiler";
 import { loadConfig } from "./config";
 
 // console.log(relayCompiler, config);
