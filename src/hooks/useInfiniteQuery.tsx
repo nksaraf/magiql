@@ -6,13 +6,14 @@ import {
   QueryConfig,
 } from "react-query";
 
-import { getRequest, GraphQLTaggedNode } from "../core/graphql-tag";
+import { getRequest } from "../core/graphql-tag";
 import {
   GraphQLClient,
   Variables,
   Response,
   OperationDescriptor,
   Query,
+  GraphQLTaggedNode,
   InfiniteQueryKey,
   Store,
 } from "../core/types";
@@ -72,7 +73,6 @@ export function useInfiniteQuery<TQuery extends Query, TError = Error>(
 
       const data = await client.execute(fetchMoreOperation);
       store.commit(fetchMoreOperation, data);
-      console.log("commited");
       return data;
     },
     options
@@ -91,7 +91,6 @@ export function useInfiniteQuery<TQuery extends Query, TError = Error>(
   }) ?? [variables];
 
   const data = store.useOperationPages(operation, pageQueries);
-  console.log({ infiniteQuery, pageQueries, data, operation });
 
   const { canFetchMore, fetchMore: baseFetchMore } = infiniteQuery;
 

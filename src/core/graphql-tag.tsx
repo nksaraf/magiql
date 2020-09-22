@@ -1,6 +1,5 @@
 // Piggybacking off relay-runtime here
 import {
-  GraphQLTaggedNode,
   createOperationDescriptor,
   ConcreteRequest,
   ReaderFragment,
@@ -8,9 +7,12 @@ import {
   getFragment as baseGetFragment,
 } from "relay-runtime";
 
-import { Query, OperationDescriptor, Variables } from "./types";
-
-export type { GraphQLTaggedNode } from "relay-runtime";
+import {
+  Query,
+  OperationDescriptor,
+  Variables,
+  GraphQLTaggedNode,
+} from "./types";
 
 export const getRequest = (
   taggedNode: GraphQLTaggedNode | string

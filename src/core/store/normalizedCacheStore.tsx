@@ -89,6 +89,7 @@ export function createReader(get: any) {
     //   prevData
     // );
     // const linkedArray = prevData || [];
+    
     const linkedArray: any[] = [];
     linkedIDs.forEach((linkedID: string, nextIndex: number) => {
       if (linkedID == null) {

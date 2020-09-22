@@ -161,8 +161,7 @@ const {
   exclude,
 } = loadConfig();
 
-console.log(languagePlugin);
-// Start the application
+// Start the relay compiler
 relayCompiler({
   schema,
   src,

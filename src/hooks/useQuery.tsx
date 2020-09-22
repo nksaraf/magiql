@@ -4,13 +4,14 @@ import {
   QueryResult,
 } from "react-query";
 
-import { getRequest, GraphQLTaggedNode } from "../core/graphql-tag";
+import { getRequest } from "../core/graphql-tag";
 import {
   Variables,
   Response,
   Query,
   Store,
   OperationDescriptor,
+  GraphQLTaggedNode,
 } from "../core/types";
 import { useClient } from "./useClient";
 import { useStore } from "./useStore";
@@ -47,7 +48,6 @@ export function useQuery<TQuery extends Query, TError = Error>(
     queryKey,
     async () => {
       const data = await client.execute(operation);
-      console.log(data);
       store.commit(operation, data);
       return data;
     },
@@ -55,7 +55,6 @@ export function useQuery<TQuery extends Query, TError = Error>(
   );
 
   const data = store.useOperation(operation);
-  console.log(data);
   return {
     ...baseQuery,
     data: baseQuery.status === "loading" ? null : data,

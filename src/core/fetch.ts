@@ -1,12 +1,11 @@
 import fetch from "isomorphic-unfetch";
 
 import { CombinedError } from "./error";
-import { getRequest, GraphQLTaggedNode } from "./graphql-tag";
+import { getRequest } from "./graphql-tag";
 import {
   FetchOperation,
   FetchOptions,
   FetchResult,
-  OperationKind,
   Query,
   Response,
   Variables,

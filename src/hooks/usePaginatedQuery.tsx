@@ -5,13 +5,14 @@ import {
   QueryConfig,
 } from "react-query";
 
-import { getRequest, GraphQLTaggedNode } from "../core/graphql-tag";
+import { getRequest } from "../core/graphql-tag";
 import {
   Variables,
   Response,
   Query,
   QueryStatus,
   Store,
+  GraphQLTaggedNode,
   OperationDescriptor,
 } from "../core/types";
 import { useClient } from "./useClient";

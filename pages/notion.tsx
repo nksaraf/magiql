@@ -6,7 +6,6 @@ export async function getStaticProps() {
   const data = await fetch(
     "https://notion-api.splitbee.io/v1/page/3691af2990584abcbcb3d6eb03e231fb"
   ).then((res) => res.json());
-  console.log(data);
 
   return {
     props: {

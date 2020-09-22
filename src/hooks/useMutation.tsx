@@ -5,13 +5,14 @@ import {
   MutationResult,
 } from "react-query";
 
-import { getRequest, GraphQLTaggedNode } from "../core/graphql-tag";
+import { getRequest } from "../core/graphql-tag";
 import {
   GraphQLClient,
   Query,
   Variables,
   Response,
   Store,
+  GraphQLTaggedNode,
   OperationDescriptor,
 } from "../core/types";
 import { useClient } from "./useClient";

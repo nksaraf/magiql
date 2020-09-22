@@ -1,7 +1,7 @@
 import React from "react";
-import { getRequest, GraphQLTaggedNode } from "relay-runtime";
+import { getRequest } from "relay-runtime";
 
-import { Query, Variables } from "../core/types";
+import { Query, Variables, GraphQLTaggedNode } from "../core/types";
 import { useRerenderer } from "./useRerenderer";
 import { useClient } from "./useClient";
 import { UseQueryOptions, UseQueryResult } from "./useQuery";

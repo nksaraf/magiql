@@ -23,6 +23,7 @@ export type {
   ConcreteRequest,
   NormalizationSelector,
   ReaderSelector,
+  GraphQLTaggedNode,
   SingularReaderSelector,
 } from "relay-runtime";
 

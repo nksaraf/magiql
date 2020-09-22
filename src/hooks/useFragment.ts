@@ -1,5 +1,10 @@
-import { getFragment, GraphQLTaggedNode } from "../core/graphql-tag";
-import { $Call, KeyType, KeyReturnType } from "../core/types";
+import { getFragment } from "../core/graphql-tag";
+import {
+  $Call,
+  KeyType,
+  KeyReturnType,
+  GraphQLTaggedNode,
+} from "../core/types";
 import { assertBabelPlugin } from "../utils";
 import { useStore } from "./useStore";
 

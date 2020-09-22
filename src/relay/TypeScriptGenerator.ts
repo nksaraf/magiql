@@ -48,9 +48,6 @@ export const generate: TypeGenerator["generate"] = (schema, node, options) => {
     IRVisitor.visit(node, createVisitor(schema, options))
   );
 
-  // @ts-ignore
-  // console.log(Printer.print);
-
   const printer = ts.createPrinter({ newLine: ts.NewLineKind.LineFeed });
 
   const resultFile = ts.createSourceFile(
