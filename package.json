@@ -46,7 +46,7 @@
     "react-draggable": "^4.4.3",
     "react-query": "^2.23.0",
     "react-query-devtools": "^2.4.7",
-    "recoil": "^0.0.10",
+    "recoil": "^0.0.13",
     "relay-compiler": "^10.0.1",
     "relay-runtime": "^10.0.1",
     "subscriptions-transport-ws": "^0.9.18"
