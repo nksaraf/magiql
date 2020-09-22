@@ -3357,10 +3357,10 @@ jest-worker@24.9.0:
     merge-stream "^2.0.0"
     supports-color "^6.1.0"
 
-jotai@^0.6.2:
-  version "0.6.2"
-  resolved "https://registry.yarnpkg.com/jotai/-/jotai-0.6.2.tgz#9419e05ccf92f38457e44471c0741cd704519a32"
-  integrity sha512-kx1dOuQDRpYxjNbnxMcOgcUx5CY3ZpFaE0F+mEorMmUanjuInFow/ZNer2+nUfMLbYGTk0h7knlKjocpIAu4YA==
+jotai@^0.7.0:
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/jotai/-/jotai-0.7.0.tgz#ad23f7fea4726635d31cc73f43348680651ea788"
+  integrity sha512-fBxkJ84AlUGKEef5nU8kN1iuCAkyC6UqyJDuSDtll07KGzINdvy5Q1vgiGp9IyE7WXcBBDWP9inMs8ZMqOU6vg==
   dependencies:
     use-context-selector "^1.1.3"
 
