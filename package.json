@@ -13,7 +13,7 @@
     "build:common": "yarn tsup src/index.ts src/node.ts src/recoil-store.ts src/native.ts src/jotai-store.ts src/devtools.ts src/devtools-native.ts --format esm,cjs --legacy-output --dts --external react --external react-dom --external react-native",
     "watch:node": "yarn build:node --watch",
     "watch:common": "yarn build:common --watch",
-    "build": "next build",
+    "build": "run-p build:node build:common && next build",
     "pub": "bump && yarn publish --access public --non-interactive",
     "watch": "yarn clean && run-p watch:*",
     "demo": "yarn next",
