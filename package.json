@@ -1,6 +1,6 @@
 {
   "name": "magiql",
-  "version": "0.0.4-alpha.6",
+  "version": "0.0.4-alpha.7",
   "description": "",
   "repository": "Nikhil Saraf",
   "license": "MIT",
@@ -10,7 +10,7 @@
     "prepublishOnly": "yarn build",
     "clean": "rm -rf dist",
     "build:node": "yarn tsup src/babel.ts src/cli.ts --format cjs",
-    "build:common": "yarn tsup src/index.ts src/node.ts src/recoil-store.ts src/jotai-store.ts src/devtools.ts --format esm,cjs --legacy-output --dts --external react --external react-dom --external react-native",
+    "build:common": "yarn tsup src/index.ts src/node.ts src/recoil-store.ts src/native.ts src/jotai-store.ts src/devtools.ts src/devtools-native.ts --format esm,cjs --legacy-output --dts --external react --external react-dom --external react-native",
     "watch:node": "yarn build:node --watch",
     "watch:common": "yarn build:common --watch",
     "build": "yarn clean && run-p build:*",
@@ -46,7 +46,7 @@
     "react-draggable": "^4.4.3",
     "react-query": "^2.23.0",
     "react-query-devtools": "^2.4.7",
-    "recoil": "^0.0.10",
+    "recoil": "^0.0.13",
     "relay-compiler": "^10.0.1",
     "relay-runtime": "^10.0.1",
     "subscriptions-transport-ws": "^0.9.18"
@@ -62,6 +62,7 @@
   },
   "module": "dist/esm/index.js",
   "main": "dist/index.js",
+  "react-native": "dist/esm/native.js",
   "exports": {
     ".": {
       "import": "./dist/esm/index.js",
@@ -89,12 +90,19 @@
       "node": "./dist/node.js",
       "default": "./dist/esm/node.js"
     },
-    "./recoil": {
-      "import": "./dist/esm/recoil.js",
-      "browser": "./dist/esm/recoil.js",
-      "require": "./dist/recoil.js",
-      "node": "./dist/index.js",
-      "default": "./dist/esm/recoil.js"
+    "./recoil-store": {
+      "import": "./dist/esm/recoil-store.js",
+      "browser": "./dist/esm/recoil-store.js",
+      "require": "./dist/recoil-store.js",
+      "node": "./dist/recoil-store.js",
+      "default": "./dist/esm/recoil-store.js"
+    },
+    "./native": {
+      "import": "./dist/esm/native.js",
+      "browser": "./dist/esm/native.js",
+      "require": "./dist/native.js",
+      "node": "./dist/native.js",
+      "default": "./dist/esm/native.js"
     },
     "./package.json": "./package.json",
     "./": "./"
@@ -104,8 +112,7 @@
     "cli",
     "devtools",
     "babel",
-    "client",
-    "recoil",
+    "recoil-store",
     "node",
     "README.md"
   ]
