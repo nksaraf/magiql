@@ -65,15 +65,16 @@ export function useInfiniteQuery<TQuery extends Query, TError = Error>(
   const queryKey = client.getInfinteQueryKey(operation);
   const infiniteQuery = useBaseInfiniteQuery<TData, TError, typeof queryKey>(
     queryKey,
-    async (queryKey, variables = {}, fetchMoreVariables) => {
+    (queryName, variables = {}, fetchMoreVariables) => {
       const fetchMoreOperation = client.buildOperation(node, {
         ...variables,
         ...(fetchMoreVariables ?? {}),
       });
 
-      const data = await client.execute(fetchMoreOperation);
-      store.commit(fetchMoreOperation, data);
-      return data;
+      return client.execute(fetchMoreOperation).then((data) => {
+        store.commit(fetchMoreOperation, data);
+        return data;
+      });
     },
     options
   );

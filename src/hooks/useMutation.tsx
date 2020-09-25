@@ -47,9 +47,9 @@ export function useMutation<TMutation extends Query, TError = Error>(
   const store = useStore();
   const node = getRequest(mutation);
   const [mutateFn, state] = useBaseMutation<TData, TError, TVariables>(
-    async (variables) => {
+    (variables) => {
       const operation = client.buildOperation(node, variables);
-      return await client.execute<TMutation>(operation);
+      return client.execute<TMutation>(operation);
     },
     {
       ...options,
