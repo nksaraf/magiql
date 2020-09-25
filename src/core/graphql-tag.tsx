@@ -9,7 +9,7 @@ import {
 
 import {
   Query,
-  OperationDescriptor,
+  Operation,
   Variables,
   GraphQLTaggedNode,
 } from "./types";
@@ -60,7 +60,7 @@ export const getOperationName = (query: string) => {
 export const createOperation = function <TQuery extends Query>(
   query: ConcreteRequest,
   variables: Variables<TQuery>
-): OperationDescriptor<TQuery> {
+): Operation<TQuery> {
   if (query.fragment === null) {
     return {
       request: {

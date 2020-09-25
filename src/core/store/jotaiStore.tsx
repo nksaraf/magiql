@@ -12,7 +12,7 @@ import {
 import { assertBabelPlugin, throwError } from "../../utils";
 import { createOperation } from "../graphql-tag";
 import {
-  OperationDescriptor,
+  Operation,
   Query,
   Response,
   constants,
@@ -308,7 +308,7 @@ export function createJotaiStore(
   };
 
   const useOperation = function <TQuery extends Query>(
-    operation: OperationDescriptor<TQuery>
+    operation: Operation<TQuery>
   ) {
     if (!operation.fragment) {
       throw new Error("babel plugin");
@@ -317,7 +317,7 @@ export function createJotaiStore(
   };
 
   const useOperationPages = function <TQuery extends Query>(
-    operation: OperationDescriptor<TQuery>,
+    operation: Operation<TQuery>,
     pageVariables: any[]
   ) {
     const [data, setData] = useAtom<any>(
@@ -364,7 +364,7 @@ export function createJotaiStore(
 
     const commit = React.useCallback(
       function <TQuery extends Query>(
-        operation: OperationDescriptor<TQuery>,
+        operation: Operation<TQuery>,
         data: Response<TQuery>
       ) {
         assertBabelPlugin(operation.request.node.operation);

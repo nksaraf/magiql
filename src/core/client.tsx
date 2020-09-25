@@ -1,13 +1,19 @@
 import { QueryCache, QueryConfig, ReactQueryConfig } from "react-query";
 import { SubscriptionClient, Observable } from "subscriptions-transport-ws";
+import {
+  debugExchange,
+  errorExchange,
+  storeExchange,
+  fetchExchange,
+  composeExchanges,
+  fallbackExchange,
+} from "./exchanges";
 
-import { fetchGraphQL, resolveFetchOptions } from "./fetch";
+import { resolveFetchOptions } from "./fetch";
 import { createOperation } from "./graphql-tag";
 import { createQueryCacheStore } from "./store/cacheStore";
 import {
-  FetchOperation,
-  OperationKind,
-  OperationDescriptor,
+  Operation,
   QueryKey,
   InfiniteQueryKey,
   Query,
@@ -16,7 +22,8 @@ import {
   ConcreteRequest,
   Store,
   FetchOptions,
-  FetchResult,
+  Exchange,
+  DebugEvent,
 } from "./types";
 
 export interface GraphQLClientOptions {
@@ -24,12 +31,29 @@ export interface GraphQLClientOptions {
   fetchOptions: FetchOptions<object>;
   queryConfig: ReactQueryConfig;
   queryCache: QueryCache;
+  onDebugEvent: (event: DebugEvent) => void;
   subscriptions: {
     client: SubscriptionClient;
     endpoint: string;
     fetchOptions: FetchOptions<object>;
   };
   useStore: () => Store;
+  useExchanges: (client: GraphQLClient) => Exchange[];
+}
+
+export function useDefaultExchanges(client: GraphQLClient) {
+  const store = client.useStore();
+
+  return [
+    debugExchange,
+    errorExchange({
+      onError: (error) => {
+        throw error;
+      },
+    }),
+    storeExchange(store),
+    fetchExchange,
+  ];
 }
 
 export class GraphQLClient {
@@ -37,7 +61,9 @@ export class GraphQLClient {
   fetchOptions: FetchOptions<object>;
   queryConfig: ReactQueryConfig<unknown, unknown>;
   cache: QueryCache;
+  onDebugEvent: (event: DebugEvent) => void;
   useStore: (() => Store) & { Provider?: React.FC<{}> };
+  private _useExchanges: (client: GraphQLClient) => Exchange[];
   subscriptions?: {
     client: SubscriptionClient;
     endpoint: string;
@@ -50,6 +76,8 @@ export class GraphQLClient {
     queryConfig = {},
     queryCache = new QueryCache(),
     useStore = createQueryCacheStore(),
+    onDebugEvent = console.log,
+    useExchanges = useDefaultExchanges,
     subscriptions,
   }: Partial<GraphQLClientOptions>) {
     this.endpoint = endpoint;
@@ -57,6 +85,8 @@ export class GraphQLClient {
     this.queryConfig = queryConfig;
     this.cache = queryCache;
     this.useStore = useStore;
+    this._useExchanges = useExchanges;
+    this.onDebugEvent = onDebugEvent;
 
     if (subscriptions && typeof window !== "undefined") {
       const {
@@ -81,7 +111,7 @@ export class GraphQLClient {
   }
 
   getInfinteQueryKey<TQuery extends Query>(
-    operation: OperationDescriptor<TQuery>
+    operation: Operation<TQuery>
   ): InfiniteQueryKey<TQuery> {
     return [
       operation.request.node.params.name,
@@ -93,11 +123,11 @@ export class GraphQLClient {
     node: ConcreteRequest,
     variables: Variables<TQuery>
   ) {
-    return createOperation(node, variables) as OperationDescriptor<TQuery>;
+    return createOperation(node, variables) as Operation<TQuery>;
   }
 
   buildSubscription<TQuery extends Query>(
-    operation: OperationDescriptor<TQuery>,
+    operation: Operation<TQuery>,
     {
       onSuccess,
       onError,
@@ -158,7 +188,7 @@ export class GraphQLClient {
   }
 
   getQueryKey<TQuery extends Query>(
-    operation: OperationDescriptor<TQuery>
+    operation: Operation<TQuery>
   ): QueryKey<TQuery> {
     return [
       operation.request.node.params.name,
@@ -166,55 +196,20 @@ export class GraphQLClient {
     ];
   }
 
-  async request<TQuery extends Query>(
-    operation: OperationDescriptor<TQuery>
-  ): Promise<FetchResult<TQuery>> {
-    return await this.fetch<TQuery>({
-      query: operation.request.node.params.text!,
-      operationName: operation.request.node.params.name,
-      operationKind: operation.request.node.params
-        .operationKind as OperationKind,
-      variables: operation.request.variables,
-    });
-  }
+  useExecutor() {
+    const exchanges = this._useExchanges(this);
+    return async <TQuery extends Query>(operation: Operation<TQuery>) => {
+      const operate = composeExchanges(exchanges)({
+        forward: fallbackExchange({
+          client: this,
+          forward: null,
+          dispatchDebug: this.onDebugEvent,
+        }),
+        client: this,
+        dispatchDebug: this.onDebugEvent,
+      });
 
-  async fetch<TQuery extends Query>({
-    query,
-    variables = {} as Variables<TQuery>,
-    operationName = undefined,
-    operationKind = "query",
-  }: Omit<
-    FetchOperation<Variables<TQuery>>,
-    "endpoint" | "fetchOptions"
-  >): Promise<FetchResult<TQuery>> {
-    return await fetchGraphQL({
-      endpoint: this.endpoint,
-      query,
-      variables,
-      fetchOptions: this.fetchOptions,
-      operationName,
-      operationKind,
-    });
-  }
-
-  async execute<TQuery extends Query>(
-    operation: OperationDescriptor<TQuery>
-  ): Promise<Response<TQuery>> {
-    console.log(
-      "🚀",
-      operation.request.node.params.name,
-      JSON.stringify(operation.request.variables)
-    );
-    const { data, error } = await this.request<TQuery>(operation);
-    console.log(
-      "📦",
-      operation.request.node.params.name,
-      JSON.stringify(operation.request.variables),
-      ...[data && "success", error].filter(Boolean)
-    );
-    if (error) {
-      throw error;
-    }
-    return data;
+      return await operate(operation);
+    };
   }
 }

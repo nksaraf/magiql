@@ -22,7 +22,7 @@ import {
   ReaderSelector,
   QueryObserver,
   RecordSource,
-  OperationDescriptor,
+  Operation,
 } from "../types";
 import { batchedUpdates } from "./batchedUpdates";
 import { createRelayNormalizer, defaultGetDataId } from "./relayNormalizer";
@@ -352,7 +352,7 @@ export function createNormalizedQueryCacheStore(
   }
 
   function useOperationPages<TQuery extends Query>(
-    operation: OperationDescriptor<TQuery>,
+    operation: Operation<TQuery>,
     pageVariables: any[]
   ) {
     assertBabelPlugin(operation.fragment);

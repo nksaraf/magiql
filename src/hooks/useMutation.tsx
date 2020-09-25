@@ -4,16 +4,16 @@ import {
   MutateFunction,
   MutationResult,
 } from "react-query";
+import { GraphQLClient } from "../core/client";
 
 import { getRequest } from "../core/graphql-tag";
 import {
-  GraphQLClient,
   Query,
   Variables,
   Response,
   Store,
   GraphQLTaggedNode,
-  OperationDescriptor,
+  Operation,
 } from "../core/types";
 import { useClient } from "./useClient";
 import { useStore } from "./useStore";
@@ -23,7 +23,7 @@ export type UseMutationResult<TMutation extends Query, TError = Error> = [
   MutationResult<Response<TMutation>, TError> & {
     client: GraphQLClient;
     store: Store;
-    operation: OperationDescriptor<TMutation>;
+    operation: Operation<TMutation>;
   }
 ];
 
@@ -46,10 +46,11 @@ export function useMutation<TMutation extends Query, TError = Error>(
   const client = useClient();
   const store = useStore();
   const node = getRequest(mutation);
+  const execute = client.useExecutor();
   const [mutateFn, state] = useBaseMutation<TData, TError, TVariables>(
     (variables) => {
       const operation = client.buildOperation(node, variables);
-      return client.execute<TMutation>(operation);
+      return execute<TMutation>(operation).then(({ data }) => data);
     },
     {
       ...options,

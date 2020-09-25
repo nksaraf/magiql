@@ -7,6 +7,8 @@ import { setBatch } from "./core/store/batchedUpdates";
 
 export * from "./core/client";
 export * from "./core/fetch";
+export * from "./core/exchanges";
+export * from "./core/types";
 export * from "./core/store/cacheStore";
 export * from "./core/store/normalizedCacheStore";
 export * from "./hooks";

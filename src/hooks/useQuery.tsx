@@ -10,7 +10,7 @@ import {
   Response,
   Query,
   Store,
-  OperationDescriptor,
+  Operation,
   GraphQLTaggedNode,
 } from "../core/types";
 import { useClient } from "./useClient";
@@ -28,7 +28,7 @@ export type UseQueryResult<TQuery extends Query, TError> = QueryResult<
 > & {
   client: ReturnType<typeof useClient>;
   store: Store;
-  operation: OperationDescriptor<TQuery>;
+  operation: Operation<TQuery>;
 };
 
 export function useQuery<TQuery extends Query, TError = Error>(
@@ -43,12 +43,12 @@ export function useQuery<TQuery extends Query, TError = Error>(
   const node = getRequest(query);
   const operation = client.buildOperation(node, variables);
   const queryKey = client.getQueryKey(operation);
+  const execute = client.useExecutor();
 
   const baseQuery = useBaseQuery<Response<TQuery>, TError, typeof queryKey>(
     queryKey,
     async () => {
-      const data = await client.execute(operation);
-      store.commit(operation, data);
+      const { data } = await execute(operation);
       return data;
     },
     options

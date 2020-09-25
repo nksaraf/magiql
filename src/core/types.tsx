@@ -1,10 +1,4 @@
 import {
-  ReactQueryConfig,
-  QueryCache,
-  Query as CachedQuery,
-  QueryConfig,
-} from "react-query";
-import {
   ConcreteRequest,
   GraphQLTaggedNode,
   NormalizationSelector,
@@ -17,6 +11,7 @@ import {
   ReaderInlineFragment,
 } from "relay-runtime/lib/util/ReaderNode";
 import { SubscriptionClient } from "subscriptions-transport-ws";
+import { GraphQLClient } from "./client";
 import { CombinedError } from "./error";
 
 export type {
@@ -37,6 +32,8 @@ export type {
   ReaderScalarField,
   ReaderSelection,
 } from "relay-runtime/lib/util/ReaderNode";
+
+export { CombinedError };
 
 export type ReaderNode =
   | ReaderCondition
@@ -87,7 +84,7 @@ export interface RequestDescriptor<TVariables> {
   readonly variables: TVariables;
 }
 
-export interface OperationDescriptor<TQuery extends Query> {
+export interface Operation<TQuery extends Query> {
   /** Selector to read data from store for this operation */
   readonly fragment: SingularReaderSelector;
   /** Description of query: text, variables, hash, etc */
@@ -108,6 +105,7 @@ export interface FetchOperation<TVariables> {
   endpoint: string;
   fetchOptions?: FetchOptions<TVariables>;
 }
+
 export type FetchOptionsFn<TVariables> = (
   operation: Omit<FetchOperation<TVariables>, "fetchOptions">
 ) => FetchRequestOptions | Promise<FetchRequestOptions>;
@@ -117,9 +115,14 @@ export type FetchOptions<TVariables> =
   | FetchRequestOptions;
 
 export interface FetchResult<TQuery extends Query> {
-  data: Response<TQuery> | undefined;
-  error: CombinedError | undefined;
-  extensions: any;
+  data?: Response<TQuery>;
+  error?: CombinedError;
+  extensions?: any;
+}
+
+export interface OperationResult<TQuery extends Query>
+  extends FetchResult<TQuery> {
+  operation: Operation<TQuery>;
 }
 
 export type Snapshot<TData> = TData;
@@ -156,7 +159,7 @@ export interface Store {
   getDataID: GetDataID;
   get(dataID: string): any;
   commit<TQuery extends Query>(
-    operation: OperationDescriptor<TQuery>,
+    operation: Operation<TQuery>,
     data: Response<TQuery>
   ): void;
   useFragment<TKey extends KeyType>(
@@ -164,11 +167,11 @@ export interface Store {
     fragmentRef: TKey
   ): $Call<KeyReturnType<TKey>>;
   useOperation<TQuery extends Query>(
-    operation: OperationDescriptor<TQuery>
+    operation: Operation<TQuery>
   ): Response<TQuery>;
   useEntities(): [string, { [key: string]: any }][];
   useOperationPages<TQuery extends Query>(
-    operation: OperationDescriptor<TQuery>,
+    operation: Operation<TQuery>,
     pageVariables: any[]
   ): Response<TQuery>[];
   Provider?: React.FC<{ children: React.ReactNode }>;
@@ -176,42 +179,70 @@ export interface Store {
 
 export type GetDataID = (record: any, type: any) => string | null;
 
-export interface GraphQLClient {
-  endpoint: string;
-  fetchOptions: FetchOptions<object>;
-  queryConfig: ReactQueryConfig;
-  cache: QueryCache;
-  subscriptions?: {
-    client: SubscriptionClient;
-    endpoint: string;
-    fetchOptions: FetchOptions<object>;
-  };
-  fetch<TQuery extends Query>(
-    operation: FetchOperation<Variables<TQuery>>
-  ): Promise<Response<TQuery>>;
-  getQueryKey<TQuery extends Query>(
-    operation: OperationDescriptor<TQuery>
-  ): QueryKey<TQuery>;
-  getInfinteQueryKey<TQuery extends Query>(
-    operation: OperationDescriptor<TQuery>
-  ): InfiniteQueryKey<TQuery>;
-  request<TQuery extends Query>(
-    operation: OperationDescriptor<TQuery>
-  ): Promise<Response<TQuery>>;
-  execute<TQuery extends Query>(
-    operation: OperationDescriptor<TQuery>
-  ): Promise<Response<TQuery>>;
-  buildOperation<TQuery extends Query>(
-    node: ConcreteRequest | string,
-    variables: Variables<TQuery>
-  ): OperationDescriptor<TQuery>;
-  buildSubscription<TQuery extends Query>(
-    operation: OperationDescriptor<TQuery>,
-    options: QueryConfig<Response<TQuery>, Error>
-  ): {
-    query: CachedQuery<Response<TQuery>, Error>;
-    unsubscribe(): void;
-    execute(): void;
-  };
-  useStore: () => Store;
+export type ExchangeOp = (
+  operation: Operation<Query>
+) => Promise<FetchResult<Query>>;
+
+/** Input parameters for to an Exchange factory function. */
+export interface ExchangeInput {
+  client: GraphQLClient;
+  forward: ExchangeIO;
+  dispatchDebug: (event: DebugEvent) => void;
 }
+
+export type DebugEvent = {
+  type: string;
+  data: any;
+  message: string;
+  operation: Operation<Query>;
+  timestamp?: number;
+  source?: string;
+};
+
+/** Function responsible for listening for streamed [operations]{@link Operation}. */
+export type Exchange = (input: ExchangeInput) => ExchangeIO & { name?: string };
+
+/** Function responsible for receiving an observable [operation]{@link Operation} and returning a [result]{@link OperationResult}. */
+export type ExchangeIO = <TQuery extends Query>(
+  operation: Operation<TQuery>
+) => Promise<OperationResult<TQuery>>;
+
+// /** Debug event types (interfaced for declaration merging). */
+// export interface DebugEventTypes {
+//   // Cache exchange
+//   cacheHit: { value: any };
+//   cacheInvalidation: {
+//     typenames: string[];
+//     response: OperationResult<Query>;
+//   };
+//   // Fetch exchange
+//   fetchRequest: {
+//     url: string;
+//     fetchOptions: RequestInit;
+//   };
+//   fetchSuccess: {
+//     url: string;
+//     fetchOptions: RequestInit;
+//     value: object;
+//   };
+//   fetchError: {
+//     url: string;
+//     fetchOptions: RequestInit;
+//     value: Error;
+//   };
+// }
+
+// export type DebugEventArg<T extends keyof DebugEventTypes | string> = {
+//   type: T;
+//   message: string;
+//   operation: Operation<Query>;
+// } & (T extends keyof DebugEventTypes
+//   ? { data: DebugEventTypes[T] }
+//   : { data?: any });
+
+// export type DebugEvent<
+//   T extends keyof DebugEventTypes | string = string
+// > = DebugEventArg<T> & {
+//   timestamp: number;
+//   source: string;
+// };

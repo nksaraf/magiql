@@ -5,13 +5,13 @@ import {
   InfiniteQueryResult,
   QueryConfig,
 } from "react-query";
+import { GraphQLClient } from "../core/client";
 
 import { getRequest } from "../core/graphql-tag";
 import {
-  GraphQLClient,
   Variables,
   Response,
-  OperationDescriptor,
+  Operation,
   Query,
   GraphQLTaggedNode,
   InfiniteQueryKey,
@@ -32,7 +32,7 @@ export type UseInfiniteQueryResult<
 > = InfiniteQueryResult<Response<TQuery>, TError> & {
   client: GraphQLClient;
   store: Store;
-  operation: OperationDescriptor<TQuery>;
+  operation: Operation<TQuery>;
 };
 
 function getLastPage<TResult>(pages: TResult[], previous?: boolean): TResult {
@@ -61,6 +61,7 @@ export function useInfiniteQuery<TQuery extends Query, TError = Error>(
   const node = getRequest(query);
   const operation = client.buildOperation(node, variables);
   const store = useStore();
+  const execute = client.useExecutor();
 
   const queryKey = client.getInfinteQueryKey(operation);
   const infiniteQuery = useBaseInfiniteQuery<TData, TError, typeof queryKey>(
@@ -71,8 +72,7 @@ export function useInfiniteQuery<TQuery extends Query, TError = Error>(
         ...(fetchMoreVariables ?? {}),
       });
 
-      return client.execute(fetchMoreOperation).then((data) => {
-        store.commit(fetchMoreOperation, data);
+      return execute(fetchMoreOperation).then(({ data }) => {
         return data;
       });
     },

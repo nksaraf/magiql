@@ -12,6 +12,7 @@ export function useClient() {
   if (!client) {
     throw new Error("No GraphQL Client found!");
   }
+
   return client;
 }
 
