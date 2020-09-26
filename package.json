@@ -1,6 +1,6 @@
 {
   "name": "magiql",
-  "version": "0.0.4-alpha.11",
+  "version": "0.0.4-alpha.12",
   "description": "",
   "repository": "Nikhil Saraf",
   "license": "MIT",
@@ -9,7 +9,7 @@
   "scripts": {
     "prepublishOnly": "run-p build:node build:common",
     "clean": "rm -rf dist",
-    "build:node": "yarn tsup src/babel.ts src/cli.ts --format cjs",
+    "build:node": "yarn tsup src/babel.ts src/cli.ts src/macro.ts --format cjs",
     "build:common": "yarn tsup src/index.ts src/node.ts src/recoil-store.ts src/native.ts src/jotai-store.ts src/devtools.ts src/devtools-native.ts --format esm,cjs --legacy-output --dts --external react --external react-dom --external react-native",
     "watch:node": "yarn build:node --watch",
     "watch:common": "yarn build:common --watch",
@@ -77,6 +77,11 @@
       "node": "./dist/babel.js",
       "default": "./dist/babel.js"
     },
+    "./macro": {
+      "require": "./dist/macro.js",
+      "node": "./dist/macro.js",
+      "default": "./dist/macro.js"
+    },
     "./devtools": {
       "import": "./dist/esm/devtools.js",
       "browser": "./dist/esm/devtools.js",
@@ -113,6 +118,7 @@
     "cli",
     "devtools",
     "babel",
+    "macro",
     "recoil-store",
     "node",
     "README.md"
