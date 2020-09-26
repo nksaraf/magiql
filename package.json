@@ -41,7 +41,7 @@
     "cosmiconfig": "^7.0.0",
     "deepmerge": "^4.2.2",
     "isomorphic-unfetch": "^3.0.0",
-    "jotai": "^0.6.2",
+    "jotai": "^0.7.1",
     "match-sorter": "^4.2.0",
     "prettier": "^2.1.1",
     "react-draggable": "^4.4.3",
