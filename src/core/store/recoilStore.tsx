@@ -83,6 +83,7 @@ function selectorFamily<T, TParam>({
   const atomCache: {
     [key: string]: { atom: RecoilState<T>; params: TParam };
   } = {};
+
   return Object.assign(
     (param: TParam) => {
       const key = rootKey(param);
@@ -168,15 +169,23 @@ export const fragmentPagesSelector = selectorFamily<any, any>({
   },
 });
 
+const storeMock = atom({
+  default: [],
+  key: "storeAtom",
+});
+
 export const storeAtom = selector<any>({
   key: "store",
   get: ({ get }) => {
+    get(storeMock);
     return Object.entries(record.cache).map(([key, val]) => [
       val.params,
       get(val.atom),
     ]);
   },
-  set: () => {},
+  set: ({ set }, val) => {
+    set(storeMock, val);
+  },
 });
 
 export const storeUpdater = selector({
