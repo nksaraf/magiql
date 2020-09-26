@@ -3,9 +3,6 @@
 /**
  * Adapted from https://github.com/facebook/relay/blob/master/packages/relay-compiler/bin/RelayCompilerBin.js
  */
-import { relayCompiler } from "relay-compiler";
-
-import { loadConfig } from "./config";
 
 // console.log(relayCompiler, config);
 
@@ -126,52 +123,22 @@ import { loadConfig } from "./config";
 //   },
 // };
 
-// // Parse CLI args
-// let yargs = _yargs
-//   .usage(
-//     "Create Relay generated files\n\n" +
-//       "$0 --schema <path> --src <path> [--watch]"
-//   )
-//   .options(options)
-//   .strict();
+export interface Config {
+  schema: string;
+  src: string;
 
-// // Load external config
-// const config = RelayConfig && RelayConfig.loadConfig();
-// if (config) {
-//   // Apply externally loaded config through the yargs API so that we can leverage yargs' defaults and have them show up
-//   // in the help banner. We add it conditionally otherwise yargs would add new option `--config` which is confusing for
-//   // Relay users (it's not Relay Config file).
-//   yargs = yargs.config(config);
-// }
-
-// const argv: Config = yargs.help().argv;
-
-const {
-  schema,
-  src,
-  artifactDirectory,
-  extensions,
-  verbose,
-  quiet,
-  validate,
-  watchman,
-  language,
-  languagePlugin,
-  include,
-  exclude,
-} = loadConfig();
-
-relayCompiler({
-  schema,
-  src,
-  artifactDirectory,
-  extensions,
-  verbose,
-  quiet,
-  watch: process.argv.includes("--watch"),
-  validate,
-  watchman,
-  language: languagePlugin,
-  include,
-  exclude,
-});
+  /**
+   * A specific directory to output all artifacts to.
+   * When enabling this the babel plugin needs `artifactDirectory` set as well.
+   */
+  artifactDirectory: string;
+  extensions: string;
+  verbose: boolean;
+  quiet: boolean;
+  watch: boolean;
+  validate: boolean;
+  watchman?: true;
+  language?: string;
+  include: string[];
+  exclude: string[];
+}

@@ -1,6 +1,15 @@
 import compileGraphQLTag from "babel-plugin-relay/lib/compileGraphQLTag";
 import getValidGraphQLTag from "babel-plugin-relay/lib/getValidGraphQLTag";
 import { loadConfig } from "./config";
+const { languagePlugin, ...config } = loadConfig();
+
+if (process.env.NODE_ENV !== "production") {
+  const { relayCompiler } = require("relay-compiler");
+  relayCompiler({
+    ...config,
+    language: languagePlugin,
+  });
+}
 
 export type RelayPluginOptions = {
   // The command to run to compile Relay files, used for error messages.
@@ -54,10 +63,9 @@ module.exports = function BabelPluginRelay(context: { types: any }): any {
   return {
     visitor: {
       Program(path, state) {
-        const config = loadConfig();
         path.traverse(visitor, {
           ...state,
-          opts: { ...config, ...state.opts },
+          opts: { ...config, languagePlugin, ...state.opts },
         });
       },
     },

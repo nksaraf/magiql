@@ -1,0 +1,5 @@
+{
+  "name": "magiql/macro",
+  "private": true,
+  "main": "../dist/macro.js"
+}
