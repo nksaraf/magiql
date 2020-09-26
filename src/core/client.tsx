@@ -1,7 +1,6 @@
 import { QueryCache, QueryConfig, ReactQueryConfig } from "react-query";
 import { SubscriptionClient, Observable } from "subscriptions-transport-ws";
 import {
-  // debugExchange,
   errorExchange,
   storeExchange,
   fetchExchange,
@@ -45,7 +44,6 @@ export function useDefaultExchanges(client: GraphQLClient) {
   const store = client.useStore();
 
   return [
-    // debugExchange,
     errorExchange({
       onError: (error) => {
         throw error;
