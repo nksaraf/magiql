@@ -39,6 +39,7 @@
     "@types/relay-runtime": "^10.0.3",
     "babel-plugin-relay": "^10.0.1",
     "cosmiconfig": "^7.0.0",
+    "deepmerge": "^4.2.2",
     "isomorphic-unfetch": "^3.0.0",
     "jotai": "^0.6.2",
     "match-sorter": "^4.2.0",

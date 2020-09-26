@@ -80,6 +80,7 @@ export interface RequestDescriptor<TVariables> {
   readonly identifier: string;
   /** Contains DocumentNode of the GraphQL Tree. AST Structure */
   readonly node: ConcreteRequest;
+  readonly fetchOptions?: FetchOptions<TVariables>;
   /** Variables for GraphQL query */
   readonly variables: TVariables;
 }
@@ -187,20 +188,22 @@ export type ExchangeOp = (
 export interface ExchangeInput {
   client: GraphQLClient;
   forward: ExchangeIO;
-  dispatchDebug: (event: DebugEvent) => void;
+  dispatchDebug: <TQuery extends Query>(event: DebugEvent<TQuery>) => void;
 }
 
-export type DebugEvent = {
+export type DebugEvent<TQuery extends Query> = {
   type: string;
   data: any;
   message: string;
-  operation: Operation<Query>;
+  operation: Operation<TQuery>;
   timestamp?: number;
   source?: string;
 };
 
 /** Function responsible for listening for streamed [operations]{@link Operation}. */
-export type Exchange = (input: ExchangeInput) => ExchangeIO & { name?: string };
+export type Exchange = ((input: ExchangeInput) => ExchangeIO) & {
+  emoji?: string;
+};
 
 /** Function responsible for receiving an observable [operation]{@link Operation} and returning a [result]{@link OperationResult}. */
 export type ExchangeIO = <TQuery extends Query>(

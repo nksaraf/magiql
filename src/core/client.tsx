@@ -1,7 +1,7 @@
 import { QueryCache, QueryConfig, ReactQueryConfig } from "react-query";
 import { SubscriptionClient, Observable } from "subscriptions-transport-ws";
 import {
-  debugExchange,
+  // debugExchange,
   errorExchange,
   storeExchange,
   fetchExchange,
@@ -31,7 +31,7 @@ export interface GraphQLClientOptions {
   fetchOptions: FetchOptions<object>;
   queryConfig: ReactQueryConfig;
   queryCache: QueryCache;
-  onDebugEvent: (event: DebugEvent) => void;
+  onDebugEvent: <TQuery extends Query>(event: DebugEvent<TQuery>) => void;
   subscriptions: {
     client: SubscriptionClient;
     endpoint: string;
@@ -45,7 +45,7 @@ export function useDefaultExchanges(client: GraphQLClient) {
   const store = client.useStore();
 
   return [
-    debugExchange,
+    // debugExchange,
     errorExchange({
       onError: (error) => {
         throw error;
@@ -61,7 +61,7 @@ export class GraphQLClient {
   fetchOptions: FetchOptions<object>;
   queryConfig: ReactQueryConfig<unknown, unknown>;
   cache: QueryCache;
-  onDebugEvent: (event: DebugEvent) => void;
+  onDebugEvent: <TQuery extends Query>(event: DebugEvent<TQuery>) => void;
   useStore: (() => Store) & { Provider?: React.FC<{}> };
   private _useExchanges: (client: GraphQLClient) => Exchange[];
   subscriptions?: {
@@ -121,9 +121,10 @@ export class GraphQLClient {
 
   buildOperation<TQuery extends Query>(
     node: ConcreteRequest,
-    variables: Variables<TQuery>
+    variables: Variables<TQuery>,
+    fetchOptions: FetchOptions<Variables<TQuery>> = {}
   ) {
-    return createOperation(node, variables) as Operation<TQuery>;
+    return createOperation(node, variables, fetchOptions) as Operation<TQuery>;
   }
 
   buildSubscription<TQuery extends Query>(

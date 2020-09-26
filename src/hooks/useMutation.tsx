@@ -14,6 +14,7 @@ import {
   Store,
   GraphQLTaggedNode,
   Operation,
+  FetchOptions,
 } from "../core/types";
 import { useClient } from "./useClient";
 import { useStore } from "./useStore";
@@ -31,6 +32,7 @@ export interface UseMutationOptions<TMutation extends Query, TError = Error>
   extends MutationConfig<Response<TMutation>, TError, Variables<TMutation>> {
   operationName?: string;
   invalidateQueries?: any[];
+  fetchOptions?: FetchOptions<Variables<TMutation>>;
 }
 
 export function useMutation<TMutation extends Query, TError = Error>(
@@ -38,6 +40,7 @@ export function useMutation<TMutation extends Query, TError = Error>(
   {
     onSuccess,
     invalidateQueries = [],
+    fetchOptions = {},
     ...options
   }: UseMutationOptions<TMutation, TError> = {}
 ): UseMutationResult<TMutation, TError> {
@@ -49,7 +52,7 @@ export function useMutation<TMutation extends Query, TError = Error>(
   const execute = client.useExecutor();
   const [mutateFn, state] = useBaseMutation<TData, TError, TVariables>(
     (variables) => {
-      const operation = client.buildOperation(node, variables);
+      const operation = client.buildOperation(node, variables, fetchOptions);
       return execute<TMutation>(operation).then(({ data }) => data);
     },
     {
@@ -73,6 +76,7 @@ export function useMutation<TMutation extends Query, TError = Error>(
       store,
       operation: {
         request: {
+          fetchOptions: fetchOptions,
           node,
           identifier: node.params.id,
           variables: {},

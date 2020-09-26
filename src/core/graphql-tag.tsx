@@ -12,6 +12,7 @@ import {
   Operation,
   Variables,
   GraphQLTaggedNode,
+  FetchOptions,
 } from "./types";
 
 export const getRequest = (
@@ -59,11 +60,13 @@ export const getOperationName = (query: string) => {
 
 export const createOperation = function <TQuery extends Query>(
   query: ConcreteRequest,
-  variables: Variables<TQuery>
+  variables: Variables<TQuery>,
+  fetchOptions: FetchOptions<Variables<TQuery>> = {}
 ): Operation<TQuery> {
   if (query.fragment === null) {
     return {
       request: {
+        fetchOptions: fetchOptions,
         node: query,
         variables,
         identifier: query.params.name,
@@ -73,7 +76,18 @@ export const createOperation = function <TQuery extends Query>(
       root: null as any,
     };
   } else {
-    return createOperationDescriptor(query, variables) as any;
+    const operationDescriptor = createOperationDescriptor(
+      query,
+      variables
+    ) as any;
+
+    return {
+      ...operationDescriptor,
+      request: {
+        ...operationDescriptor.request,
+        fetchOptions,
+      },
+    };
   }
 };
 

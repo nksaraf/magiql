@@ -14,8 +14,8 @@ import {
   Operation,
   Query,
   GraphQLTaggedNode,
-  InfiniteQueryKey,
   Store,
+  FetchOptions,
 } from "../core/types";
 import { useClient } from "./useClient";
 import { useStore } from "./useStore";
@@ -24,6 +24,7 @@ export interface UseInfiniteQueryOptions<TQuery extends Query, TError = Error>
   extends InfiniteQueryConfig<Response<TQuery>, TError> {
   variables?: Variables<TQuery>;
   operationName?: string;
+  fetchOptions?: FetchOptions<Variables<TQuery>>;
 }
 
 export type UseInfiniteQueryResult<
@@ -53,13 +54,14 @@ export function useInfiniteQuery<TQuery extends Query, TError = Error>(
   query: GraphQLTaggedNode | string,
   {
     variables = {} as Variables<TQuery>,
+    fetchOptions = {},
     ...options
   }: UseInfiniteQueryOptions<TQuery, TError>
 ): UseInfiniteQueryResult<TQuery, TError> {
   type TData = Response<TQuery>;
   const client = useClient();
   const node = getRequest(query);
-  const operation = client.buildOperation(node, variables);
+  const operation = client.buildOperation(node, variables, fetchOptions);
   const store = useStore();
   const execute = client.useExecutor();
 
@@ -67,10 +69,14 @@ export function useInfiniteQuery<TQuery extends Query, TError = Error>(
   const infiniteQuery = useBaseInfiniteQuery<TData, TError, typeof queryKey>(
     queryKey,
     (queryName, variables = {}, fetchMoreVariables) => {
-      const fetchMoreOperation = client.buildOperation(node, {
-        ...variables,
-        ...(fetchMoreVariables ?? {}),
-      });
+      const fetchMoreOperation = client.buildOperation(
+        node,
+        {
+          ...variables,
+          ...(fetchMoreVariables ?? {}),
+        },
+        fetchOptions
+      );
 
       return execute(fetchMoreOperation).then(({ data }) => {
         return data;

@@ -15,10 +15,10 @@ export type BaseVariables = { [key: string]: any };
 
 export async function resolveFetchOptions<TVariables>(
   fetchOptions: FetchOptions<TVariables>,
-  operation: Partial<FetchOperation<TVariables>>
+  fetchOperation: Partial<FetchOperation<TVariables>>
 ) {
   return typeof fetchOptions === "function"
-    ? await fetchOptions(operation as FetchOperation<TVariables>)
+    ? await fetchOptions(fetchOperation as FetchOperation<TVariables>)
     : fetchOptions;
 }
 
