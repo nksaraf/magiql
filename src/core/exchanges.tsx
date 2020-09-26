@@ -37,9 +37,9 @@ export const composeExchanges = (exchanges: Exchange[]) => ({
 export const errorExchange = ({
   onError,
 }: {
-  onError: (error: Error) => void;
-}): Exchange => {
-  function errorExchange({ forward, client }) {
+  onError: (error: CombinedError) => void;
+}) => {
+  const errorExchange: Exchange = ({ forward }) => {
     return async (operation) => {
       const operationResult = await forward(operation);
       const { error } = operationResult;
@@ -49,7 +49,7 @@ export const errorExchange = ({
 
       return operationResult;
     };
-  }
+  };
   errorExchange.emoji = "❗";
   return errorExchange;
 };
@@ -59,29 +59,28 @@ export const fallbackExchange: Exchange = function fallbackExchange() {
     throw new Error("operation is not supported");
   };
 };
+fallbackExchange.emoji = "❓";
 
-// export const debugExchange: Exchange = function debugExchange({
-//   forward,
-//   client,
-// }) {
-//   return async (operation) => {
-//     console.log(
-//       "🚀",
-//       operation.request.node.params.name,
-//       JSON.stringify(operation.request.variables)
-//     );
-//     const operationResult = await forward(operation);
-//     console.log(
-//       "📦",
-//       operation.request.node.params.name,
-//       JSON.stringify(operation.request.variables),
-//       ...[operationResult.data && "success", operationResult.error].filter(
-//         Boolean
-//       )
-//     );
-//     return operationResult;
-//   };
-// };
+export const debugExchange: Exchange = function debugExchange({ forward }) {
+  return async (operation) => {
+    console.log(
+      "🚀",
+      operation.request.node.params.name,
+      JSON.stringify(operation.request.variables),
+      "fetching"
+    );
+    const operationResult = await forward(operation);
+    console.log(
+      "📦",
+      operation.request.node.params.name,
+      JSON.stringify(operation.request.variables),
+      ...[operationResult.data && "success", operationResult.error].filter(
+        Boolean
+      )
+    );
+    return operationResult;
+  };
+};
 
 export async function createFetchOperation<TQuery extends Query>(
   operation: Operation<TQuery>,
@@ -118,39 +117,46 @@ export const fetchExchange: Exchange = function fetchExchange({
   dispatchDebug,
 }) {
   return async (operation) => {
-    const fetchOperation = await createFetchOperation(operation, client);
+    if (
+      operation.request.node.params.operationKind === "query" ||
+      operation.request.node.params.operationKind === "mutation"
+    ) {
+      const fetchOperation = await createFetchOperation(operation, client);
 
-    dispatchDebug({
-      type: "fetchRequest",
-      message: "fetching",
-      operation,
-      data: fetchOperation,
-    });
+      dispatchDebug({
+        type: "fetchRequest",
+        message: "fetching",
+        operation,
+        data: fetchOperation,
+      });
 
-    const result = await fetchGraphQL(fetchOperation);
+      const result = await fetchGraphQL(fetchOperation);
 
-    const error = !result.data ? result.error : undefined;
+      const error = !result.data ? result.error : undefined;
 
-    dispatchDebug({
-      type: error ? "fetchError" : "fetchSuccess",
-      message: `${error ? "fetch failed" : "fetch successful"}`,
-      operation,
-      data: {
-        ...fetchOperation,
-        value: error || result,
-      },
-    });
+      dispatchDebug({
+        type: error ? "fetchError" : "fetchSuccess",
+        message: `${error ? "fetch failed" : "fetch successful"}`,
+        operation,
+        data: {
+          ...fetchOperation,
+          value: error || result,
+        },
+      });
 
-    return {
-      ...result,
-      operation,
-    };
+      return {
+        ...result,
+        operation,
+      };
+    } else {
+      return await forward(operation);
+    }
   };
 };
 fetchExchange.emoji = "🚀";
 
-export const storeExchange = (store: Store): Exchange => {
-  function storeExchange({ forward, client, dispatchDebug }) {
+export const storeExchange = (store: Store) => {
+  const storeExchange: Exchange = ({ forward, dispatchDebug }) => {
     return async (operation) => {
       const result = await forward(operation);
       store.commit(operation, result.data);
@@ -162,7 +168,7 @@ export const storeExchange = (store: Store): Exchange => {
       });
       return result;
     };
-  }
+  };
   storeExchange.emoji = "🗄 ";
   return storeExchange;
 };
@@ -191,7 +197,7 @@ export function authExchange<T>({
   addAuthToOperation,
   onAuthFailed,
 }: AuthExchangeConfig<T>): Exchange {
-  function authExchange({ client, forward, dispatchDebug }) {
+  const authExchange: Exchange = ({ client, forward, dispatchDebug }) => {
     return async (operation) => {
       // const tokens = getAuthTokens();
       let authState = getAuthState();
@@ -262,7 +268,7 @@ export function authExchange<T>({
 
       return result;
     };
-  }
+  };
   authExchange.emoji = "🔓";
   return authExchange;
 }
