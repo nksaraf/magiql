@@ -1,6 +1,6 @@
 {
   "name": "magiql",
-  "version": "0.0.4-alpha.12",
+  "version": "0.0.4-alpha.13",
   "description": "",
   "repository": "Nikhil Saraf",
   "license": "MIT",
@@ -37,6 +37,7 @@
   },
   "dependencies": {
     "@types/relay-runtime": "^10.0.4",
+    "babel-plugin-macros": "^2.8.0",
     "babel-plugin-relay": "^10.0.1",
     "cosmiconfig": "^7.0.0",
     "deepmerge": "^4.2.2",
