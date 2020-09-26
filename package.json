@@ -1,6 +1,6 @@
 {
   "name": "magiql",
-  "version": "0.0.4-alpha.8",
+  "version": "0.0.4-alpha.9",
   "description": "",
   "repository": "Nikhil Saraf",
   "license": "MIT",
@@ -46,7 +46,7 @@
     "prettier": "^2.1.1",
     "react-draggable": "^4.4.3",
     "react-query": "^2.23.0",
-    "react-query-devtools": "^2.4.7",
+    "react-query-devtools": "^2.5.1",
     "recoil": "^0.0.13",
     "relay-compiler": "^10.0.1",
     "relay-runtime": "^10.0.1",
