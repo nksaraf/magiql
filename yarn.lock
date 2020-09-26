@@ -4490,9 +4490,9 @@ react-notion@^0.8.1:
     prismjs "^1.21.0"
 
 react-query-devtools@^2.4.7:
-  version "2.4.7"
-  resolved "https://registry.yarnpkg.com/react-query-devtools/-/react-query-devtools-2.4.7.tgz#afc34d18d3e37be5c73fa143da8db803ae74cc4c"
-  integrity sha512-rjGTtiIvku8wHL2yQiItkFFAeI1bCfPuLrh9V2LzJN+vz7pFA/XDbF0ksBFZnUS/sv0sSNZtmudhrpcGmZDWEg==
+  version "2.5.1"
+  resolved "https://registry.yarnpkg.com/react-query-devtools/-/react-query-devtools-2.5.1.tgz#aaabc66538fd196f3f40b385c36059e4b3f8f55b"
+  integrity sha512-9d5lQFb3jrQ+8Bu53VUu7P2xJdgie9z494JPph5G04ETijGBkyYk2TVS3RGSupsRA1geXaSaAhICU+Sn2ru9tg==
   dependencies:
     match-sorter "^4.1.0"
 
