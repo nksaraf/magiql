@@ -17,8 +17,8 @@ export * from "./core/operation";
 
 setConsole({
   log: console.log,
-  warn: console.log,
-  error: (error) => {},
+  warn: console.warn,
+  error: console.warn
 });
 
 setBatch(unstable_batchedUpdates);
