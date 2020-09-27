@@ -6,7 +6,6 @@ import {
 } from "react-query";
 import { GraphQLClient } from "../core/graphQLClient";
 
-import { getRequest } from "../core/operation";
 import {
   Query,
   Variables,
@@ -48,11 +47,14 @@ export function useMutation<TMutation extends Query, TError = Error>(
   type TVariables = Variables<TMutation>;
   const client = useGraphQLClient();
   const store = useGraphQLStore();
-  const node = getRequest(mutation);
   const execute = client.useExecutor();
   const [mutateFn, state] = useBaseMutation<TData, TError, TVariables>(
     (variables) => {
-      const operation = client.buildOperation(node, variables, fetchOptions);
+      const operation = client.buildOperation(
+        mutation,
+        variables,
+        fetchOptions
+      );
       return execute<TMutation>(operation).then(({ data }) => data);
     },
     {
@@ -77,8 +79,8 @@ export function useMutation<TMutation extends Query, TError = Error>(
       operation: {
         request: {
           fetchOptions: fetchOptions,
-          node,
-          identifier: node.params.id,
+          node: mutation,
+          // identifier: mutation.params.id,
           variables: {},
         },
       } as any,

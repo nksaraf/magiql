@@ -23,6 +23,7 @@ import {
   FetchOptions,
   Exchange,
   DebugEvent,
+  GraphQLTaggedNode,
 } from "./types";
 
 export interface GraphQLClientOptions {
@@ -118,8 +119,8 @@ export class GraphQLClient {
   }
 
   buildOperation<TQuery extends Query>(
-    node: ConcreteRequest,
-    variables: Variables<TQuery>,
+    node: string | GraphQLTaggedNode,
+    variables: Variables<TQuery> = {},
     fetchOptions: FetchOptions<Variables<TQuery>> = {}
   ) {
     return createOperation(node, variables, fetchOptions) as Operation<TQuery>;

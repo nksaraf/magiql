@@ -4,7 +4,6 @@ import {
   QueryResult,
 } from "react-query";
 
-import { getRequest } from "../core/operation";
 import {
   Variables,
   Response,
@@ -43,8 +42,7 @@ export function useQuery<TQuery extends Query, TError = Error>(
 ): UseQueryResult<TQuery, TError> {
   const client = useGraphQLClient();
   const store = useGraphQLStore();
-  const node = getRequest(query);
-  const operation = client.buildOperation(node, variables, fetchOptions);
+  const operation = client.buildOperation(query, variables, fetchOptions);
   const queryKey = client.getQueryKey(operation);
   const execute = client.useExecutor();
 

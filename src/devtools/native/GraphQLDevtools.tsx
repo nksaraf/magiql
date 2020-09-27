@@ -2,6 +2,7 @@ import React from "react";
 import { View } from "react-native";
 
 import { theme } from "../common/theme";
+export { theme } from "../common/theme";
 import { StoreDevtools } from "./StoreDevtools";
 
 export interface GraphQLDevtoolsProps {

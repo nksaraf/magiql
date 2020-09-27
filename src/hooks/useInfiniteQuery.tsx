@@ -7,7 +7,6 @@ import {
 } from "react-query";
 import { GraphQLClient } from "../core/graphQLClient";
 
-import { getRequest } from "../core/operation";
 import {
   Variables,
   Response,
@@ -60,8 +59,7 @@ export function useInfiniteQuery<TQuery extends Query, TError = Error>(
 ): UseInfiniteQueryResult<TQuery, TError> {
   type TData = Response<TQuery>;
   const client = useGraphQLClient();
-  const node = getRequest(query);
-  const operation = client.buildOperation(node, variables, fetchOptions);
+  const operation = client.buildOperation(query, variables, fetchOptions);
   const store = useGraphQLStore();
   const execute = client.useExecutor();
 
@@ -70,7 +68,7 @@ export function useInfiniteQuery<TQuery extends Query, TError = Error>(
     queryKey,
     (queryName, variables = {}, fetchMoreVariables) => {
       const fetchMoreOperation = client.buildOperation(
-        node,
+        operation.request.node,
         {
           ...variables,
           ...(fetchMoreVariables ?? {}),

@@ -59,17 +59,18 @@ export const getOperationName = (query: string) => {
 };
 
 export const createOperation = function <TQuery extends Query>(
-  query: ConcreteRequest,
-  variables: Variables<TQuery>,
+  query: string | GraphQLTaggedNode,
+  variables: Variables<TQuery> = {},
   fetchOptions: FetchOptions<Variables<TQuery>> = {}
 ): Operation<TQuery> {
-  if (query.fragment === null) {
+  const node = getRequest(query);
+  if (node.fragment === null) {
     return {
       request: {
         fetchOptions: fetchOptions,
-        node: query,
+        node: node,
         variables,
-        identifier: query.params.name,
+        identifier: node.params.name,
       },
       response: null as any,
       fragment: null as any,
@@ -77,7 +78,7 @@ export const createOperation = function <TQuery extends Query>(
     };
   } else {
     const operationDescriptor = createOperationDescriptor(
-      query,
+      node,
       variables
     ) as any;
 

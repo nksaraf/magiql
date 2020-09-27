@@ -84,6 +84,7 @@ export default function GraphQLDevtools({
               position: "relative",
               borderRadius: 12,
               background: theme.background,
+              ...style,
             }}
           >
             <div
