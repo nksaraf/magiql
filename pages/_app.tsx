@@ -13,7 +13,6 @@ import {
   fetchExchange,
 } from "magiql";
 import GraphQLDevtools from "magiql/devtools";
-import { createJotaiStore } from "magiql/jotai-store";
 import { createRecoilStore } from "magiql/recoil-store";
 
 function useExchanges(client: GraphQLClient) {
