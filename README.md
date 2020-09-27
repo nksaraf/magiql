@@ -40,7 +40,7 @@ Here are some of the big dependencies and inspirations for `magiql`:
   * Concept: `useFragment` hook (game changer!) to declaratively define data needs for components independent of the fetching of the data
   * Implementation: `relay-runtime` inspiration for (de)normalizating data
   * `magiql` allows us to use the `relay` hooks API without jumping to React Suspense (can't use the new relay hooks without that)
-  * **Do not need relay-compliant server (will work with any GraphQL server)**
+  * **Do not need relay compliant server (will work with any GraphQL server)**
   
   
 * Recoil (opt-in)
