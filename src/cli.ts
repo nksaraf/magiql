@@ -157,6 +157,7 @@ const {
   watchman,
   language,
   languagePlugin,
+  runWithBabel,
   include,
   exclude,
 } = loadConfig();

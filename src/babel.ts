@@ -4,11 +4,13 @@ import { loadConfig } from "./config";
 const { languagePlugin, ...config } = loadConfig();
 
 if (process.env.NODE_ENV !== "production") {
-  const { relayCompiler } = require("relay-compiler");
-  relayCompiler({
-    ...config,
-    language: languagePlugin,
-  });
+  if (config.runWithBabel) {
+    const { relayCompiler } = require("relay-compiler");
+    relayCompiler({
+      ...config,
+      language: languagePlugin,
+    });
+  }
 }
 
 export type RelayPluginOptions = {
