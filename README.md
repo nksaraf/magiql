@@ -1,8 +1,37 @@
 # 🧙 magiql
 
-A simple but potentially magical GraphQL client for React backed by [react-query](https://github.com/tannerlinsley/react-query).
-The API is very similar to Apollo Client. The cache is managed by react-query and a very thin fetch wrapper is used
-to make the requests. A simple middleware API is used to allow for things like auth.
+A simple but potentially magical GraphQL client for React. It stands on the shoulders of massive giants in the data-synchronization and state-management tools in this space both conceputally and some as actual dependencies.
+
+* React-query
+  * Data-fetching (network) layer
+  * Stale-while-revalidate caching strategy
+  * Request deduplication
+  * Window Focus refetching
+  * Network Status refetching
+  * Infinite queries
+  * Paginated queries
+  * Parallel and dependent queries
+  * Lazy queries
+  * Polling/interval refetching
+  * React Suspense support
+  * Normalized caching (with the help of the relay compiler)
+ 
+* Relay (compiler)
+  * Build time optimizations (flatten fragments, add id fields, etc.)
+  * Code-generation for types (for full typescript support)
+  * Using fragments effectively with optimizations
+  * Concept: `useFragment` hook (gamechanger!) to declaratively define data needs for components independent of the fetching of the data
+  * Implementation: `relay-runtime` inspiration for (de)normalizating data
+  * `magiql` allows us to use a `relay`-like hooks API without the server requirements or jumping to React Suspense (can't use the new relay hooks without that)
+  
+* Recoil
+  * Normalized cache for data
+  * Granular subscription (field-level) to data for fragments and queries based on exactly what they ask
+  * **similar implementation for jotai is also being worked on**
+  
+* Urql
+  * Concept: `exchange` API to customize execution of graphql request
+  * Allowed easy ways to add logging, persisted queries, auth (with token refresh support)
 
 Usage example:
 
@@ -131,56 +160,4 @@ const MagicalPokemonSearch = () => {
   }
 }`
 ```
-
-## Code generation
-
-Uses [graphql-code-generator](https://github.com/dotansimha/graphql-code-generator) to generate hooks from graphql documents
-across your project. Uses [graphql-config](https://github.com/kamilkisiela/graphql-config) spec to get the necessary config.
-Converts magiql into a smart module that supplies necessary hooks with full type-safety during the developent. Just need to run `magiql` command on the CLI to generate types. `magiql --watch` runs it in watch mode.
-
-```yaml
-# .graphqlconfig.yml
-
-schema: https://graphql-pokemon.now.sh
-documents: pages/**/*.{tsx,ts,graphql}
-```
-
-```graphql
-# pokemon.graphql
-query searchPokemon($name: String) {
-    pokemon(name: $name) {
-      id
-      number
-      name
-      attacks {
-        special {
-          name
-          type
-          damage
-        }
-      }
-
-      image
-    }
-  }
-`;
-```
-
-```tsx
-import { useSearchPokemonQuery } from "magiql";
-
-const SearchPokemon = () => {
-  const { data, status, error } = useSearchPokemonQuery({
-    variables: {
-      name: "pikachu",
-    },
-  });
-
-  return <pre>{JSON.stringify({ status, data, error }, null, 2)}</pre>;
-};
-```
-
-Using code generation, we can get autocompletion for types while working with `useMagiqlQuery`.
-
-<img src="https://github.com/nksaraf/magiql/blob/master/examples/example.png" data-canonical-src="https://github.com/nksaraf/magiql/blob/master/examples/example.png" width="400" alt="Typescript autocomplete useMagiqlQuery" />
 
