@@ -45,7 +45,11 @@ export default function App({ Component, pageProps }) {
   return (
     <GraphQLClientProvider client={client}>
       <Component {...pageProps} />
-      <GraphQLDevtools defaultIsOpen={true} defaultTab="store" />
+      <GraphQLDevtools
+        defaultIsOpen={true}
+        defaultTab="store"
+        style={{ top: 64 }}
+      />
     </GraphQLClientProvider>
   );
 }

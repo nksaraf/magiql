@@ -3,12 +3,12 @@ import { graphql, usePaginatedQuery } from "magiql";
 import { Person } from "./Person";
 import { PeoplePaginatedQuery } from "../generated/PeoplePaginatedQuery.graphql";
 import Link from "next/link";
+import { NavBar } from "./NavBar";
+import { Header } from "./ActionButton";
 
 export function PeoplePaginated() {
   const [state, setState] = React.useState(10);
-  const { resolvedData, store, fetchMore } = usePaginatedQuery<
-    PeoplePaginatedQuery
-  >(
+  const { resolvedData } = usePaginatedQuery<PeoplePaginatedQuery>(
     graphql`
       query PeoplePaginatedQuery($limit: Int = 10) {
         allPeople(first: $limit) {
@@ -35,22 +35,8 @@ export function PeoplePaginated() {
 
   return (
     <div>
-      <div style={{ display: "flex", flexDirection: "row" }}>
-        <code style={{ fontFamily: "Roboto Mono" }}>
-          <Link href="/infinite">
-            <a>useInfiniteQuery</a>
-          </Link>
-        </code>
-        <div style={{ width: 8 }} />
-        <code style={{ fontFamily: "Roboto Mono" }}>
-          <Link href="/paginated">
-            <a>usePaginatedQuery</a>
-          </Link>
-        </code>
-      </div>
-      <h1>
-        <code style={{ fontFamily: "Roboto Mono" }}>usePaginatedQuery</code>
-      </h1>
+      <NavBar />
+      <Header>usePaginatedQuery</Header>
       <button
         onClick={() => {
           // getStorageKey();

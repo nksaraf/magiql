@@ -2,9 +2,9 @@
 
 A set of React hooks to work with GraphQL data. `magiql` stands on the shoulders of massive giants in the data-synchronization and state-management space, both conceputally and some as actual dependencies. It uses the amazing `react-query` library as its data-fetching and synchronization layer which forms the foundation of this library. Seriously, without `react-query`, this won't be any good. The API is also very similar to `react-query` and will be familiar to the users. It's just slightly tweaked to make it easier to work with GraphQL.
 
-There is an example for this: [https://magiql.vercel.app](https://magiql.vercel.app)
+There is an example for this: [https://magiql.vercel.app](https://magiql.vercel.app). You can see the [components](/components) and [pages](/pages) folder for example code.
 
-**Warning**: This is still in alpha stage and there are basically no docs available
+**Warning**: This is still in alpha stage and docs and examples are in the works
 
 ## Installation
 
@@ -17,9 +17,11 @@ yarn add magiql graphql
 npm install magiql graphql --save
 ```
 
-## Using the compiler (fragments and normalized store)
+## Using the Relay compiler
 
-To use the `relay-compiler`, add `magiql/babel` to your Babel config as a plugin, eg. in `babel.config.js`
+**This is required to use fragments and normalized caching**
+
+To use the `relay-compiler`, add `magiql/babel` to your Babel config as a plugin, eg. in `babel.config.js`.
 
 ```javascript
 module.exports {
@@ -28,11 +30,11 @@ module.exports {
 }
 ```
 
-Or, you can run the compiler from cli using the `magiql` command (use `magiql --watch` for watch mode, recommended for development). This is also just a wrapper around the `relay-compiler`.
+Or, you can run the compiler from cli using the `magiql` command (use `magiql --watch` for watch mode, recommended for development). This is also just a wrapper around the `relay-compiler`. You still need to add the Babel plugin, but can disable running the compiler with Babel, but setting `runWithBabel` to `false` in `magiql.config.js`.
 
 ### `magiql.config.js`
 
-If need to customize the relay compiler away the from defaults (specified below), add a `magiql.config.js` file in the root directory. It is similar to the `relay.config.js`, just with different defaults and a custom language plugin for typescript.
+If need to customize the Relay compiler away from the defaults (specified below), add a `magiql.config.js` file in the root directory. It is very similar to `relay.config.js`, but tailored a little for `magiql`.
 
 ```javascript
 module.exports = {
@@ -56,6 +58,8 @@ module.exports = {
 
 ## Devtools
 
+You can use the `magiql` Devtools which are completely inspired by `react-query-devtools` as follows.
+
 ```tsx
 import React from "react";
 import { GraphQLClient, GraphQLClientProvider } from "magiql";
@@ -70,6 +74,8 @@ export default function App({ children }) {
   );
 }
 ```
+
+<img src='/public/example.gif' />
 
 ## Basic usage
 

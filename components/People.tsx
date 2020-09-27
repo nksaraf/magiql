@@ -1,7 +1,8 @@
 import React from "react";
 import { graphql, useQuery } from "magiql";
-import Link from "next/link";
 import { PeopleQuery } from "generated/PeopleQuery.graphql";
+import { Actions, ActionButton, Header } from "./ActionButton";
+import { NavBar } from "./NavBar";
 
 export function People() {
   const { data, status } = useQuery<PeopleQuery>(
@@ -61,44 +62,5 @@ export function People() {
         </div>
       </main>
     </>
-  );
-}
-
-function ActionButton({ onClick, children }) {
-  return <button onClick={onClick}>{children}</button>;
-}
-
-function Actions({ children }) {
-  return <div style={{ marginBottom: 16 }}>{children}</div>;
-}
-function Header({ children }) {
-  return (
-    <h1>
-      <code style={{ fontFamily: "Roboto Mono" }}>{children}</code>
-    </h1>
-  );
-}
-
-function NavBar() {
-  return (
-    <div style={{ display: "flex", flexDirection: "row" }}>
-      <code style={{ fontFamily: "Roboto Mono" }}>
-        <Link href="/paginated">
-          <a>useQuery</a>
-        </Link>
-      </code>
-      <div style={{ width: 8 }} />
-      <code style={{ fontFamily: "Roboto Mono" }}>
-        <Link href="/infinite">
-          <a>useInfiniteQuery</a>
-        </Link>
-      </code>
-      <div style={{ width: 8 }} />
-      <code style={{ fontFamily: "Roboto Mono" }}>
-        <Link href="/paginated">
-          <a>usePaginatedQuery</a>
-        </Link>
-      </code>
-    </div>
   );
 }

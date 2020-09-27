@@ -74,7 +74,7 @@ export function styled(type, newStyles, queries = {}) {
 
 export const Entry = styled("div", {
   fontFamily: "Menlo, monospace",
-  fontSize: "0.7rem",
+  fontSize: "0.9rem",
   lineHeight: "1.7",
   outline: "none",
 });
