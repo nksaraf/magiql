@@ -1,6 +1,23 @@
 # 🧙 magiql
 
-A simple but potentially magical GraphQL client for React. It stands on the shoulders of massive giants in the data-synchronization and state-management tools in this space both conceputally and some as actual dependencies. It uses the amazing React Query library as its data fetching (network) layer to synchronize data with your backend. The API is also very similar to `react-query` just slightly tweaked to make it easier with GraphQL. The data fetching patterns with `useQuery`, `usePaginatedQuery` and `useInfiniteQuery` (and the numerous ways to customize them) cover almost all use cases that ever arise. They provide an amazing user experience with regards to the freshness of the data without overfetching. The `useMutation` hook provides a way to update the server state from your React app. And last, the `useFragment` hook allow you to properly encapsulate the date requirements of a component within it (for maximum composability and reusability)
+A set of h GraphQL client for React. It stands on the shoulders of massive giants in the data-synchronization and state-management tools in this space both conceputally and some as actual dependencies. It uses the amazing React Query library as its data fetching (network) layer to synchronize data with your backend. The API is also very similar to `react-query` just slightly tweaked to make it easier with GraphQL. The data fetching patterns with `useQuery`, `usePaginatedQuery` and `useInfiniteQuery` (and the numerous ways to customize them) cover almost all use cases that ever arise. They provide an amazing user experience with regards to the freshness of the data without overfetching. The `useMutation` hook provides a way to update the server state from your React app. And last, the `useFragment` hook allow you to properly encapsulate the date requirements of a component within it (for maximum composability and reusability)
+
+* Stale-while-revalidate caching strategy
+* Request deduplication
+* Infinite queries
+* Paginated queries
+* Parallel and dependent queries
+* Lazy queries
+* Window Focus refetching
+* Network Status refetching
+* Polling/interval refetching
+* React Suspense support
+* Normalized caching (with the help of the relay compiler)
+* Typescript support
+* React Native support
+* Devtools for queries (with the help of `react-query-devtools`) and normalized store
+
+**Warning**: This is still in alpha stage and there are basically no docs available
 
 ## Installation
 
@@ -105,9 +122,17 @@ const App = () => {
 
 ## Working with fragments
 
-With GraphQL, the biggest game changer when used with React are __fragments__. The `useFragment` hook introduced by `relay` makes it delightful to declare the data needs of your components, completely localized in your component, independent of how the data is fetched by some parent component. A component only subscribes to the part of the data store that it cares about (down to the field level). These restrictions provide an excellent authoring experience that almost seems magical when it works. This makes components that much more composable and reusable. It is also fully typed thanks to the Relay compiler. 
+With GraphQL, the biggest game changer when used with React are __fragments__. The `useFragment` hook introduced by `relay` makes it delightful to declare the data needs of your components.
 
-To fully unlock fragments, including optimistic responses and cache manipulatioon, we needed a normalized cache (store) of our data where each entity is identified and stored once. In this case, every component that accesses that data subscribes to the single entity and rerenders when the entity changes. The normalized cache is **optional** and you can begin to use `magiql` and fragments without it too. In `magiql`, we have provided a few implementations of the `store` that all allow fragments to be used:
+* Date requirements completely localized and encapsulated in your component
+* Declarative, modular and composable
+* Fragments can include nest more fragments and fits naturally with the React component model
+* Don't need to add everything to the top level query
+* Easy to ensure type safety (using `relay` compiler artifacts)
+* Data available independent of how the data is fetched by some parent component
+* Components only subscribe to the precise part of the data store that it cares about (down to the field level). 
+
+These features and accompanying restrictions provide an excellent authoring experience that almost seems magical when it works. To fully unlock fragments, including optimistic responses and cache manipulation of entities, we needed a normalized cache (store) of our data where each entity is identified and stored once. In this case, every component that accesses that data subscribes to the single entity and rerenders when the entity changes. The normalized cache is **optional** and you can begin to use `magiql` and fragments without it too. In `magiql`, we have provided a few implementations of the `store` that all allow fragments to be used:
 
 * Recoil `createRecoilStore`
    * Each field of an entity is stored as atom, entities and fragments are both selectors on the atoms
