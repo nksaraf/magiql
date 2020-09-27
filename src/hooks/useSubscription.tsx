@@ -1,11 +1,11 @@
 import React from "react";
-import { getRequest } from "relay-runtime";
+import { getRequest } from "../core/operation";
 
 import { Query, Variables, GraphQLTaggedNode } from "../core/types";
 import { useRerenderer } from "./useRerenderer";
-import { useClient } from "./useClient";
+import { useGraphQLClient } from "./useGraphQLClient";
 import { UseQueryOptions, UseQueryResult } from "./useQuery";
-import { useStore } from "./useStore";
+import { useGraphQLStore } from "./useGraphQLStore";
 
 export function useSubscription<
   TSubscription extends Query,
@@ -17,8 +17,8 @@ export function useSubscription<
     ...options
   }: UseQueryOptions<TSubscription, Error> = {}
 ): UseQueryResult<TSubscription, TError> {
-  const client = useClient();
-  const store = useStore();
+  const client = useGraphQLClient();
+  const store = useGraphQLStore();
   const rerender = useRerenderer();
   const node = getRequest(subscription);
   const operation = client.buildOperation(node, variables);

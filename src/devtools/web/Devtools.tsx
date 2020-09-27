@@ -3,13 +3,13 @@ import Draggable from "react-draggable";
 import { ReactQueryCacheProvider } from "react-query";
 import { ReactQueryDevtoolsPanel } from "react-query-devtools";
 
-import { useClient } from "../../hooks";
+import { useGraphQLClient } from "../../hooks";
 import Explorer, { ThemeProvider } from "./Explorer";
 import Logo from "./RQLogo";
 import { theme } from "./theme";
 
 export function StoreDevtools() {
-  const client = useClient();
+  const client = useGraphQLClient();
   const store = client.useStore();
   const entities = store.useEntities();
   const [input, setInput] = React.useState("");
@@ -90,7 +90,7 @@ export function StoreDevtools() {
 }
 
 export function QueriesDevtools() {
-  const client = useClient();
+  const client = useGraphQLClient();
   return (
     <ReactQueryCacheProvider queryCache={client.cache}>
       <div

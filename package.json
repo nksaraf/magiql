@@ -25,6 +25,7 @@
     "@types/react": "^16.9.49",
     "@types/react-dom": "^16.9.8",
     "@types/react-native": "^0.63.22",
+    "@types/relay-compiler": "^8.0.0",
     "graphql": "^15.3.0",
     "next": "^9.5.3",
     "npm-run-all": "^4.1.5",

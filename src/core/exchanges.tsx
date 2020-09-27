@@ -1,4 +1,9 @@
-import { fetchGraphQL, resolveFetchOptions } from "./fetch";
+/**
+ * Concept copied from the amazing `urql` client (without using streams)
+ * https://github.com/FormidableLabs/urql/blob/main/packages/core/src/exchanges
+ */
+
+import { fetchGraphQL, resolveFetchOptions } from "./fetchGraphQL";
 import {
   OperationKind,
   Store,
@@ -11,7 +16,7 @@ import {
   CombinedError,
 } from "./types";
 import deepMerge from "deepmerge";
-import { GraphQLClient } from "./client";
+import { GraphQLClient } from "./graphQLClient";
 
 export const composeExchanges = (exchanges: Exchange[]) => ({
   client,
@@ -35,9 +40,11 @@ export const composeExchanges = (exchanges: Exchange[]) => ({
   );
 
 export const errorExchange = ({
-  onError,
+  onError = (error) => {
+    throw error;
+  },
 }: {
-  onError: (error: CombinedError) => void;
+  onError?: (error: CombinedError) => void;
 }) => {
   const errorExchange: Exchange = ({ forward }) => {
     return async (operation) => {

@@ -5,7 +5,7 @@ import { getSelector, getStorageKey, SelectorData } from "relay-runtime";
 
 import { assertBabelPlugin, stableStringify } from "../../utils";
 import { useRerenderer } from "../../hooks/useRerenderer";
-import { createOperation } from "../graphql-tag";
+import { createOperation } from "../operation";
 import {
   Response,
   Query,

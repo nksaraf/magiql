@@ -1,7 +1,7 @@
 import fetch from "isomorphic-unfetch";
 
 import { CombinedError } from "./error";
-import { getRequest } from "./graphql-tag";
+import { getRequest } from "./operation";
 import {
   FetchOperation,
   FetchOptions,

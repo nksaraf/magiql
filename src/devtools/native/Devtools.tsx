@@ -7,13 +7,13 @@ import {
   FlatList,
 } from "react-native";
 
-import { useClient } from "../../hooks";
+import { useGraphQLClient } from "../../hooks";
 import Explorer from "./Explorer";
 // import Logo from "./RQLogo";
 import { theme } from "./theme";
 
 export function StoreDevtools({ onClose }) {
-  const client = useClient();
+  const client = useGraphQLClient();
   const store = client.useStore();
   const flatlistref = React.useRef<FlatList>();
   const data = store.useEntities();

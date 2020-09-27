@@ -4,7 +4,7 @@ import compileGraphQLTag from "babel-plugin-relay/lib/compileGraphQLTag";
 import getValidGraphQLTag from "babel-plugin-relay/lib/getValidGraphQLTag";
 
 import { createMacro } from "babel-plugin-macros";
-import { loadConfig } from "./config";
+import { loadConfig } from "./relay/config";
 
 const configName = "magiql";
 

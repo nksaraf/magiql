@@ -1,4 +1,4 @@
-import { useClient } from "../../hooks";
+import { useGraphQLClient } from "../../hooks";
 import { throwError } from "../../utils";
 import { Store } from "../types";
 
@@ -7,7 +7,7 @@ export function createQueryCacheStore(): () => Store {
   const commit = (_operation, _data) => {};
 
   const useOperation: Store["useOperation"] = (operation) => {
-    const client = useClient();
+    const client = useGraphQLClient();
     const queryKey = client.getQueryKey(operation);
     return client.cache.getQueryData(queryKey);
   };

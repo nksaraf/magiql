@@ -1,4 +1,5 @@
-export * from "./useClient";
+export * from "./useGraphQLClient";
+export * from "./useGraphQLStore";
 export * from "./useSubscription";
 export * from "./useQuery";
 export * from "./useInfiniteQuery";

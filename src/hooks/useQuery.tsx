@@ -4,7 +4,7 @@ import {
   QueryResult,
 } from "react-query";
 
-import { getRequest } from "../core/graphql-tag";
+import { getRequest } from "../core/operation";
 import {
   Variables,
   Response,
@@ -14,8 +14,8 @@ import {
   GraphQLTaggedNode,
   FetchOptions,
 } from "../core/types";
-import { useClient } from "./useClient";
-import { useStore } from "./useStore";
+import { useGraphQLClient } from "./useGraphQLClient";
+import { useGraphQLStore } from "./useGraphQLStore";
 
 export interface UseQueryOptions<TQuery extends Query, TError = Error>
   extends QueryConfig<Response<TQuery>, TError> {
@@ -28,7 +28,7 @@ export type UseQueryResult<TQuery extends Query, TError> = QueryResult<
   Response<TQuery>,
   TError
 > & {
-  client: ReturnType<typeof useClient>;
+  client: ReturnType<typeof useGraphQLClient>;
   store: Store;
   operation: Operation<TQuery>;
 };
@@ -41,8 +41,8 @@ export function useQuery<TQuery extends Query, TError = Error>(
     ...options
   }: UseQueryOptions<TQuery, TError> = {}
 ): UseQueryResult<TQuery, TError> {
-  const client = useClient();
-  const store = useStore();
+  const client = useGraphQLClient();
+  const store = useGraphQLStore();
   const node = getRequest(query);
   const operation = client.buildOperation(node, variables, fetchOptions);
   const queryKey = client.getQueryKey(operation);

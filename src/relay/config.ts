@@ -1,4 +1,4 @@
-import plugin from "./relay";
+import plugin from ".";
 import { cosmiconfigSync, defaultLoaders } from "cosmiconfig";
 
 var explorer = cosmiconfigSync("magiql", {
@@ -12,6 +12,27 @@ var explorer = cosmiconfigSync("magiql", {
     noExt: defaultLoaders[".yaml"],
   },
 });
+
+export interface Config {
+  schema: string;
+  src: string;
+
+  /**
+   * A specific directory to output all artifacts to.
+   * When enabling this the babel plugin needs `artifactDirectory` set as well.
+   */
+  artifactDirectory: string;
+  extensions: string;
+  verbose: boolean;
+  quiet: boolean;
+  watch: boolean;
+  validate: boolean;
+  watchman?: true;
+  language?: string;
+  include: string[];
+  exclude: string[];
+}
+
 
 export function loadConfig() {
   var result = explorer.search();
