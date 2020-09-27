@@ -4,80 +4,13 @@ A set of React hooks to work with GraphQL data. `magiql` stands on the shoulders
 
 There is an example for this: [https://magiql.vercel.app](https://magiql.vercel.app). You can see the [components](/components) and [pages](/pages) folder for example code.
 
-**Warning**: This is still in alpha stage and docs and examples are in the works
-
-## Installation
-
-To install `magiql` to your project, run the following commands based on if you use `yarn` or `npm`
-
-```bash
-yarn add magiql graphql
-
-# or
-npm install magiql graphql --save
-```
-
-## Using the Relay compiler
-
-**This is required to use fragments and normalized caching**
-
-To use the `relay-compiler`, add `magiql/babel` to your Babel config as a plugin, eg. in `babel.config.js`.
-
-```javascript
-module.exports {
-  presets: [ ... ],
-  plugins: ["magiql/babel", ... ]
-}
-```
-
-Or, you can run the compiler from cli using the `magiql` command (use `magiql --watch` for watch mode, recommended for development). This is also just a wrapper around the `relay-compiler`. You still need to add the Babel plugin, but can disable running the compiler with Babel, but setting `runWithBabel` to `false` in `magiql.config.js`.
-
-### `magiql.config.js`
-
-If need to customize the Relay compiler away from the defaults (specified below), add a `magiql.config.js` file in the root directory. It is very similar to `relay.config.js`, but tailored a little for `magiql`.
-
-```javascript
-module.exports = {
-  schema: "./schema.graphql",
-  src: "./",
-  artifactDirectory: "generated",
-  extensions: ["ts", "tsx", "js", "jsx", "graphql"],
-  quiet: false,
-  watch: boolean,
-  runWithBabel: true,
-  language: "typescript",
-  include: ["**"],
-  exclude: [
-      "**/node_modules/**",
-      "**/__mocks__/**",
-      `**/generated/**`,
-    ];
- }
-
-```
-
-## Devtools
-
-You can use the `magiql` Devtools which are completely inspired by `react-query-devtools` as follows.
-
-```tsx
-import React from "react";
-import { GraphQLClient, GraphQLClientProvider } from "magiql";
-import GraphQLDevtools from "magiql/devtools";
-
-export default function App({ children }) {
-  return (
-    <GraphQLClientProvider client={client}>
-      {children}
-      <GraphQLDevtools defaultIsOpen defaultTab="store" />
-    </GraphQLClientProvider>
-  );
-}
-```
-
 <img src='/public/example.gif' />
 
-## Basic usage
+**Warning**: This is still in alpha stage and docs and examples are in the works
+
+<details>
+<summary><strong>Basic Usage</strong></summary>
+ 
 
 ```tsx
 import {
@@ -144,6 +77,87 @@ const App = () => {
   );
 };
 ```
+
+</details>
+
+<details>
+<summary><strong>Installation</strong></summary>
+ 
+To install `magiql` to your project, run the following commands based on if you use `yarn` or `npm`
+
+```bash
+yarn add magiql graphql
+
+# or
+npm install magiql graphql --save
+```
+</details>
+
+<details>
+<summary><strong>Using the Relay compiler
+  </strong></summary>
+
+_This is required to use fragments and normalized caching_
+
+To use the `relay-compiler`, add `magiql/babel` to your Babel config as a plugin, eg. in `babel.config.js`.
+
+```javascript
+module.exports {
+  presets: [ ... ],
+  plugins: ["magiql/babel", ... ]
+}
+```
+
+Or, you can run the compiler from cli using the `magiql` command (use `magiql --watch` for watch mode, recommended for development). This is also just a wrapper around the `relay-compiler`. You still need to add the Babel plugin, but can disable running the compiler with Babel, but setting `runWithBabel` to `false` in `magiql.config.js`.
+
+#### `magiql.config.js`
+
+If need to customize the Relay compiler away from the defaults (specified below), add a `magiql.config.js` file in the root directory. It is very similar to `relay.config.js`, but tailored a little for `magiql`.
+
+```javascript
+module.exports = {
+  schema: "./schema.graphql",
+  src: "./",
+  artifactDirectory: "generated",
+  extensions: ["ts", "tsx", "js", "jsx", "graphql"],
+  quiet: false,
+  watch: boolean,
+  runWithBabel: true,
+  language: "typescript",
+  include: ["**"],
+  exclude: [
+      "**/node_modules/**",
+      "**/__mocks__/**",
+      `**/generated/**`,
+    ];
+ }
+
+```
+
+</details>
+
+<details>
+<summary><strong>Devtools</strong></summary>
+ 
+You can use the `magiql` Devtools which are completely inspired by `react-query-devtools` as follows.
+
+```tsx
+import React from "react";
+import { GraphQLClient, GraphQLClientProvider } from "magiql";
+import GraphQLDevtools from "magiql/devtools";
+
+export default function App({ children }) {
+  return (
+    <GraphQLClientProvider client={client}>
+      {children}
+      <GraphQLDevtools defaultIsOpen defaultTab="store" />
+    </GraphQLClientProvider>
+  );
+}
+```
+</details>
+
+
 
 ## Working with fragments
 
