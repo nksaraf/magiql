@@ -1,1 +1,1 @@
-export { default } from "./devtools/native";
+export { default, GraphQLDevtools } from "./devtools/native";
