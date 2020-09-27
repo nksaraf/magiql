@@ -1,7 +1,0 @@
-{
-  "name": "magiql/jotai-store",
-  "private": true,
-  "main": "../dist/jotai-store.js",
-  "module": "../dist/esm/jotai-store.js",
-  "types": "../dist/jotai-store.d.ts"
-}

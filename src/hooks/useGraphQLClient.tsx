@@ -1,13 +1,13 @@
 import React from "react";
 import { ReactQueryCacheProvider, ReactQueryConfigProvider } from "react-query";
 
-import { GraphQLClient } from "../core/client";
+import { GraphQLClient } from "../core/graphQLClient";
 
 export const GraphQLClientContext = React.createContext<GraphQLClient | null>(
   null
 );
 
-export function useClient() {
+export function useGraphQLClient() {
   const client = React.useContext(GraphQLClientContext);
   if (!client) {
     throw new Error("No GraphQL Client found!");

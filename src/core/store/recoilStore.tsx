@@ -18,7 +18,7 @@ import {
 } from "relay-runtime";
 
 import { assertBabelPlugin, throwError } from "../../utils";
-import { createOperation } from "../graphql-tag";
+import { createOperation } from "../operation";
 import {
   Operation,
   Query,

@@ -1,11 +1,11 @@
 import React, { Suspense } from "react";
 
-import { GraphQLDevtoolsProps } from "./Devtools";
+import { GraphQLDevtoolsProps } from "./GraphQLDevtools";
 
 export let GraphQLDevtools: React.FC<GraphQLDevtoolsProps>;
 
 if (typeof window !== "undefined") {
-  const LazyGraphQLDevtools: any = React.lazy(() => import("./Devtools"));
+  const LazyGraphQLDevtools: any = React.lazy(() => import("./GraphQLDevtools"));
   LazyGraphQLDevtools.displayName = "GraphQLDevtools";
   GraphQLDevtools = (props: any) => {
     return (

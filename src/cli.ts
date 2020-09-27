@@ -5,7 +5,7 @@
  */
 import { relayCompiler } from "relay-compiler";
 
-import { loadConfig } from "./config";
+import { loadConfig } from "./relay/config";
 
 // console.log(relayCompiler, config);
 

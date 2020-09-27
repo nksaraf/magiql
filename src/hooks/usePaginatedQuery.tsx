@@ -5,7 +5,7 @@ import {
   QueryConfig,
 } from "react-query";
 
-import { getRequest } from "../core/graphql-tag";
+import { getRequest } from "../core/operation";
 import {
   Variables,
   Response,
@@ -16,8 +16,8 @@ import {
   Operation,
   FetchOptions,
 } from "../core/types";
-import { useClient } from "./useClient";
-import { useStore } from "./useStore";
+import { useGraphQLClient } from "./useGraphQLClient";
+import { useGraphQLStore } from "./useGraphQLStore";
 
 export interface UsePaginatedQueryOptions<TQuery extends Query, TError = Error>
   extends QueryConfig<Response<TQuery>, TError> {
@@ -30,7 +30,7 @@ export type UsePaginatedQueryResult<
   TQuery extends Query,
   TError
 > = PaginatedQueryResult<Response<TQuery>, TError> & {
-  client: ReturnType<typeof useClient>;
+  client: ReturnType<typeof useGraphQLClient>;
   store: Store;
   resolvedOperation: Operation<TQuery>;
   latestOperation: Operation<TQuery>;
@@ -46,8 +46,8 @@ export function usePaginatedQuery<TQuery extends Query, TError = Error>(
 ): UsePaginatedQueryResult<TQuery, TError> {
   type TData = Response<TQuery>;
   const node = getRequest(query);
-  const client = useClient();
-  const store = useStore();
+  const client = useGraphQLClient();
+  const store = useGraphQLStore();
   const variablesRef = React.useRef(variables);
   const latestOperation = client.buildOperation(node, variables, fetchOptions);
   const queryKey = client.getQueryKey(latestOperation);

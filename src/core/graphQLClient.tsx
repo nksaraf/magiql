@@ -8,8 +8,8 @@ import {
   fallbackExchange,
 } from "./exchanges";
 
-import { resolveFetchOptions } from "./fetch";
-import { createOperation } from "./graphql-tag";
+import { resolveFetchOptions } from "./fetchGraphQL";
+import { createOperation } from "./operation";
 import { createQueryCacheStore } from "./store/cacheStore";
 import {
   Operation,
@@ -61,7 +61,7 @@ export class GraphQLClient {
   cache: QueryCache;
   onDebugEvent: <TQuery extends Query>(event: DebugEvent<TQuery>) => void;
   useStore: (() => Store) & { Provider?: React.FC<{}> };
-  private _useExchanges: (client: GraphQLClient) => Exchange[];
+  private useExchanges: (client: GraphQLClient) => Exchange[];
   subscriptions?: {
     client: SubscriptionClient;
     endpoint: string;
@@ -83,7 +83,7 @@ export class GraphQLClient {
     this.queryConfig = queryConfig;
     this.cache = queryCache;
     this.useStore = useStore;
-    this._useExchanges = useExchanges;
+    this.useExchanges = useExchanges;
     this.onDebugEvent = onDebugEvent;
 
     if (subscriptions && typeof window !== "undefined") {
@@ -196,7 +196,7 @@ export class GraphQLClient {
   }
 
   useExecutor() {
-    const exchanges = this._useExchanges(this);
+    const exchanges = this.useExchanges(this);
     return async <TQuery extends Query>(operation: Operation<TQuery>) => {
       const operate = composeExchanges(exchanges)({
         forward: fallbackExchange({

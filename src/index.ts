@@ -3,15 +3,15 @@ import { setConsole } from "react-query";
 
 import { setBatch } from "./core/store/batchedUpdates";
 
-export * from "./core/client";
+export * from "./core/graphQLClient";
 export * from "./core/exchanges";
-export * from "./core/fetch";
+export * from "./core/fetchGraphQL";
 export * from "./core/types";
 export * from "./core/store/cacheStore";
 export * from "./core/store/normalizedCacheStore";
 export * from "./hooks";
 export * from "./core/store/batchedUpdates";
-export * from "./core/graphql-tag";
+export * from "./core/operation";
 
 setConsole({
   log: console.log,

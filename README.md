@@ -8,19 +8,18 @@ Usage example:
 
 ```tsx
 import {
-  MagiqlProvider,
-  createClient,
+  GraphQLClientProvider,
+  GraphQLClient,
   useQuery,
-
-  // no cost function, just returns the string, 
-  // but allows IDE's to recognize the string as GraphQL tag.
-  gql,
+  graphql,
 } from "magiql";
 
-const client = createClient("https://graphql-pokemon.now.sh");
+const client = new GraphQLClient({
+  endpoint: "https://graphql-pokemon.now.sh"
+});
 
 const SearchPokemon = () => {
-  const { data, status, error } = useQuery(gql`
+  const { data, status, error } = useQuery(graphql`
     query pokemon($name: String) {
       pokemon(name: $name) {
         id
@@ -48,9 +47,9 @@ const SearchPokemon = () => {
 
 const App = () => {
   return (
-    <MagiqlProvider client={client}>
+    <GraphQLClientProvider client={client}>
       <SearchPokemon />
-    </MagiqlProvider>
+    </GraphQLClientProvider>
   );
 }
 

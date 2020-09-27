@@ -1,6 +1,6 @@
 import compileGraphQLTag from "babel-plugin-relay/lib/compileGraphQLTag";
 import getValidGraphQLTag from "babel-plugin-relay/lib/getValidGraphQLTag";
-import { loadConfig } from "./config";
+import { loadConfig } from "./relay/config";
 const { languagePlugin, ...config } = loadConfig();
 
 if (process.env.NODE_ENV !== "production") {

@@ -11,7 +11,7 @@ import {
   ReaderInlineFragment,
 } from "relay-runtime/lib/util/ReaderNode";
 import { SubscriptionClient } from "subscriptions-transport-ws";
-import { GraphQLClient } from "./client";
+import { GraphQLClient } from "./graphQLClient";
 import { CombinedError } from "./error";
 
 export type {
