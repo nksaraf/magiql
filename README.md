@@ -19,7 +19,7 @@ Most of the features that we are providing are thanks to [`react-query`](https:/
 * React Suspense Support (must be enabled with React Concurrent Mode)
 * Dedicated Devtools
 
-Using the [`relay-compiler`](https://github.com/facebook/relay) is required for some more awesome features,
+Using the [`relay-compiler`](https://github.com/facebook/relay) (via `magiql/babel` or `magiql` cli) is required to unlock some more awesome features,
 
 * Schema-aware Normalized caching + Entity Manipulation (opt-in)
 * Multiple store implementations ([`recoil`](https://github.com/facebookexperimental/Recoil), [`react-query`](https://github.com/tannerlinsley/react-query))
