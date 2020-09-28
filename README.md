@@ -24,7 +24,7 @@ Most of the features that we are providing are thanks to `react-query` and `rela
 * React Suspense Support (must be enabled with React Concurrent Mode)
 * Dedicated Devtools
 
-_Note: You don't need a Relay-compliant server to get all these features in `magiql`. It will work with any GraphQL server._
+**Note: You don't need a Relay-compliant server to get all these features in `magiql`. It will work with any GraphQL server. It also doesn't require you to commit to React Concurrent Mode which the new `relay` hooks require.**
 
 There is an example for this: [https://magiql.vercel.app](https://magiql.vercel.app). You can see the [components](/components) and [pages](/pages) folder for example code.
 
@@ -416,7 +416,9 @@ const client = new GraphQLClient({
 
 <details>
 <summary><big><strong>Naming convention for operations</strong></big></summary>
-Relay allows us to use fragments in queries and mutations without importing them as modules. For this to work, the names must be globally unique. It is also good habit to name the fragments and queries based on the components and props that use them. Thus, relay enforces a few conventions when it comes to naming your operations. These conventions are quite helpful and make your lives easier.
+  
+Relay allows us to use fragments in queries and mutations without importing them as modules. For this to work, the names must be globally unique. It is also good habit to name the fragments and queries based on the components and props that use them. Thus, relay enforces a few conventions when it comes to naming your operations. These conventions are quite helpful and make your lives easier:
+  
  
 * Queries must be named `query ${ModuleName}Query { ... }`, eg, a query in file `Home.tsx` can be named `HomeQuery` or `HomeRoomsQuery`
 * Mutations must be named `mutation ${ModuleName}Mutation { ... }`, eg, a mutation in file `Home.tsx` can be named `HomeMutation` or `HomeDestroyMutation`
