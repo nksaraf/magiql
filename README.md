@@ -1,30 +1,30 @@
 # 🧙 magiql
 
-A set of React hooks to work with GraphQL data. `magiql` stands on the shoulders of massive giants in the data-synchronization and state-management space, both conceputally and some as actual dependencies. It uses the amazing `react-query` library as its data-fetching and synchronization layer which forms the foundation of this library. Seriously, without `react-query`, this won't be any good. The API is also very similar to `react-query` and will be familiar to the users. It's just slightly tweaked to make it easier to work with GraphQL. It then brings in the Relay compiler and `recoil` to add normalized caching and the `useFragment` hook to bring a delightful and highly productive authoring experience.
+A set of React hooks to work with GraphQL data. `magiql` stands on the shoulders of massive giants in the data-synchronization and state-management space, both conceputally and some as actual dependencies. It uses the amazing [`react-query`](https://github.com/tannerlinsley/react-query) library as its data-fetching and synchronization layer which forms the foundation of this library. Seriously, without [`react-query`](https://github.com/tannerlinsley/react-query), this won't be any good. The API is also very similar to [`react-query`](https://github.com/tannerlinsley/react-query) and will be familiar to the users. It's just slightly tweaked to make it easier to work with GraphQL. It then brings in the Relay compiler and [`recoil`](https://github.com/facebookexperimental/Recoil) to add normalized caching and the `useFragment` hook to bring a delightful and highly productive authoring experience.
 
 # Features
 
-Most of the features that we are providing are thanks to `react-query` and `relay-compiler`. `magiql` merely tries to be an orchestrator between these great tools.
+Most of the features that we are providing are thanks to [`react-query`](https://github.com/tannerlinsley/react-query) and [`relay-compiler`](https://github.com/facebook/relay). `magiql` merely tries to be an orchestrator between these great tools.
 
-* Auto Caching + Refetching (stale-while-revalidate, Window Refocus, Polling/Realtime)
-* Parallel + Dependent Queries
-* "Lazy" Queries
-* Request Deduplication
-* Paginated + Cursor-based Queries
-* Load-More + Infinite Scroll Queries w/ Scroll Recovery
-* Request Cancellation
-* Mutations + Reactive Query Refetching
-* Optimistic Updates
-* Normalized caching + Entity Manipulation (opt-in)
-* Multiple store implementations (`recoil`, `react-query`)
-* Typescript Support + Code generation (powered by Relay Compiler)
-* Build-time GraphQL optimizations (powered by Relay Compiler)
-* Relay-style `useFragment` hook
-* Exchanges API to customize execution (logging, persisted queries, authentication, JWT token refresh)
-* React Suspense Support (must be enabled with React Concurrent Mode)
-* Dedicated Devtools
+- Auto Caching + Refetching (stale-while-revalidate, Window Refocus, Polling/Realtime)
+- Parallel + Dependent Queries
+- "Lazy" Queries
+- Request Deduplication
+- Paginated + Cursor-based Queries
+- Load-More + Infinite Scroll Queries w/ Scroll Recovery
+- Request Cancellation
+- Mutations + Reactive Query Refetching
+- Optimistic Updates
+- Normalized caching + Entity Manipulation (opt-in)
+- Multiple store implementations ([`recoil`](https://github.com/facebookexperimental/Recoil), [`react-query`](https://github.com/tannerlinsley/react-query))
+- Typescript Support + Code generation (powered by Relay Compiler)
+- Build-time GraphQL optimizations (powered by Relay Compiler)
+- Relay-style `useFragment` hook
+- Exchanges API to customize execution (logging, persisted queries, authentication, JWT token refresh)
+- React Suspense Support (must be enabled with React Concurrent Mode)
+- Dedicated Devtools
 
-**Note: You don't need a Relay-compliant server to get all these features in `magiql`. It will work with any GraphQL server. It also doesn't require you to commit to React Concurrent Mode which the new `relay` hooks require.**
+**Note: You don't need a Relay-compliant server to get all these features in `magiql`. It will work with any GraphQL server. It also doesn't require you to commit to React Concurrent Mode which the new [`relay`](https://github.com/facebook/relay) hooks require.**
 
 There is an example for this: [https://magiql.vercel.app](https://magiql.vercel.app). You can see the [components](/components) and [pages](/pages) folder for example code.
 
@@ -110,7 +110,7 @@ const App = () => {
  
 To install `magiql` to your project, run the following commands based on if you use `yarn` or `npm`
 
-```bash
+```sh
 yarn add magiql graphql
 
 # or
@@ -124,7 +124,7 @@ npm install magiql graphql --save
 
 _This is required to use fragments and normalized caching_
 
-To use the `relay-compiler`, add `magiql/babel` to your Babel config as a plugin, eg. in `babel.config.js`. The `magiql` Babel plugin is just a wrapper around `babel-plugin-relay` to include everything in one dependency. It also runs the `relay-compiler` in watch mode by default.
+To use the [`relay-compiler`](https://github.com/facebook/relay), add `magiql/babel` to your Babel config as a plugin, eg. in `babel.config.js`. The `magiql` Babel plugin is just a wrapper around [`babel-plugin-relay`](https://github.com/facebook/relay) to include everything in one dependency. It also runs the [`relay-compiler`](https://github.com/facebook/relay) in watch mode by default.
 
 ```javascript
 module.exports {
@@ -133,7 +133,7 @@ module.exports {
 }
 ```
 
-Or, you can run the compiler from cli using the `magiql` command (use `magiql --watch` for watch mode, recommended for development). This is also just a wrapper around the `relay-compiler`. You still need to add the Babel plugin, but can disable running the compiler with Babel, but setting `runWithBabel` to `false` in `magiql.config.js`.
+Or, you can run the compiler from cli using the `magiql` command (use `magiql --watch` for watch mode, recommended for development). This is also just a wrapper around the [`relay-compiler`](https://github.com/facebook/relay). You still need to add the Babel plugin, but can disable running the compiler with Babel, but setting `runWithBabel` to `false` in `magiql.config.js`.
 
 #### `magiql.config.js`
 
@@ -164,84 +164,27 @@ module.exports = {
 <details>
 <summary><big><strong>Customizing the GraphQL Client</strong></big></summary>
 
-```tsx
-import {
-  GraphQLClientProvider,
-  GraphQLClient,
-  useQuery,
-  graphql,
-} from "magiql";
+Coming soon
 
-const client = new GraphQLClient({
-  endpoint: "https://swapi-graphql.netlify.app/.netlify/functions/index",
-});
+</details>
 
-const People = () => {
-  const { data, status, error } = useQuery(
-    graphql`
-      query PeopleQuery($limit: Int) {
-        allPeople(first: $limit) {
-          edges {
-            node {
-              id
-              name
-              homeworld {
-                name
-              }
-            }
-          }
-        }
-      }
-    `,
-    {
-      variables: {
-        limit: 10,
-      },
-    }
-  );
+<details>
+<summary><big><strong>Exchanges</strong></big></summary>
 
-  if (status === "loading") {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>{error.message}</div>;
-  }
-
-  return (
-    <div>
-      {data
-        ? data.allPeople?.edges?.map((edge) => (
-            <div key={edge.node.id}>
-              <b>{edge.node.name}</b> ({edge.node.homeworld?.name})
-            </div>
-          ))
-        : null}
-    </div>
-  );
-};
-
-const App = () => {
-  return (
-    <GraphQLClientProvider client={client}>
-      <People />
-    </GraphQLClientProvider>
-  );
-};
-```
+Coming soon
 
 </details>
 
 <details>
 <summary><big><strong>Working with fragments</strong></big></summary>
 
-With GraphQL, the biggest game changer when used with React are **fragments**. The `useFragment` hook introduced by `relay` makes it delightful to declare the data needs of your components. These are some of the advantages:
+With GraphQL, the biggest game changer when used with React are **fragments**. The `useFragment` hook introduced by [`relay`](https://github.com/facebook/relay) makes it delightful to declare the data needs of your components. These are some of the advantages:
 
 - Date requirements completely localized and encapsulated in your component
 - Declarative, modular and composable
 - Fragments can include nest more fragments and fits naturally with the React component model
 - Don't need to add everything to the top level query
-- Easy to ensure type safety (using `relay` compiler artifacts)
+- Easy to ensure type safety (using [`relay-compiler`](https://github.com/facebook/relay) generated files)
 - Data available independent of how the data is fetched by some parent component
 - Components only subscribe to the precise part of the data store that it cares about (down to the field level).
 
@@ -379,7 +322,7 @@ To fully unlock fragments, including optimistic responses and cache manipulation
 
 - Each entity is identified and stored once.
 - Component that access entities subscribe to changes to that entity
-- Implementation can be customized when creating a `GraphQLClient` via the `useStore` option, we provide three implementations of our own (using `recoil` and `react-query`'s `QueryCache`)
+- Implementation can be customized when creating a `GraphQLClient` via the `useStore` option, we provide three implementations of our own (using [`recoil`](https://github.com/facebookexperimental/Recoil) and [`react-query`](https://github.com/tannerlinsley/react-query)'s `QueryCache`)
 - Provide your own `getDataID` to these stores to control how id's are determined and then let `magiql` handle the rest for managing access.
 
 ```typescript
@@ -450,7 +393,7 @@ export default function App({ children }) {
 
 # API
 
-The following is the core API for `magiql`. With the help of amazing libraries like `react-query`, `relay-compiler` and `recoil`, we are able to provide the following features as a GraphQL client. The runtime is your familiar `react-query` api. There is also an optional build time setup that unlocks fragments and normalized store.
+The following is the core API for `magiql`. With the help of amazing libraries like [`react-query`](https://github.com/tannerlinsley/react-query), [`relay-compiler`](https://github.com/facebook/relay) and [`recoil`](https://github.com/facebookexperimental/Recoil), we are able to provide the following features as a GraphQL client. The runtime is your familiar [`react-query`](https://github.com/tannerlinsley/react-query) api. There is also an optional build time setup that unlocks fragments and normalized store.
 
 <details>
 <summary><big><code>useQuery</code></big></summary>
@@ -477,7 +420,7 @@ export default function App({ children }) {
 ### Runtime
 
 - `useQuery(query, { variables, ...options })`, `usePaginatedQuery` and `useInfiniteQuery`: Data fetching patterns for GraphQL queries with numerous ways to customize them for refetching on different events
-  - All `options` from `react-query` are valid in the second argument
+  - All `options` from [`react-query`](https://github.com/tannerlinsley/react-query) are valid in the second argument
   - No fetch function or query key required
   - Stale-while-revalidate caching strategy
   - Request deduplication
@@ -488,7 +431,7 @@ export default function App({ children }) {
   - Window Focus refetching
   - Network Status refetching
   - Polling/interval refetching
-  - Normalized caching (uses `relay-compiler`)
+  - Normalized caching (uses [`relay-compiler`](https://github.com/facebook/relay))
 - `useMutation`: a hook that provides a way to run GraphQL mutations (updates) on the server state conviniently with optmistic updates from your React app
   - Optimistic updates
   - Cache manipulation for entities in store
@@ -496,15 +439,15 @@ export default function App({ children }) {
   - Field-level subscription for fragments, only rerenders when that changes
   - Allows nesting of fragments, great deal of composability and reusability
   - Doesn't need to be responsible for fetching data (gets reference from parent component)
-  - **Requires that you run the `relay-compiler` with either the Babel plugin or the cli command.**
+  - **Requires that you run the [`relay-compiler`](https://github.com/facebook/relay) with either the Babel plugin or the cli command.**
 - `useGraphQLClient`: Access the underlying GraphQLClient
   - Create new client using `GraphQLClient` class
   - Add the `GraphQLClientProvider` with an instance of a `GraphQLClient`
-  - Can customize `react-query` config by using `new GraphQLClient({ endpoint: "...", queryConfig: {...} })
+  - Can customize [`react-query`](https://github.com/tannerlinsley/react-query) config by using `new GraphQLClient({ endpoint: "...", queryConfig: {...} })
 - Exchanges based API for customizing query execution behaviour, allows for,
   - logging, authentication, refreshing tokens, normalization, error handling
 - React Suspense support
-  - prowered by `react-query` (must be enabled)
+  - prowered by [`react-query`](https://github.com/tannerlinsley/react-query) (must be enabled)
 - React Native support
   - Should work out of the box in `expo` or wherever the `react-native` `package.json` property is resolved
 
@@ -537,7 +480,7 @@ Here are some of the big dependencies and inspirations for `magiql`:
   - Using fragments effectively with optimizations
   - Concept: `useFragment` hook (game changer!) to declaratively define data needs for components independent of the fetching of the data
   - Implementation: `relay-runtime` inspiration for (de)normalizating data
-  - `magiql` allows us to use the `relay` hooks API without jumping to React Suspense (can't use the new relay hooks without that)
+  - `magiql` allows us to use the [`relay`](https://github.com/facebook/relay) hooks API without jumping to React Suspense (can't use the new relay hooks without that)
   - **Do not need relay compliant server (will work with any GraphQL server)**
 - [recoil](https://github.com/facebookexperimental/Recoil) (opt-in)
   - Alternative implementation for normalized cache for data
