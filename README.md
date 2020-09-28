@@ -8,6 +8,8 @@ There is an example for this: [https://magiql.vercel.app](https://magiql.vercel.
 
 **Warning**: This is still in alpha stage and docs and examples are in the works
 
+# Documentation
+
 <details>
 <summary><strong>Basic Usage</strong></summary>
  
@@ -99,7 +101,7 @@ npm install magiql graphql --save
 
 _This is required to use fragments and normalized caching_
 
-To use the `relay-compiler`, add `magiql/babel` to your Babel config as a plugin, eg. in `babel.config.js`.
+To use the `relay-compiler`, add `magiql/babel` to your Babel config as a plugin, eg. in `babel.config.js`. The `magiql` Babel plugin is just a wrapper around `babel-plugin-relay` to include everything in one dependency. It also runs the `relay-compiler` in watch mode by default. 
 
 ```javascript
 module.exports {
@@ -136,30 +138,9 @@ module.exports = {
 
 </details>
 
+
 <details>
-<summary><strong>Devtools</strong></summary>
- 
-You can use the `magiql` Devtools which are completely inspired by `react-query-devtools` as follows.
-
-```tsx
-import React from "react";
-import { GraphQLClient, GraphQLClientProvider } from "magiql";
-import GraphQLDevtools from "magiql/devtools";
-
-export default function App({ children }) {
-  return (
-    <GraphQLClientProvider client={client}>
-      {children}
-      <GraphQLDevtools defaultIsOpen defaultTab="store" />
-    </GraphQLClientProvider>
-  );
-}
-```
-</details>
-
-
-
-## Working with fragments
+<summary><strong>Working with fragments</strong></summary>
 
 With GraphQL, the biggest game changer when used with React are **fragments**. The `useFragment` hook introduced by `relay` makes it delightful to declare the data needs of your components. These are some of the advantages:
 
@@ -171,7 +152,7 @@ With GraphQL, the biggest game changer when used with React are **fragments**. T
 - Data available independent of how the data is fetched by some parent component
 - Components only subscribe to the precise part of the data store that it cares about (down to the field level).
 
-### Usage (with fragments)
+#### Usage (with fragments)
 
 ```tsx
 // Person.tsx
@@ -259,6 +240,123 @@ const App = () => {
 
 These features and accompanying restrictions provide an excellent authoring experience that almost seems magical when it works.
 
+</details>
+
+<details>
+<summary><strong>Support</strong></summary>
+Using the relay-compiler, `magiql` can generate types for all your operations since it has access to your schema as well. These types are generated and updated by the compiler, so ensure that it's running in watch mode (either through Babel or the cli) when you are developing.
+  
+If the name of query is `HomeQuery`, then import type as such:
+
+ ```typescript
+ import { HomeQuery } from "generated/HomeQuery.graphql";
+ import { useQuery } from "magiql";
+
+ const { data, error } = useQuery<HomeQuery>(graphql`
+   query HomeQuery {
+     currentHome {
+       name
+     }
+   }
+ `);
+ ```
+
+* Types are imported from the folder specified as `artifactDirectory` in `magiql.config.js` (Default: `generated`).
+* Typescript support is enabled by default. To disable it, set `language` to `javascript` in `magiql.config.js`.
+* If not using the compiler, you can provide type parameters to each operation with the following sample signature 
+
+```tsx
+type HomeQuery = {
+  response: {
+    currentHome: {
+      name: string
+    }
+  },
+  variables: {}
+}
+```
+</details>
+
+<details>
+<summary><strong>Devtools</strong></summary>
+ 
+You can use the `magiql` Devtools which are completely inspired by `react-query-devtools` as follows.
+
+```tsx
+import React from "react";
+import { GraphQLClient, GraphQLClientProvider } from "magiql";
+import GraphQLDevtools from "magiql/devtools";
+
+export default function App({ children }) {
+  return (
+    <GraphQLClientProvider client={client}>
+      {children}
+      <GraphQLDevtools defaultIsOpen defaultTab="store" />
+    </GraphQLClientProvider>
+  );
+}
+```
+</details>
+
+<details>
+<summary><strong>Naming convention for operations</strong></summary>
+Relay allows us to use fragments in queries and mutations without importing them as modules. For this to work, the names must be globally unique. It is also good habit to name the fragments and queries based on the components and props that use them. Thus, relay enforces a few conventions when it comes to naming your operations. These conventions are quite helpful and make your lives easier.
+ 
+* Queries must be named `query ${ModuleName}Query { ... }`, eg, a query in file `Home.tsx` can be named `HomeQuery` or `HomeRoomsQuery`
+* Mutations must be named `mutation ${ModuleName}Mutation { ... }`, eg, a mutation in file `Home.tsx` can be named `HomeMutation` or `HomeDestroyMutation`
+* Fragments must be named `fragment ${ModuleName}_${propName} on type { ... }`, eg, a fragment in file `HomeDetails.tsx` where the prop for the fragment ref is `home` can be named `HomeDetails_home`
+  
+</details>
+
+<details>
+<summary><strong>Normalized caching</strong></summary>
+
+To fully unlock fragments, including optimistic responses and cache manipulation of entities, we needed a normalized cache of our data. We call this cache, the **`store`** in `magiql`.
+
+- Each entity is identified and stored once.
+- Component that access entities subscribe to changes to that entity
+- Implementation can be customized when creating a `GraphQLClient` via the `useStore` option, we provide three implementations of our own (using `recoil` and `react-query`'s `QueryCache`)
+- Provide your own `getDataID` to these stores to control how id's are determined and then let `magiql` handle the rest for managing access.
+
+```typescript
+import { GraphQLClient } from "magiql";
+import { createRecoilStore } from "magiql/recoil-store";
+
+const client = new GraphQLClient({
+  endpoint: "...",
+  useStore: createRecoilStore({
+    // optional, by default it uses the `id` field if available otherwise falls back to an unnormalized id
+    // this is the default function
+    getDataID: (record, type) => (record.id ? `${type}:${record.id}` : null),
+  }),
+});
+```
+
+#### Store Implementations
+
+- Recoil `createRecoilStore`
+
+  - **Recommended** if already working with the compiler and the Babel plugin
+  - Each field of an entity is stored as atom, entities and fragments are both selectors on the atoms
+  - Components subscribe to fields on entities (very granular and precise)
+  - Customize how to determine `id` for each entity
+
+- React Query's `QueryCache` as store `createNormalizedQueryCacheStore`
+  - Each entity is a query with the entity's id as the key
+  - Components subscribe to entities (not field-level subscriptions)
+  - Same API as `createRecoilStore`
+  -
+- React Query's QueryCache (unnormalized) `createQueryCacheStore`
+  - Client's QueryCache stores data attached to queries, and doesnt identify entities
+  - Doesn't allow cache manipulation with entities
+  - No options required since doesn't actually normally, but will still work with Fragments
+  -
+- Jotai `createJotaiStore`
+  - _Coming soon_
+  - Similar to recoil's store
+  
+</details>
+
 ## API
 
 The following is the core API for `magiql`. With the help of amazing libraries like `react-query`, `relay-compiler` and `recoil`, we are able to provide the following features as a GraphQL client. The runtime is your familiar `react-query` api. There is also an optional build time setup that unlocks fragments and normalized store.
@@ -296,94 +394,7 @@ The following is the core API for `magiql`. With the help of amazing libraries l
   - prowered by `react-query` (must be enabled)
 - React Native support
   - Should work out of the box in `expo` or wherever the `react-native` `package.json` property is resolved
-- `magiql/devtools`: Devtools for queries (with the help of `react-query-devtools`) and normalized store
-  - use `GraphQLDevtools` from in your component tree somewhere inside the `GraphQLClientProvider`
 
-### Build time
-
-- _Necessary to work with `useFragment` hook and the the normalized store._
-- **But you don't need it to start using `magiql`, you will just not be ablue to use fragments and the normalized store, but other everything else (queries, mutations) works as normal**
-- `magiql/babel`: The `magiql` Babel plugin is just a wrapper around `babel-plugin-relay` to include everything in one dependency.
-  - Runs the `relay-compiler` when the babel plugin is loaded. If you don't want this, set `runWithBabel` to `false` in the `magiql.config.js` file.
-- `magiql` cli command
-  - runs `relay-compiler` with config from `magiql.config.js`
-  - run with `--watch` flag for watch mode
-- `magiql.config.js`
-- Conventions for naming operations (should follow is using compiler)
-  - Queries must be named `query ${ModuleName}Query { ... }`, eg, a query in file `Home.tsx` can be named `HomeQuery` or `HomeRoomsQuery`
-  - Mutations must be named `mutation ${ModuleName}Mutation { ... }`, eg, a mutation in file `Home.tsx` can be named `HomeMutation` or `HomeDestroyMutation`
-  - Fragments must be named `fragment ${ModuleName}_${propName} on type { ... }`, eg, a fragment in file `HomeDetails.tsx` where the prop for the fragment ref is `home` can be named `HomeDetails_home`
-  - Relay allows us to use fragments in queries and mutations without importing them as modules. For this to work, the names must be globally unique. It is also good habit to name the fragments based on the components and props that use them.
-- **Typescript support**
-
-  - If the name of query is `HomeQuery`, then import type as such:
-
-  ```typescript
-  import { HomeQuery } from "generated/HomeQuery.graphql";
-  import { useQuery } from "magiql";
-
-  const { data, error } = useQuery<HomeQuery>(graphql`
-    query HomeQuery {
-      currentHome {
-        name
-      }
-    }
-  `);
-  ```
-
-  - Types automatically generated by `relay-compiler` (run with Babel or via cli command `magiql`)
-  - Can be imported from the folder specified as `artifactDirectory` in `magiql.config.js` (Default: `generated`).
-
-  - Enabled by default
-  - To disable, set `language` to `javascript` in `magiql.config.js`
-
-### Normalized Store
-
-To fully unlock fragments, including optimistic responses and cache manipulation of entities, we needed a normalized cache (store) of our data
-
-- Each entity is identified and stored once.
-- Component that access entities subscribe to changes to that entity
-- Implementation can be customized when creating a `GraphQLClient` via the `useStore` option, we provide three implementations of our own (using `recoil` and `react-query`'s `QueryCache`)
-- Provide your own `getDataID` to these stores to control how id's are determined and then let `magiql` handle the rest for managing access.
-
-eg.
-
-```typescript
-import { GraphQLClient } from "magiql";
-import { createRecoilStore } from "magiql/recoil-store";
-
-const client = new GraphQLClient({
-  endpoint: "...",
-  useStore: createRecoilStore({
-    // optional, by default it uses the `id` field if available otherwise falls back to an unnormalized id
-    // this is the default function
-    getDataID: (record, type) => (record.id ? `${type}:${record.id}` : null),
-  }),
-});
-```
-
-#### Normalized Store Implementations
-
-- Recoil `createRecoilStore`
-
-  - **Recommended** if already working with the compiler and the Babel plugin
-  - Each field of an entity is stored as atom, entities and fragments are both selectors on the atoms
-  - Components subscribe to fields on entities (very granular and precise)
-  - Customize how to determine `id` for each entity
-
-- React Query's `QueryCache` as store `createNormalizedQueryCacheStore`
-  - Each entity is a query with the entity's id as the key
-  - Components subscribe to entities (not field-level subscriptions)
-  - Same API as `createRecoilStore`
-  -
-- React Query's QueryCache (unnormalized) `createQueryCacheStore`
-  - Client's QueryCache stores data attached to queries, and doesnt identify entities
-  - Doesn't allow cache manipulation with entities
-  - No options required since doesn't actually normally, but will still work with Fragments
-  -
-- Jotai `createJotaiStore`
-  - _Coming soon_
-  - Similar to recoil's store
 
 ## Foundation and inspirations
 
