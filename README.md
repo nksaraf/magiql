@@ -244,7 +244,8 @@ These features and accompanying restrictions provide an excellent authoring expe
 
 <details>
 <summary><strong>Typescript Support</strong></summary>
-Using the relay-compiler, `magiql` can generate types for all your operations since it has access to your schema as well. These types are generated and updated by the compiler, so ensure that it's running in watch mode (either through Babel or the cli) when you are developing.
+ 
+Using the Relay compiler, `magiql` can generate types for all your operations since it has access to your schema as well. These types are generated and updated by the compiler, so ensure that it's running in watch mode (either through Babel or the cli) when you are developing.
   
 If the name of query is `HomeQuery`, then import type as such:
 
@@ -304,25 +305,20 @@ const client = new GraphQLClient({
 #### Store Implementations
 
 - Recoil `createRecoilStore`
-
   - **Recommended** if already working with the compiler and the Babel plugin
   - Each field of an entity is stored as atom, entities and fragments are both selectors on the atoms
   - Components subscribe to fields on entities (very granular and precise)
   - Customize how to determine `id` for each entity
-
+  
 - React Query's `QueryCache` as store `createNormalizedQueryCacheStore`
   - Each entity is a query with the entity's id as the key
   - Components subscribe to entities (not field-level subscriptions)
   - Same API as `createRecoilStore`
-  -
+  
 - React Query's QueryCache (unnormalized) `createQueryCacheStore`
   - Client's QueryCache stores data attached to queries, and doesnt identify entities
   - Doesn't allow cache manipulation with entities
   - No options required since doesn't actually normally, but will still work with Fragments
-  -
-- Jotai `createJotaiStore`
-  - _Coming soon_
-  - Similar to recoil's store
   
 </details>
 
@@ -401,7 +397,6 @@ The following is the core API for `magiql`. With the help of amazing libraries l
 Here are some of the big dependencies and inspirations for `magiql`:
 
 - [react-query](https://github.com/tannerlinsley/react-query)
-
   - Data-fetching (network) layer
   - Stale-while-revalidate caching strategy
   - Request deduplication
