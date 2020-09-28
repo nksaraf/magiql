@@ -11,8 +11,7 @@ There is an example for this: [https://magiql.vercel.app](https://magiql.vercel.
 # Documentation
 
 <details>
-<summary><big><big><strong>Basic Usage</strong></big></big></summary>
-
+<summary><big><strong>Basic Usage</strong></big></summary>
 
 ```tsx
 import {
