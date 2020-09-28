@@ -15,19 +15,30 @@ import {
   FetchOptions,
 } from "./types";
 
+import { parse } from "graphql/language/parser";
+import assert from "assert";
+
 export const getRequest = (
   taggedNode: GraphQLTaggedNode | string
 ): ConcreteRequest => {
   if (typeof taggedNode === "string") {
-    const { operationName, operationKind } = getOperationName(taggedNode);
+    const node = parse(taggedNode);
+    const document = node.definitions.find(
+      (def) => def.kind === "OperationDefinition"
+    );
+
+    assert(document !== null && document.kind === "OperationDefinition");
+
+    console.log(document);
     return {
       kind: "Request",
-      fragment: null as any,
+      fragment: document.selectionSet.selections.map(selection => {}),
       operation: null as any,
       params: {
-        operationKind,
-        name: operationName,
-        id: operationName,
+        operationKind: document.operation,
+        name: document.name.value,
+        id: document.name.value,
+        cacheID: "",
         text: taggedNode,
         metadata: {},
       },
@@ -92,6 +103,5 @@ export const createOperation = function <TQuery extends Query>(
   }
 };
 
-export const graphql: (
-  strings: TemplateStringsArray
-) => GraphQLTaggedNode | string = String.raw;
+export const graphql: (strings, ...values) => GraphQLTaggedNode | string =
+  String.raw;

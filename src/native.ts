@@ -11,6 +11,7 @@ export * from "./core/exchanges";
 export * from "./core/types";
 export * from "./core/store/cacheStore";
 export * from "./core/store/normalizedCacheStore";
+export * from "./core/normalizer/relayNormalizer";
 export * from "./hooks";
 export * from "./core/store/batchedUpdates";
 export * from "./core/operation";
@@ -18,7 +19,7 @@ export * from "./core/operation";
 setConsole({
   log: console.log,
   warn: console.warn,
-  error: console.warn
+  error: console.warn,
 });
 
 setBatch(unstable_batchedUpdates);

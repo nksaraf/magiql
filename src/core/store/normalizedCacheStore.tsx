@@ -25,7 +25,6 @@ import {
   Operation,
 } from "../types";
 import { batchedUpdates } from "./batchedUpdates";
-import { createRelayNormalizer, defaultGetDataId } from "./relayNormalizer";
 
 export function createReader(get: any) {
   let seenRecords = new Set<string>();
@@ -89,7 +88,7 @@ export function createReader(get: any) {
     //   prevData
     // );
     // const linkedArray = prevData || [];
-    
+
     const linkedArray: any[] = [];
     linkedIDs.forEach((linkedID: string, nextIndex: number) => {
       if (linkedID == null) {
@@ -227,16 +226,11 @@ export function createReader(get: any) {
 export function createNormalizedQueryCacheStore(
   options: Partial<Store> & {
     cache?: QueryCache;
-    normalizer?: { normalizeResponse: any };
   } = {}
 ): () => Store {
   const entities = new Set<string>();
 
-  const {
-    getDataID = defaultGetDataId,
-    normalizer = createRelayNormalizer({ getDataID }),
-    cache = new QueryCache(),
-  } = options;
+  const { cache = new QueryCache() } = options;
 
   const {
     get = (dataID: string) => {
@@ -316,21 +310,13 @@ export function createNormalizedQueryCacheStore(
 
   const {
     useFragment = (fragmentNode, fragmentRef) => {
-      assertBabelPlugin(fragmentNode);
       return useSelector(getSelector(fragmentNode, fragmentRef));
     },
     useOperation = (operation) => {
-      assertBabelPlugin(operation.fragment);
       return useSelector(operation.fragment);
     },
     commit = (operation, data) => {
-      assertBabelPlugin(operation.request.node.fragment);
-      const recordSource = normalizer.normalizeResponse(
-        operation.request.node,
-        data,
-        operation.root?.variables
-      );
-      update(recordSource);
+      update(data);
     },
   } = options;
 
@@ -355,7 +341,6 @@ export function createNormalizedQueryCacheStore(
     operation: Operation<TQuery>,
     pageVariables: any[]
   ) {
-    assertBabelPlugin(operation.fragment);
     const dataReader = createReader(get);
 
     const data = pageVariables.map((variables) => {
@@ -375,7 +360,6 @@ export function createNormalizedQueryCacheStore(
   }
 
   const store = {
-    getDataID,
     update,
     updateRecord,
     commit,

@@ -6,6 +6,7 @@ import {
   fetchExchange,
   composeExchanges,
   fallbackExchange,
+  normalizerExchange,
 } from "./exchanges";
 
 import { resolveFetchOptions } from "./fetchGraphQL";
@@ -24,6 +25,7 @@ import {
   Exchange,
   DebugEvent,
   GraphQLTaggedNode,
+  Normalizer,
 } from "./types";
 
 export interface GraphQLClientOptions {
@@ -37,7 +39,10 @@ export interface GraphQLClientOptions {
     endpoint: string;
     fetchOptions: FetchOptions<object>;
   };
-  useStore: () => Store;
+  useStore: (() => Store) & {
+    Provider?: React.FC<{}>;
+  };
+  normalizer: Normalizer;
   useExchanges: (client: GraphQLClient) => Exchange[];
 }
 
@@ -51,6 +56,7 @@ export function useDefaultExchanges(client: GraphQLClient) {
       },
     }),
     storeExchange(store),
+    normalizerExchange,
     fetchExchange,
   ];
 }
@@ -61,7 +67,10 @@ export class GraphQLClient {
   queryConfig: ReactQueryConfig<unknown, unknown>;
   cache: QueryCache;
   onDebugEvent: <TQuery extends Query>(event: DebugEvent<TQuery>) => void;
-  useStore: (() => Store) & { Provider?: React.FC<{}> };
+  useStore: (() => Store) & {
+    Provider?: React.FC<{}>;
+  };
+  normalizer?: Normalizer;
   private useExchanges: (client: GraphQLClient) => Exchange[];
   subscriptions?: {
     client: SubscriptionClient;
@@ -75,7 +84,8 @@ export class GraphQLClient {
     queryConfig = {},
     queryCache = new QueryCache(),
     useStore = createQueryCacheStore(),
-    onDebugEvent = console.log,
+    normalizer = null,
+    onDebugEvent = () => {},
     useExchanges = useDefaultExchanges,
     subscriptions,
   }: Partial<GraphQLClientOptions>) {
@@ -86,6 +96,7 @@ export class GraphQLClient {
     this.useStore = useStore;
     this.useExchanges = useExchanges;
     this.onDebugEvent = onDebugEvent;
+    this.normalizer = normalizer;
 
     if (subscriptions && typeof window !== "undefined") {
       const {

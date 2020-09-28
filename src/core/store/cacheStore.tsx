@@ -2,7 +2,7 @@ import { useGraphQLClient } from "../../hooks";
 import { throwError } from "../../utils";
 import { Store } from "../types";
 
-export function createQueryCacheStore(): () => Store {
+export function createQueryCacheStore() {
   const useFragment = (_, fragmentRef) => fragmentRef;
   const commit = (_operation, _data) => {};
 
@@ -24,15 +24,16 @@ export function createQueryCacheStore(): () => Store {
     commit,
     useFragment,
     useOperation,
-    getDataID: throwError(),
-    update: throwError(),
     updateRecord: throwError(),
+    update: throwError(),
     get: throwError(),
     useEntities,
     useOperationPages,
   };
 
-  return function useStore() {
+  function useStore() {
     return store;
-  };
+  }
+
+  return useStore;
 }

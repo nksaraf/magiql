@@ -14,6 +14,7 @@ import {
   FetchOperation,
   Variables,
   CombinedError,
+  Normalizer,
 } from "./types";
 import deepMerge from "deepmerge";
 import { GraphQLClient } from "./graphQLClient";
@@ -166,19 +167,55 @@ export const storeExchange = (store: Store) => {
   const storeExchange: Exchange = ({ forward, dispatchDebug }) => {
     return async (operation) => {
       const result = await forward(operation);
-      store.commit(operation, result.data);
-      dispatchDebug({
-        type: "commit",
-        message: "commited to store",
-        operation,
-        data: result.data,
-      });
+      if (result.extensions?.normalizedData) {
+        store.commit(operation, result.extensions?.normalizedData);
+        dispatchDebug({
+          type: "commit",
+          message: "commited to store",
+          operation,
+          data: result.data,
+        });
+      }
+
       return result;
     };
   };
-  storeExchange.emoji = "🗄 ";
+  storeExchange.emoji = "🗄";
   return storeExchange;
 };
+
+export const normalizerExchange: Exchange = ({
+  forward,
+  client,
+  dispatchDebug,
+}) => {
+  return async (operation) => {
+    const result = await forward(operation);
+    const { data } = result;
+    const normalizedData = client.normalizer
+      ? client.normalizer.normalizeResponse(data, operation)
+      : data;
+
+    dispatchDebug({
+      type: "normalize",
+      message: "normalized response",
+      operation,
+      data: {
+        raw: data,
+        normalized: normalizedData,
+      },
+    });
+
+    return {
+      ...result,
+      extensions: {
+        normalizedData,
+      },
+    };
+  };
+};
+
+normalizerExchange.emoji = "🗃";
 
 export interface AuthExchangeConfig<T> {
   didAuthError(params: { error: CombinedError }): boolean;

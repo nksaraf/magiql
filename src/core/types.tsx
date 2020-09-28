@@ -154,10 +154,13 @@ export type $Call<Fn extends (...args: any[]) => any> = Fn extends (
   ? RT
   : never;
 
+export interface Normalizer {
+  normalizeResponse: (data: any, operation: Operation<Query>) => any;
+}
+
 export interface Store {
   update(recordSource: any): void;
   updateRecord(id: string, record: any): void;
-  getDataID: GetDataID;
   get(dataID: string): any;
   commit<TQuery extends Query>(
     operation: Operation<TQuery>,

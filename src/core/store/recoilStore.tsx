@@ -33,7 +33,7 @@ import {
   ReaderScalarField,
   ReaderSelection,
 } from "../types";
-import { createRelayNormalizer, defaultGetDataId } from "./relayNormalizer";
+import { createRelayNormalizer, defaultGetDataId } from "../normalizer/relayNormalizer";
 
 function atomFamily<T, TParam>({
   default: defaultValue,
@@ -332,34 +332,18 @@ export function readFragmentFromStore<TData>(
   return traverse(node, dataID, null) as TData;
 }
 
-export function createRecoilStore(
-  options: Partial<Store> & {
-    normalizer?: { normalizeResponse: any };
-  } = {}
-): () => Store {
-  const {
-    getDataID = defaultGetDataId,
-    normalizer = createRelayNormalizer({ getDataID }),
-  } = options;
-
+export function createRecoilStore(): () => Store {
   const store = {
-    getDataID,
     get: throwError(),
   };
 
   const useSelector = function <TData>(fragment: ReaderSelector) {
-    if (!fragment) {
-      throw new Error("no selector");
-    }
     return useRecoilValueLoadable(fragmentSelector(fragment)).contents as TData;
   };
 
   const useOperation = function <TQuery extends Query>(
     operation: Operation<TQuery>
   ) {
-    if (!operation.fragment) {
-      throw new Error("babel plugin");
-    }
     return useSelector(operation.fragment);
   };
 
@@ -378,9 +362,6 @@ export function createRecoilStore(
     fragmentNode,
     fragmentRef
   ) {
-    if (!fragmentNode) {
-      throw new Error("babel plugin");
-    }
     const selector = getSelector(fragmentNode, fragmentRef);
     return useSelector(selector);
   };
@@ -413,13 +394,7 @@ export function createRecoilStore(
         operation: Operation<TQuery>,
         data: Response<TQuery>
       ) {
-        assertBabelPlugin(operation.request.node.operation);
-        const recordSource = normalizer.normalizeResponse(
-          operation.request.node,
-          data,
-          operation.root?.variables
-        );
-        update(recordSource);
+        update(data);
       },
       [update]
     );

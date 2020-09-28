@@ -24,6 +24,13 @@ export function PeopleInfinite() {
             endCursor
           }
         }
+        allFilms {
+          edges {
+            node {
+              id
+            }
+          }
+        }
       }
     `,
     {

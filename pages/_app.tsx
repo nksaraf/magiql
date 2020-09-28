@@ -14,31 +14,32 @@ import {
 } from "magiql";
 import GraphQLDevtools from "magiql/devtools";
 import { createRecoilStore } from "magiql/recoil-store";
+import { createRelayNormalizer } from "magiql";
+import { createNormalizer } from "magiql/core/normalizer/normalizerNormal";
 
-function useExchanges(client: GraphQLClient) {
-  const store = client.useStore();
+// function useExchanges(client: GraphQLClient) {
+//   const store = client.useStore();
 
-  return [
-    debugExchange,
-    errorExchange({
-      onError: (error) => {
-        throw error;
-      },
-    }),
-    storeExchange(store),
-    fetchExchange,
-  ];
-}
+//   return [
+//     errorExchange({
+//       onError: (error) => {
+//         throw error;
+//       },
+//     }),
+//     storeExchange(store),
+//     fetchExchange,
+//   ];
+// }
 
 const client = new GraphQLClient({
   endpoint: "https://swapi-graphql.netlify.app/.netlify/functions/index",
-  useExchanges: useExchanges,
   onDebugEvent: (event) => {
     console.log(
       `[${event.source}]: ${event.operation.request.node.operation.name} ${event.message}`
     );
   },
-  useStore: createRecoilStore(),
+  // useStore: createNormalizedQueryCacheStore(),
+  normalizer: createNormalizer(),
 });
 
 export default function App({ Component, pageProps }) {

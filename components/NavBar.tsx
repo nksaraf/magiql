@@ -5,7 +5,7 @@ export function NavBar() {
   return (
     <div style={{ display: "flex", flexDirection: "row" }}>
       <code style={{ fontFamily: "Roboto Mono" }}>
-        <Link href="/index">
+        <Link href="/">
           <a>useQuery</a>
         </Link>
       </code>

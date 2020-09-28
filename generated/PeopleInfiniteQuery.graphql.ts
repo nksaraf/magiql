@@ -22,6 +22,13 @@ export type PeopleInfiniteQueryResponse = {
       readonly endCursor: string | null;
     };
   } | null;
+  readonly allFilms: {
+    readonly edges: ReadonlyArray<{
+      readonly node: {
+        readonly id: string;
+      } | null;
+    } | null> | null;
+  } | null;
 };
 export type PeopleInfiniteQuery = {
   readonly response: PeopleInfiniteQueryResponse;
@@ -49,6 +56,13 @@ query PeopleInfiniteQuery(
       endCursor
     }
   }
+  allFilms {
+    edges {
+      node {
+        id
+      }
+    }
+  }
 }
 ****/
 
@@ -68,6 +82,13 @@ query PeopleInfiniteQuery(
     pageInfo {
       hasNextPage
       endCursor
+    }
+  }
+  allFilms {
+    edges {
+      node {
+        id
+      }
     }
   }
 }
@@ -146,6 +167,38 @@ const node: ConcreteRequest = (function () {
     v6 = {
       alias: null,
       args: null,
+      concreteType: "FilmsConnection",
+      kind: "LinkedField",
+      name: "allFilms",
+      plural: false,
+      selections: [
+        {
+          alias: null,
+          args: null,
+          concreteType: "FilmsEdge",
+          kind: "LinkedField",
+          name: "edges",
+          plural: true,
+          selections: [
+            {
+              alias: null,
+              args: null,
+              concreteType: "Film",
+              kind: "LinkedField",
+              name: "node",
+              plural: false,
+              selections: [v3 /*: any*/],
+              storageKey: null,
+            },
+          ],
+          storageKey: null,
+        },
+      ],
+      storageKey: null,
+    },
+    v7 = {
+      alias: null,
+      args: null,
       kind: "ScalarField",
       name: "name",
       storageKey: null,
@@ -198,6 +251,7 @@ const node: ConcreteRequest = (function () {
           ],
           storageKey: null,
         },
+        v6 /*: any*/,
       ],
       type: "Root",
       abstractKey: null,
@@ -233,7 +287,7 @@ const node: ConcreteRequest = (function () {
                   plural: false,
                   selections: [
                     v3 /*: any*/,
-                    v6 /*: any*/,
+                    v7 /*: any*/,
                     {
                       alias: null,
                       args: null,
@@ -241,7 +295,7 @@ const node: ConcreteRequest = (function () {
                       kind: "LinkedField",
                       name: "homeworld",
                       plural: false,
-                      selections: [v6 /*: any*/, v3 /*: any*/],
+                      selections: [v7 /*: any*/, v3 /*: any*/],
                       storageKey: null,
                     },
                   ],
@@ -255,20 +309,21 @@ const node: ConcreteRequest = (function () {
           ],
           storageKey: null,
         },
+        v6 /*: any*/,
       ],
     },
     params: {
-      cacheID: "a838096e2e3bff8eeb93745faf818124",
+      cacheID: "24eb9c96ec085b1235e903105f2307ff",
       id: null,
       metadata: {},
       name: "PeopleInfiniteQuery",
       operationKind: "query",
       text:
-        "query PeopleInfiniteQuery(\n  $limit: Int = 10\n  $after: String\n) {\n  allPeople(first: $limit, after: $after) {\n    edges {\n      node {\n        id\n        ...Person_person\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n\nfragment Person_person on Person {\n  name\n  homeworld {\n    name\n    id\n  }\n}\n",
+        "query PeopleInfiniteQuery(\n  $limit: Int = 10\n  $after: String\n) {\n  allPeople(first: $limit, after: $after) {\n    edges {\n      node {\n        id\n        ...Person_person\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n  allFilms {\n    edges {\n      node {\n        id\n      }\n    }\n  }\n}\n\nfragment Person_person on Person {\n  name\n  homeworld {\n    name\n    id\n  }\n}\n",
     },
   };
 })();
-(node as any).hash = "7a6561c97b5eb742eadb66da49f4fcf7";
+(node as any).hash = "e8b6434abadf195bb9a63f8449eb6172";
 (node as any).query =
-  "query PeopleInfiniteQuery(\n  $limit: Int = 10\n  $after: String\n) {\n  allPeople(first: $limit, after: $after) {\n    edges {\n      node {\n        id\n        name\n        homeworld {\n          name\n        }\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n";
+  "query PeopleInfiniteQuery(\n  $limit: Int = 10\n  $after: String\n) {\n  allPeople(first: $limit, after: $after) {\n    edges {\n      node {\n        id\n        name\n        homeworld {\n          name\n        }\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n  allFilms {\n    edges {\n      node {\n        id\n      }\n    }\n  }\n}\n";
 export default node;

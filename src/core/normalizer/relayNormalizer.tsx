@@ -16,7 +16,7 @@ import {
 } from "relay-runtime/lib/util/NormalizationNode";
 
 import { assertBabelPlugin } from "../../utils";
-import { constants, GetDataID, Record } from "../types";
+import { constants, GetDataID, Operation, Query, Record } from "../types";
 
 export type NormalizationNode =
   | NormalizationClientExtension
@@ -51,8 +51,8 @@ export const defaultGetDataId = (record, type) =>
 export function createRelayNormalizer({
   getDataID = defaultGetDataId,
 }: {
-  getDataID: GetDataID;
-}) {
+  getDataID?: GetDataID;
+} = {}) {
   let recordSource: Record = {};
   let variables = {};
 
@@ -178,10 +178,10 @@ export function createRelayNormalizer({
     });
   }
 
-  function normalizeResponse(node: ConcreteRequest, data: any, vars: any) {
-    assertBabelPlugin(node.operation);
+  function normalizeResponse(data: any, operation: Operation<Query>) {
+    const node = operation.request.node;
 
-    variables = vars;
+    variables = operation.root?.variables;
     recordSource = {};
     const record = {
       [constants.ID_KEY]: constants.ROOT_ID,
