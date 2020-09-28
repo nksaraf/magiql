@@ -1,6 +1,6 @@
 # 🧙 magiql
 
-A set of React hooks to work with GraphQL data. `magiql` stands on the shoulders of massive giants in the data-synchronization and state-management space, both conceputally and some as actual dependencies. It uses the amazing `react-query` library as its data-fetching and synchronization layer which forms the foundation of this library. Seriously, without `react-query`, this won't be any good. The API is also very similar to `react-query` and will be familiar to the users. It's just slightly tweaked to make it easier to work with GraphQL.
+A set of React hooks to work with GraphQL data. `magiql` stands on the shoulders of massive giants in the data-synchronization and state-management space, both conceputally and some as actual dependencies. It uses the amazing `react-query` library as its data-fetching and synchronization layer which forms the foundation of this library. Seriously, without `react-query`, this won't be any good. The API is also very similar to `react-query` and will be familiar to the users. It's just slightly tweaked to make it easier to work with GraphQL. It then brings in the Relay compiler and `recoil` to add normalized caching and the `useFragment` hook to bring a delightful and highly productive authoring experience.
 
 There is an example for this: [https://magiql.vercel.app](https://magiql.vercel.app). You can see the [components](/components) and [pages](/pages) folder for example code.
 
