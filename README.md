@@ -162,20 +162,6 @@ module.exports = {
 </details>
 
 <details>
-<summary><big><strong>Customizing the GraphQL Client</strong></big></summary>
-
-Coming soon
-
-</details>
-
-<details>
-<summary><big><strong>Exchanges</strong></big></summary>
-
-Coming soon
-
-</details>
-
-<details>
 <summary><big><strong>Working with fragments</strong></big></summary>
 
 With GraphQL, the biggest game changer when used with React are **fragments**. The `useFragment` hook introduced by [`relay`](https://github.com/facebook/relay) makes it delightful to declare the data needs of your components. These are some of the advantages:
@@ -312,6 +298,20 @@ type HomeQuery = {
   variables: {};
 };
 ```
+
+</details>
+
+<details>
+<summary><big><strong>Customizing the GraphQL Client</strong></big></summary>
+
+Coming soon
+
+</details>
+
+<details>
+<summary><big><strong>Exchanges</strong></big></summary>
+
+Coming soon
 
 </details>
 
