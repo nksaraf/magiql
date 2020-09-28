@@ -6,23 +6,27 @@ A set of React hooks to work with GraphQL data. `magiql` stands on the shoulders
 
 Most of the features that we are providing are thanks to [`react-query`](https://github.com/tannerlinsley/react-query) and [`relay-compiler`](https://github.com/facebook/relay). `magiql` merely tries to be an orchestrator between these great tools.
 
-- Auto Caching + Refetching (stale-while-revalidate, Window Refocus, Polling/Realtime)
-- Parallel + Dependent Queries
-- "Lazy" Queries
-- Request Deduplication
-- Paginated + Cursor-based Queries
-- Load-More + Infinite Scroll Queries w/ Scroll Recovery
-- Request Cancellation
-- Mutations + Reactive Query Refetching
-- Optimistic Updates
-- Normalized caching + Entity Manipulation (opt-in)
-- Multiple store implementations ([`recoil`](https://github.com/facebookexperimental/Recoil), [`react-query`](https://github.com/tannerlinsley/react-query))
-- Typescript Support + Code generation (powered by Relay Compiler)
-- Build-time GraphQL optimizations (powered by Relay Compiler)
-- Relay-style `useFragment` hook
-- Exchanges API to customize execution (logging, persisted queries, authentication, JWT token refresh)
-- React Suspense Support (must be enabled with React Concurrent Mode)
-- Dedicated Devtools
+* Auto Caching + Refetching (stale-while-revalidate, Window Refocus, Polling/Realtime)
+* Parallel + Dependent Queries
+* "Lazy" Queries
+* Request Deduplication
+* Paginated + Cursor-based Queries
+* Load-More + Infinite Scroll Queries w/ Scroll Recovery
+* Request Cancellation
+* Mutations + Reactive Query Refetching
+* Optimistic Updates
+* Exchanges API to customize execution (logging, persisted queries, authentication, JWT token refresh)
+* React Suspense Support (must be enabled with React Concurrent Mode)
+* Dedicated Devtools
+
+Using the [`relay-compiler`](https://github.com/facebook/relay) is required for some more awesome features,
+
+* Schema-aware Normalized caching + Entity Manipulation (opt-in)
+* Multiple store implementations ([`recoil`](https://github.com/facebookexperimental/Recoil), [`react-query`](https://github.com/tannerlinsley/react-query))
+* Typescript Support + Code generation (powered by Relay Compiler)
+* Build-time GraphQL optimizations (powered by Relay Compiler)
+* Relay-style `useFragment` hook
+
 
 **Note: You don't need a Relay-compliant server to get all these features in `magiql`. It will work with any GraphQL server. It also doesn't require you to commit to React Concurrent Mode which the new [`relay`](https://github.com/facebook/relay) hooks require.**
 
@@ -108,7 +112,7 @@ const App = () => {
 <details>
 <summary><big><strong>Installation</strong></big></summary>
  
-To install `magiql` to your project, run the following commands based on if you use `yarn` or `npm`
+To install `magiql` with all its features to your project, run the following commands based on if you use `yarn` or `npm`. The single dependency includes multiple entry points to code-split features and not require user to install more dependencies.
 
 ```sh
 yarn add magiql graphql
