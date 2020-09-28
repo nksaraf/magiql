@@ -2,6 +2,30 @@
 
 A set of React hooks to work with GraphQL data. `magiql` stands on the shoulders of massive giants in the data-synchronization and state-management space, both conceputally and some as actual dependencies. It uses the amazing `react-query` library as its data-fetching and synchronization layer which forms the foundation of this library. Seriously, without `react-query`, this won't be any good. The API is also very similar to `react-query` and will be familiar to the users. It's just slightly tweaked to make it easier to work with GraphQL. It then brings in the Relay compiler and `recoil` to add normalized caching and the `useFragment` hook to bring a delightful and highly productive authoring experience.
 
+# Features
+
+Most of the features that we are providing are thanks to `react-query` and `relay-compiler`. `magiql` merely tries to be an orchestrator between these great tools.
+
+* Auto Caching + Refetching (stale-while-revalidate, Window Refocus, Polling/Realtime)
+* Parallel + Dependent Queries
+* "Lazy" Queries
+* Request Deduplication
+* Paginated + Cursor-based Queries
+* Load-More + Infinite Scroll Queries w/ Scroll Recovery
+* Request Cancellation
+* Mutations + Reactive Query Refetching
+* Optimistic Updates
+* Normalized caching + Entity Manipulation (opt-in)
+* Multiple store implementations (`recoil`, `react-query`)
+* Typescript Support + Code generation (powered by Relay Compiler)
+* Build-time GraphQL optimizations (powered by Relay Compiler)
+* Relay-style `useFragment` hook
+* Exchanges API to customize execution (logging, persisted queries, authentication, JWT token refresh)
+* React Suspense Support (must be enabled with React Concurrent Mode)
+* Dedicated Devtools
+
+_Note: You don't need a Relay-compliant server to get all these features in `magiql`. It will work with any GraphQL server._
+
 There is an example for this: [https://magiql.vercel.app](https://magiql.vercel.app). You can see the [components](/components) and [pages](/pages) folder for example code.
 
 <img src='/public/example.gif' />
@@ -133,6 +157,77 @@ module.exports = {
     ];
  }
 
+```
+
+</details>
+
+<details>
+<summary><big><strong>Customizing the GraphQL Client</strong></big></summary>
+
+```tsx
+import {
+  GraphQLClientProvider,
+  GraphQLClient,
+  useQuery,
+  graphql,
+} from "magiql";
+
+const client = new GraphQLClient({
+  endpoint: "https://swapi-graphql.netlify.app/.netlify/functions/index",
+});
+
+const People = () => {
+  const { data, status, error } = useQuery(
+    graphql`
+      query PeopleQuery($limit: Int) {
+        allPeople(first: $limit) {
+          edges {
+            node {
+              id
+              name
+              homeworld {
+                name
+              }
+            }
+          }
+        }
+      }
+    `,
+    {
+      variables: {
+        limit: 10,
+      },
+    }
+  );
+
+  if (status === "loading") {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error.message}</div>;
+  }
+
+  return (
+    <div>
+      {data
+        ? data.allPeople?.edges?.map((edge) => (
+            <div key={edge.node.id}>
+              <b>{edge.node.name}</b> ({edge.node.homeworld?.name})
+            </div>
+          ))
+        : null}
+    </div>
+  );
+};
+
+const App = () => {
+  return (
+    <GraphQLClientProvider client={client}>
+      <People />
+    </GraphQLClientProvider>
+  );
+};
 ```
 
 </details>
