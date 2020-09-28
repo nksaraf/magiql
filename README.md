@@ -243,7 +243,7 @@ These features and accompanying restrictions provide an excellent authoring expe
 </details>
 
 <details>
-<summary><strong>Support</strong></summary>
+<summary><strong>Typescript Support</strong></summary>
 Using the relay-compiler, `magiql` can generate types for all your operations since it has access to your schema as well. These types are generated and updated by the compiler, so ensure that it's running in watch mode (either through Babel or the cli) when you are developing.
   
 If the name of query is `HomeQuery`, then import type as such:
@@ -275,37 +275,6 @@ type HomeQuery = {
   variables: {}
 }
 ```
-</details>
-
-<details>
-<summary><strong>Devtools</strong></summary>
- 
-You can use the `magiql` Devtools which are completely inspired by `react-query-devtools` as follows.
-
-```tsx
-import React from "react";
-import { GraphQLClient, GraphQLClientProvider } from "magiql";
-import GraphQLDevtools from "magiql/devtools";
-
-export default function App({ children }) {
-  return (
-    <GraphQLClientProvider client={client}>
-      {children}
-      <GraphQLDevtools defaultIsOpen defaultTab="store" />
-    </GraphQLClientProvider>
-  );
-}
-```
-</details>
-
-<details>
-<summary><strong>Naming convention for operations</strong></summary>
-Relay allows us to use fragments in queries and mutations without importing them as modules. For this to work, the names must be globally unique. It is also good habit to name the fragments and queries based on the components and props that use them. Thus, relay enforces a few conventions when it comes to naming your operations. These conventions are quite helpful and make your lives easier.
- 
-* Queries must be named `query ${ModuleName}Query { ... }`, eg, a query in file `Home.tsx` can be named `HomeQuery` or `HomeRoomsQuery`
-* Mutations must be named `mutation ${ModuleName}Mutation { ... }`, eg, a mutation in file `Home.tsx` can be named `HomeMutation` or `HomeDestroyMutation`
-* Fragments must be named `fragment ${ModuleName}_${propName} on type { ... }`, eg, a fragment in file `HomeDetails.tsx` where the prop for the fragment ref is `home` can be named `HomeDetails_home`
-  
 </details>
 
 <details>
@@ -355,6 +324,37 @@ const client = new GraphQLClient({
   - _Coming soon_
   - Similar to recoil's store
   
+</details>
+
+<details>
+<summary><strong>Naming convention for operations</strong></summary>
+Relay allows us to use fragments in queries and mutations without importing them as modules. For this to work, the names must be globally unique. It is also good habit to name the fragments and queries based on the components and props that use them. Thus, relay enforces a few conventions when it comes to naming your operations. These conventions are quite helpful and make your lives easier.
+ 
+* Queries must be named `query ${ModuleName}Query { ... }`, eg, a query in file `Home.tsx` can be named `HomeQuery` or `HomeRoomsQuery`
+* Mutations must be named `mutation ${ModuleName}Mutation { ... }`, eg, a mutation in file `Home.tsx` can be named `HomeMutation` or `HomeDestroyMutation`
+* Fragments must be named `fragment ${ModuleName}_${propName} on type { ... }`, eg, a fragment in file `HomeDetails.tsx` where the prop for the fragment ref is `home` can be named `HomeDetails_home`
+  
+</details>
+
+<details>
+<summary><strong>Devtools</strong></summary>
+ 
+You can use the `magiql` Devtools which are completely inspired by `react-query-devtools` as follows.
+
+```tsx
+import React from "react";
+import { GraphQLClient, GraphQLClientProvider } from "magiql";
+import GraphQLDevtools from "magiql/devtools";
+
+export default function App({ children }) {
+  return (
+    <GraphQLClientProvider client={client}>
+      {children}
+      <GraphQLDevtools defaultIsOpen defaultTab="store" />
+    </GraphQLClientProvider>
+  );
+}
+```
 </details>
 
 ## API
