@@ -2,6 +2,7 @@ import "react-notion/src/styles.css";
 import "prismjs/themes/prism.css";
 
 import React from "react";
+import Head from "next/head";
 import {
   GraphQLClient,
   GraphQLClientProvider,
@@ -44,6 +45,9 @@ const client = new GraphQLClient({
 export default function App({ Component, pageProps }) {
   return (
     <GraphQLClientProvider client={client}>
+      <Head>
+        <title>magiql: GraphQL hooks for React</title>
+      </Head>
       <Component {...pageProps} />
       <GraphQLDevtools
         defaultIsOpen={true}
