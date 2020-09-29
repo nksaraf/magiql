@@ -3,7 +3,7 @@ import React from "react";
 import { QueryCache } from "react-query";
 import { getSelector } from "relay-runtime";
 
-import { assertBabelPlugin, stableStringify } from "../../utils";
+import { stableStringify } from "../../utils";
 import { useRerenderer } from "../../hooks/useRerenderer";
 import { createOperation } from "../parser";
 import {
@@ -17,7 +17,7 @@ import {
   Operation,
 } from "../types";
 import { batchedUpdates } from "./batchedUpdates";
-import { createReader } from "../reader";
+import { readFragmentAsRecords } from "../reader";
 
 export function createNormalizedQueryCacheStore(
   options: Partial<Store> & {
@@ -96,12 +96,10 @@ export function createNormalizedQueryCacheStore(
       throw new Error("No selector specified");
     }
 
-    const dataReader = createReader(get);
-    const snaphot = dataReader.read<TData>(selector as SingularReaderSelector);
-    // @ts-ignore
-    useSubscriptions([...dataReader.seenRecords.values()]);
+    const { data, seenRecords } = readFragmentAsRecords(selector, get);
+    useSubscriptions([...seenRecords]);
 
-    return snaphot;
+    return data;
   }
 
   const {

@@ -16,10 +16,24 @@ import {
   NormalizationField,
 } from "relay-runtime/lib/util/NormalizationNode";
 
+import { constants, GetDataID, Operation, Query, Record } from "./types";
 
+export const PREFIX = "client:";
 
-import { constants, GetDataID, Operation, Query, Record } from "../types";
-import { generateClientID } from "./generateClientID";
+export function generateClientID(
+  id: string,
+  storageKey: string,
+  index?: number
+): string {
+  let key = id + ":" + storageKey;
+  if (index != null) {
+    key += ":" + index;
+  }
+  if (key.indexOf(PREFIX) !== 0) {
+    key = PREFIX + key;
+  }
+  return key;
+}
 
 export type NormalizationNode =
   | NormalizationClientExtension

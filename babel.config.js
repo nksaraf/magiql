@@ -1,4 +1,4 @@
 module.exports = {
   presets: ["next/babel"],
-  plugins: ["macros"],
+  plugins: ["macros", "./dist/babel.js"],
 };

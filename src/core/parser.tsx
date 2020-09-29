@@ -247,7 +247,6 @@ const flattenFragments = (node: DocumentNode): DocumentNode => {
             selections: Array.from(selections.values()),
           }
         : node;
-
     },
   });
 
@@ -307,14 +306,20 @@ export const getRequest = (
 ): ConcreteRequest => {
   if (typeof taggedNode === "string") {
     return parseRequest(taggedNode);
-  } else if (
-    typeof taggedNode === "object" &&
-    (taggedNode as any).params.metadata?.parser === "graphql"
+  }
+
+  const request = baseGetRequest(taggedNode);
+  if (
+    typeof request === "object" &&
+    request.params.metadata?.parser === "graphql"
   ) {
-    return taggedNode as ConcreteRequest;
+    return request as ConcreteRequest;
   } else {
-    const request = baseGetRequest(taggedNode);
     (request.params as any).text = (request as any).query;
+    (request.params as any).metadata = {
+      ...(request.params as any).metadata,
+      parser: "relay",
+    };
     return request;
   }
 };

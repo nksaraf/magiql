@@ -33,7 +33,6 @@ export interface Config {
   exclude: string[];
 }
 
-
 export function loadConfig() {
   var result = explorer.search();
   let config: any = {};
@@ -51,6 +50,7 @@ export function loadConfig() {
     quiet = false,
     watchman = true,
     validate = false,
+    runWithBabel = true,
     language = "typescript",
     languagePlugin = plugin({ keyFields, language }),
     include = ["**"],
@@ -68,6 +68,7 @@ export function loadConfig() {
     src,
     artifactDirectory,
     extensions,
+    runWithBabel,
     verbose,
     quiet,
     watchman,
