@@ -1,6 +1,6 @@
 {
   "name": "magiql",
-  "version": "0.0.6-alpha.1",
+  "version": "0.0.7",
   "description": "",
   "repository": "Nikhil Saraf",
   "license": "MIT",
@@ -60,7 +60,6 @@
     "subscriptions-transport-ws": "^0.9.18"
   },
   "peerDependencies": {
-    "graphql": "*",
     "prettier": "*",
     "react": "*",
     "react-dom": "*",
