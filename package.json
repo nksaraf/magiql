@@ -1,6 +1,6 @@
 {
   "name": "magiql",
-  "version": "0.0.7",
+  "version": "0.0.8-alpha.0",
   "description": "",
   "repository": "Nikhil Saraf",
   "license": "MIT",
@@ -46,6 +46,7 @@
     "react-notion": "^0.8.1",
     "react-query-devtools": "^2.5.1",
     "relay-runtime": "^10.0.1",
+    "subscriptions-transport-ws": "^0.9.18",
     "tsup": "^3.7.0",
     "typescript": "^4.0.3"
   },
@@ -56,8 +57,7 @@
     "jotai": "^0.7.1",
     "react-query": "^2.23.0",
     "recoil": "^0.0.13",
-    "relay-compiler": "^10.0.1",
-    "subscriptions-transport-ws": "^0.9.18"
+    "relay-compiler": "^10.0.1"
   },
   "peerDependencies": {
     "prettier": "*",
