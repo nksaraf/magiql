@@ -1,4 +1,5 @@
-# 🧙 magiql
+
+#  <img src="/public/hat2.png" width="100" /> magiql
 
 A set of React hooks to work with GraphQL data. `magiql` stands on the shoulders of massive giants in the data-synchronization and state-management space, both conceputally and some as actual dependencies. It uses the amazing [`react-query`](https://github.com/tannerlinsley/react-query) library as its data-fetching and synchronization layer which forms the foundation of this library. Seriously, without [`react-query`](https://github.com/tannerlinsley/react-query), this won't be any good. The API is also very similar to [`react-query`](https://github.com/tannerlinsley/react-query) and will be familiar to the users. It's just slightly tweaked to make it easier to work with GraphQL. It then brings in the Relay compiler and [`recoil`](https://github.com/facebookexperimental/Recoil) to add normalized caching and the `useFragment` hook to bring a delightful and highly productive authoring experience.
 
