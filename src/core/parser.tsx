@@ -201,7 +201,7 @@ const inlineFragments = (node: DocumentNode): DocumentNode => {
           loc: fragment.loc,
         } as InlineFragmentNode;
       } else {
-        console.warn(
+        throw new Error(
           `Missing fragment definition (forgot to add fragment?): ${node.name.value}`
         );
         return null;

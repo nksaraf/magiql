@@ -1,6 +1,6 @@
 import React from "react";
 import { graphql, usePaginatedQuery } from "magiql";
-import { Person } from "./Person";
+import { Person, Person_person } from "./Person";
 import { PeoplePaginatedQuery } from "../generated/PeoplePaginatedQuery.graphql";
 import Link from "next/link";
 import { NavBar } from "./NavBar";
@@ -25,6 +25,8 @@ export function PeoplePaginated() {
           }
         }
       }
+
+      ${Person_person}
     `,
     {
       variables: {
