@@ -44,7 +44,10 @@ export function useQuery<TQuery extends Query, TError = Error>(
   } = options;
   const client = useGraphQLClient();
   const store = useGraphQLStore();
-  const operation = client.buildOperation(query, { variables, fetchOptions });
+  const operation = client.buildOperation<TQuery>(query, {
+    variables,
+    fetchOptions,
+  });
   const queryKey = client.getQueryKey(operation);
   const execute = client.useExecutor();
 
@@ -56,7 +59,6 @@ export function useQuery<TQuery extends Query, TError = Error>(
     },
     queryOptions
   );
-
 
   const data = store.useOperation(operation);
   return {

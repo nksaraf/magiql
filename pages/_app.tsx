@@ -38,7 +38,7 @@ const client = new GraphQLClient({
       event.data
     );
   },
-  useStore: createNormalizedQueryCacheStore(),
+  useStore: createRecoilStore(),
 });
 
 export default function App({ Component, pageProps }) {
