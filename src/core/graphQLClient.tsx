@@ -51,13 +51,13 @@ export function useDefaultExchanges(client: GraphQLClient) {
   const store = client.useStore();
 
   return [
+    storeExchange(store),
+    normalizerExchange,
     errorExchange({
       onError: (error) => {
         throw error;
       },
     }),
-    storeExchange(store),
-    normalizerExchange,
     fetchExchange,
   ];
 }
