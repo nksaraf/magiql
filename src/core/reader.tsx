@@ -115,13 +115,13 @@ export function readFragment<TData, TRecord>(
 
           if (value === null) {
             data[fieldName] = null;
-            return;
+            break;
           }
           if (field.plural || isRefs(value)) {
             const linkedIDs = value[constants.REFS_KEY];
             if (linkedIDs == null) {
               data[fieldName] = null;
-              return null;
+              break;
             }
             const linkedArray: any[] = [];
             linkedIDs.forEach((linkedID: string, nextIndex: number) => {

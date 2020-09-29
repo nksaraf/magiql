@@ -15,12 +15,15 @@ import {
   GraphQLTaggedNode,
   Store,
   FetchOptions,
+  CombinedError,
 } from "../core/types";
 import { useGraphQLClient } from "./useGraphQLClient";
 import { useGraphQLStore } from "./useGraphQLStore";
 
-export interface UseInfiniteQueryOptions<TQuery extends Query, TError = Error>
-  extends InfiniteQueryConfig<Response<TQuery>, TError> {
+export interface UseInfiniteQueryOptions<
+  TQuery extends Query,
+  TError = CombinedError
+> extends InfiniteQueryConfig<Response<TQuery>, TError> {
   variables?: Variables<TQuery>;
   operationName?: string;
   fetchOptions?: FetchOptions<Variables<TQuery>>;
@@ -49,7 +52,7 @@ function hasMorePages<TResult, TError>(
   }
 }
 
-export function useInfiniteQuery<TQuery extends Query, TError = Error>(
+export function useInfiniteQuery<TQuery extends Query, TError = CombinedError>(
   query: GraphQLTaggedNode | string,
   options: UseInfiniteQueryOptions<TQuery, TError>
 ): UseInfiniteQueryResult<TQuery, TError> {

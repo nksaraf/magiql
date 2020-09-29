@@ -14,11 +14,12 @@ import {
   GraphQLTaggedNode,
   Operation,
   FetchOptions,
+  CombinedError,
 } from "../core/types";
 import { useGraphQLClient } from "./useGraphQLClient";
 import { useGraphQLStore } from "./useGraphQLStore";
 
-export type UseMutationResult<TMutation extends Query, TError = Error> = [
+export type UseMutationResult<TMutation extends Query, TError = CombinedError> = [
   MutateFunction<Response<TMutation>, TError, Variables<TMutation>>,
   MutationResult<Response<TMutation>, TError> & {
     client: GraphQLClient;
@@ -27,14 +28,14 @@ export type UseMutationResult<TMutation extends Query, TError = Error> = [
   }
 ];
 
-export interface UseMutationOptions<TMutation extends Query, TError = Error>
+export interface UseMutationOptions<TMutation extends Query, TError = CombinedError>
   extends MutationConfig<Response<TMutation>, TError, Variables<TMutation>> {
   operationName?: string;
   invalidateQueries?: any[];
   fetchOptions?: FetchOptions<Variables<TMutation>>;
 }
 
-export function useMutation<TMutation extends Query, TError = Error>(
+export function useMutation<TMutation extends Query, TError = CombinedError>(
   mutation: GraphQLTaggedNode | string,
   options: UseMutationOptions<TMutation, TError> = {}
 ): UseMutationResult<TMutation, TError> {

@@ -13,12 +13,15 @@ import {
   GraphQLTaggedNode,
   Operation,
   FetchOptions,
+  CombinedError,
 } from "../core/types";
 import { useGraphQLClient } from "./useGraphQLClient";
 import { useGraphQLStore } from "./useGraphQLStore";
 
-export interface UsePaginatedQueryOptions<TQuery extends Query, TError = Error>
-  extends QueryConfig<Response<TQuery>, TError> {
+export interface UsePaginatedQueryOptions<
+  TQuery extends Query,
+  TError = CombinedError
+> extends QueryConfig<Response<TQuery>, TError> {
   variables?: Variables<TQuery>;
   operationName?: string;
   fetchOptions?: FetchOptions<Variables<TQuery>>;
@@ -34,7 +37,7 @@ export type UsePaginatedQueryResult<
   latestOperation: Operation<TQuery>;
 };
 
-export function usePaginatedQuery<TQuery extends Query, TError = Error>(
+export function usePaginatedQuery<TQuery extends Query, TError = CombinedError>(
   query: GraphQLTaggedNode | string,
   options: UsePaginatedQueryOptions<TQuery, TError> = {}
 ): UsePaginatedQueryResult<TQuery, TError> {

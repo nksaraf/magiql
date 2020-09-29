@@ -12,12 +12,13 @@ import {
   Operation,
   GraphQLTaggedNode,
   FetchOptions,
+  CombinedError,
 } from "../core/types";
 import { useGraphQLClient } from "./useGraphQLClient";
 import { useGraphQLStore } from "./useGraphQLStore";
 import { GraphQLClient } from "../core/graphQLClient";
 
-export interface UseQueryOptions<TQuery extends Query, TError = Error>
+export interface UseQueryOptions<TQuery extends Query, TError = CombinedError>
   extends QueryConfig<Response<TQuery>, TError> {
   variables?: Variables<TQuery>;
   operationName?: string;
@@ -33,7 +34,7 @@ export type UseQueryResult<TQuery extends Query, TError> = QueryResult<
   operation: Operation<TQuery>;
 };
 
-export function useQuery<TQuery extends Query, TError = Error>(
+export function useQuery<TQuery extends Query, TError = CombinedError>(
   query: GraphQLTaggedNode | string,
   options: UseQueryOptions<TQuery, TError> = {}
 ): UseQueryResult<TQuery, TError> {
