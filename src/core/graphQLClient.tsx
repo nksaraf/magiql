@@ -27,6 +27,7 @@ import {
   GraphQLTaggedNode,
   Normalizer,
 } from "./types";
+import { createNormalizer } from "./normalizer";
 
 export interface GraphQLClientOptions {
   endpoint: string;
@@ -84,7 +85,7 @@ export class GraphQLClient {
     queryConfig = {},
     queryCache = new QueryCache(),
     useStore = createQueryCacheStore(),
-    normalizer = null,
+    normalizer = createNormalizer(),
     onDebugEvent = () => {},
     useExchanges = useDefaultExchanges,
     subscriptions,

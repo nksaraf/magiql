@@ -197,21 +197,6 @@ export const readFragmentAsRecords = (selector, get) => {
   return { data: snaphot, seenRecords: [...dataReader.seenRecords.values()] };
 };
 
-import {
-  getStorageKey,
-  RelayConcreteNode,
-  SelectorData,
-  SingularReaderSelector,
-} from "relay-runtime";
-import {
-  constants,
-  ReaderNode,
-  ReaderFragmentSpread,
-  ReaderLinkedField,
-  ReaderScalarField,
-  ReaderSelection,
-} from "../types";
-
 export function readFragmentAsFields<TData>(
   getter: any,
   selector: SingularReaderSelector
@@ -321,4 +306,3 @@ export function readFragmentAsFields<TData>(
   const { node, dataID } = selector;
   return traverse(node, dataID, null) as TData;
 }
-

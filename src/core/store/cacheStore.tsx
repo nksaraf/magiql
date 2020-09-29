@@ -28,6 +28,7 @@ export function createQueryCacheStore() {
     update: throwError(),
     get: throwError(),
     useEntities,
+    type: "unnormalized",
     useOperationPages,
   };
 

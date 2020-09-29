@@ -159,6 +159,7 @@ export interface Normalizer {
 }
 
 export interface Store {
+  type: "normalized" | "unnormalized";
   update(recordSource: any): void;
   updateRecord(id: string, record: any): void;
   get(dataID: string): any;
@@ -212,43 +213,3 @@ export type Exchange = ((input: ExchangeInput) => ExchangeIO) & {
 export type ExchangeIO = <TQuery extends Query>(
   operation: Operation<TQuery>
 ) => Promise<OperationResult<TQuery>>;
-
-// /** Debug event types (interfaced for declaration merging). */
-// export interface DebugEventTypes {
-//   // Cache exchange
-//   cacheHit: { value: any };
-//   cacheInvalidation: {
-//     typenames: string[];
-//     response: OperationResult<Query>;
-//   };
-//   // Fetch exchange
-//   fetchRequest: {
-//     url: string;
-//     fetchOptions: RequestInit;
-//   };
-//   fetchSuccess: {
-//     url: string;
-//     fetchOptions: RequestInit;
-//     value: object;
-//   };
-//   fetchError: {
-//     url: string;
-//     fetchOptions: RequestInit;
-//     value: Error;
-//   };
-// }
-
-// export type DebugEventArg<T extends keyof DebugEventTypes | string> = {
-//   type: T;
-//   message: string;
-//   operation: Operation<Query>;
-// } & (T extends keyof DebugEventTypes
-//   ? { data: DebugEventTypes[T] }
-//   : { data?: any });
-
-// export type DebugEvent<
-//   T extends keyof DebugEventTypes | string = string
-// > = DebugEventArg<T> & {
-//   timestamp: number;
-//   source: string;
-// };

@@ -9,9 +9,7 @@ import {
   useSetRecoilState,
   RecoilRoot,
 } from "recoil";
-import {
-  getSelector,
-} from "relay-runtime";
+import { getSelector } from "relay-runtime";
 
 import { throwError } from "../../utils";
 import { createOperation } from "../parser";
@@ -24,7 +22,6 @@ import {
   ReaderSelector,
   RecordSource,
 } from "../types";
-import { readFragmentFromStore } from "./readFragmentFromStore";
 
 function atomFamily<T, TParam>({
   default: defaultValue,
@@ -147,7 +144,10 @@ export const record = selectorFamily<any, any>({
 export const fragmentSelector = selectorFamily<any, any>({
   key: (param) => `fragment/${stableStringify(param)}`,
   get: (fragment) => ({ get }) => {
-    return readFragmentFromStore(({ id, field}) => get(recordField({ id, field })), fragment);
+    return readFragmentAsFields(
+      ({ id, field }) => get(recordField({ id, field })),
+      fragment
+    );
   },
 });
 
@@ -155,7 +155,10 @@ export const fragmentPagesSelector = selectorFamily<any, any>({
   key: (param) => `fragment/${stableStringify(param)}`,
   get: ([node, pageVariables]) => ({ get }) => {
     return pageVariables.map((page: any) =>
-      readFragmentAsFields(get, createOperation(node, page).fragment)
+      readFragmentAsFields(
+        ({ id, field }) => get(recordField({ id, field })),
+        createOperation(node, page).fragment
+      )
     );
   },
 });
@@ -267,6 +270,7 @@ export function createRecoilStore(): () => Store {
       useOperationPages,
       commit,
       useEntities,
+      type: "normalized" as const,
       Provider: RecoilRoot as any,
     };
   }
