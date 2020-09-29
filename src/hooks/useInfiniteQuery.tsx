@@ -51,15 +51,16 @@ function hasMorePages<TResult, TError>(
 
 export function useInfiniteQuery<TQuery extends Query, TError = Error>(
   query: GraphQLTaggedNode | string,
-  {
+  options: UseInfiniteQueryOptions<TQuery, TError>
+): UseInfiniteQueryResult<TQuery, TError> {
+  const {
     variables = {} as Variables<TQuery>,
     fetchOptions = {},
-    ...options
-  }: UseInfiniteQueryOptions<TQuery, TError>
-): UseInfiniteQueryResult<TQuery, TError> {
+    ...queryOptions
+  } = options;
   type TData = Response<TQuery>;
   const client = useGraphQLClient();
-  const operation = client.buildOperation(query, variables, fetchOptions);
+  const operation = client.buildOperation(query, { variables, fetchOptions });
   const store = useGraphQLStore();
   const execute = client.useExecutor();
 
@@ -67,20 +68,20 @@ export function useInfiniteQuery<TQuery extends Query, TError = Error>(
   const infiniteQuery = useBaseInfiniteQuery<TData, TError, typeof queryKey>(
     queryKey,
     (queryName, variables = {}, fetchMoreVariables) => {
-      const fetchMoreOperation = client.buildOperation(
-        operation.request.node,
-        {
+      const fetchMoreOperation = client.buildOperation(operation.request.node, {
+        variables: {
           ...variables,
           ...(fetchMoreVariables ?? {}),
         },
-        fetchOptions
-      );
+        fetchOptions,
+      });
+
 
       return execute(fetchMoreOperation).then(({ data }) => {
         return data;
       });
     },
-    options
+    queryOptions
   );
 
   const pageQueries = infiniteQuery.data?.map((page, index) => {

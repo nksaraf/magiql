@@ -13,10 +13,13 @@ import {
   NormalizationClientExtension,
   NormalizationCondition,
   NormalizationInlineFragment,
+  NormalizationField,
 } from "relay-runtime/lib/util/NormalizationNode";
 
-import { assertBabelPlugin } from "../../utils";
+
+
 import { constants, GetDataID, Operation, Query, Record } from "../types";
+import { generateClientID } from "./generateClientID";
 
 export type NormalizationNode =
   | NormalizationClientExtension
@@ -28,27 +31,10 @@ export type NormalizationNode =
   | NormalizationSplitOperation
   | NormalizationStream;
 
-const PREFIX = "client:";
-
-export function generateClientID(
-  id: string,
-  storageKey: string,
-  index?: number
-): string {
-  let key = id + ":" + storageKey;
-  if (index != null) {
-    key += ":" + index;
-  }
-  if (key.indexOf(PREFIX) !== 0) {
-    key = PREFIX + key;
-  }
-  return key;
-}
-
 export const defaultGetDataId = (record, type) =>
   record.id ? `${type}:${record.id}` : null;
 
-export function createRelayNormalizer({
+export function createNormalizer({
   getDataID = defaultGetDataId,
 }: {
   getDataID?: GetDataID;
@@ -139,7 +125,10 @@ export function createRelayNormalizer({
       selection.kind === RelayConcreteNode.LINKED_FIELD &&
       (selection as NormalizationLinkedField)
     ) {
-      if ((selection as NormalizationLinkedField).plural) {
+      if (
+        (selection as NormalizationLinkedField).plural ||
+        Array.isArray(fieldValue)
+      ) {
         normalizePluralLink(
           selection as NormalizationLinkedField,
           record,

@@ -13,7 +13,7 @@ export * from "./core/normalizer/relayNormalizer";
 // export * from "./core/normalizer/relayNormalizer";
 export * from "./hooks";
 export * from "./core/store/batchedUpdates";
-export * from "./core/operation";
+export * from "./core/parser";
 
 setConsole({
   log: console.log,

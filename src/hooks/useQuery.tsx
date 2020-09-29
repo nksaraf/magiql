@@ -15,6 +15,7 @@ import {
 } from "../core/types";
 import { useGraphQLClient } from "./useGraphQLClient";
 import { useGraphQLStore } from "./useGraphQLStore";
+import { GraphQLClient } from "../core/graphQLClient";
 
 export interface UseQueryOptions<TQuery extends Query, TError = Error>
   extends QueryConfig<Response<TQuery>, TError> {
@@ -27,22 +28,23 @@ export type UseQueryResult<TQuery extends Query, TError> = QueryResult<
   Response<TQuery>,
   TError
 > & {
-  client: ReturnType<typeof useGraphQLClient>;
+  client: GraphQLClient;
   store: Store;
   operation: Operation<TQuery>;
 };
 
 export function useQuery<TQuery extends Query, TError = Error>(
   query: GraphQLTaggedNode | string,
-  {
+  options: UseQueryOptions<TQuery, TError> = {}
+): UseQueryResult<TQuery, TError> {
+  const {
     variables = {} as Variables<TQuery>,
     fetchOptions = {},
-    ...options
-  }: UseQueryOptions<TQuery, TError> = {}
-): UseQueryResult<TQuery, TError> {
+    ...queryOptions
+  } = options;
   const client = useGraphQLClient();
   const store = useGraphQLStore();
-  const operation = client.buildOperation(query, variables, fetchOptions);
+  const operation = client.buildOperation(query, { variables, fetchOptions });
   const queryKey = client.getQueryKey(operation);
   const execute = client.useExecutor();
 
@@ -52,8 +54,9 @@ export function useQuery<TQuery extends Query, TError = Error>(
       const { data } = await execute(operation);
       return data;
     },
-    options
+    queryOptions
   );
+
 
   const data = store.useOperation(operation);
   return {

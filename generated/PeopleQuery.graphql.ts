@@ -4,7 +4,6 @@
 
 import { ConcreteRequest } from "relay-runtime";
 export type PeopleQueryVariables = {
-  limit?: number | null;
   after?: string | null;
 };
 export type PeopleQueryResponse = {
@@ -32,10 +31,9 @@ export type PeopleQuery = {
 
 /**QUERY**
 query PeopleQuery(
-  $limit: Int = 10
   $after: String
 ) {
-  allPeople(first: $limit, after: $after) {
+  allPeople(first: 10, after: $after) {
     edges {
       node {
         id
@@ -56,10 +54,9 @@ query PeopleQuery(
 
 /*
 query PeopleQuery(
-  $limit: Int = 10
   $after: String
 ) {
-  allPeople(first: $limit, after: $after) {
+  allPeople(first: 10, after: $after) {
     edges {
       node {
         id
@@ -80,50 +77,47 @@ query PeopleQuery(
 */
 
 const node: ConcreteRequest = (function () {
-  var v0 = {
-      defaultValue: null,
-      kind: "LocalArgument",
-      name: "after",
-    },
-    v1 = {
-      defaultValue: 10,
-      kind: "LocalArgument",
-      name: "limit",
-    },
-    v2 = [
+  var v0 = [
+      {
+        defaultValue: null,
+        kind: "LocalArgument",
+        name: "after",
+      },
+    ],
+    v1 = [
       {
         kind: "Variable",
         name: "after",
         variableName: "after",
       },
       {
-        kind: "Variable",
+        kind: "Literal",
         name: "first",
-        variableName: "limit",
+        value: 10,
       },
     ],
-    v3 = {
+    v2 = {
       alias: null,
       args: null,
       kind: "ScalarField",
       name: "id",
       storageKey: null,
     },
-    v4 = {
+    v3 = {
       alias: null,
       args: null,
       kind: "ScalarField",
       name: "name",
       storageKey: null,
     },
-    v5 = {
+    v4 = {
       alias: null,
       args: null,
       kind: "ScalarField",
       name: "cursor",
       storageKey: null,
     },
-    v6 = {
+    v5 = {
       alias: null,
       args: null,
       concreteType: "PageInfo",
@@ -150,14 +144,14 @@ const node: ConcreteRequest = (function () {
     };
   return {
     fragment: {
-      argumentDefinitions: [v0 /*: any*/, v1 /*: any*/],
+      argumentDefinitions: v0 /*: any*/,
       kind: "Fragment",
       metadata: null,
       name: "PeopleQuery",
       selections: [
         {
           alias: null,
-          args: v2 /*: any*/,
+          args: v1 /*: any*/,
           concreteType: "PeopleConnection",
           kind: "LinkedField",
           name: "allPeople",
@@ -179,8 +173,8 @@ const node: ConcreteRequest = (function () {
                   name: "node",
                   plural: false,
                   selections: [
+                    v2 /*: any*/,
                     v3 /*: any*/,
-                    v4 /*: any*/,
                     {
                       alias: null,
                       args: null,
@@ -188,17 +182,17 @@ const node: ConcreteRequest = (function () {
                       kind: "LinkedField",
                       name: "homeworld",
                       plural: false,
-                      selections: [v4 /*: any*/],
+                      selections: [v3 /*: any*/],
                       storageKey: null,
                     },
                   ],
                   storageKey: null,
                 },
-                v5 /*: any*/,
+                v4 /*: any*/,
               ],
               storageKey: null,
             },
-            v6 /*: any*/,
+            v5 /*: any*/,
           ],
           storageKey: null,
         },
@@ -208,13 +202,13 @@ const node: ConcreteRequest = (function () {
     },
     kind: "Request",
     operation: {
-      argumentDefinitions: [v1 /*: any*/, v0 /*: any*/],
+      argumentDefinitions: v0 /*: any*/,
       kind: "Operation",
       name: "PeopleQuery",
       selections: [
         {
           alias: null,
-          args: v2 /*: any*/,
+          args: v1 /*: any*/,
           concreteType: "PeopleConnection",
           kind: "LinkedField",
           name: "allPeople",
@@ -236,8 +230,8 @@ const node: ConcreteRequest = (function () {
                   name: "node",
                   plural: false,
                   selections: [
+                    v2 /*: any*/,
                     v3 /*: any*/,
-                    v4 /*: any*/,
                     {
                       alias: null,
                       args: null,
@@ -245,34 +239,34 @@ const node: ConcreteRequest = (function () {
                       kind: "LinkedField",
                       name: "homeworld",
                       plural: false,
-                      selections: [v4 /*: any*/, v3 /*: any*/],
+                      selections: [v3 /*: any*/, v2 /*: any*/],
                       storageKey: null,
                     },
                   ],
                   storageKey: null,
                 },
-                v5 /*: any*/,
+                v4 /*: any*/,
               ],
               storageKey: null,
             },
-            v6 /*: any*/,
+            v5 /*: any*/,
           ],
           storageKey: null,
         },
       ],
     },
     params: {
-      cacheID: "2d1b59e462e1766b9ca6a91d8b8aa03b",
+      cacheID: "56f12338bf60c7a8cf0c6ec38f1b0e60",
       id: null,
       metadata: {},
       name: "PeopleQuery",
       operationKind: "query",
       text:
-        "query PeopleQuery(\n  $limit: Int = 10\n  $after: String\n) {\n  allPeople(first: $limit, after: $after) {\n    edges {\n      node {\n        id\n        name\n        homeworld {\n          name\n          id\n        }\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n",
+        "query PeopleQuery(\n  $after: String\n) {\n  allPeople(first: 10, after: $after) {\n    edges {\n      node {\n        id\n        name\n        homeworld {\n          name\n          id\n        }\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n",
     },
   };
 })();
-(node as any).hash = "0ce6117fdb1b425421ca351ab4df1a54";
+(node as any).hash = "aa27f4b387789ff53375561295d29a3f";
 (node as any).query =
-  "query PeopleQuery(\n  $limit: Int = 10\n  $after: String\n) {\n  allPeople(first: $limit, after: $after) {\n    edges {\n      node {\n        id\n        name\n        homeworld {\n          name\n        }\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n";
+  "query PeopleQuery(\n  $after: String\n) {\n  allPeople(first: 10, after: $after) {\n    edges {\n      node {\n        id\n        name\n        homeworld {\n          name\n        }\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n";
 export default node;

@@ -1,6 +1,6 @@
 import React from "react";
 import { useInfiniteQuery, graphql } from "magiql";
-import { Person } from "./Person";
+import { Person, Person_person } from "./Person";
 import { PeopleInfiniteQuery } from "../generated/PeopleInfiniteQuery.graphql";
 import { NavBar } from "./NavBar";
 import { Header, Actions, ActionButton } from "./ActionButton";
@@ -10,11 +10,16 @@ export function PeopleInfinite() {
     PeopleInfiniteQuery
   >(
     graphql`
-      query PeopleInfiniteQuery($limit: Int = 10, $after: String) {
-        allPeople(first: $limit, after: $after) {
+      query PeopleInfiniteQuery($limit: Int = 10) {
+        allPeople(first: $limit) {
           edges {
             node {
               id
+              name
+              homeworld {
+                id
+                name
+              }
               ...Person_person
             }
             cursor
@@ -32,6 +37,7 @@ export function PeopleInfinite() {
           }
         }
       }
+      ${Person_person}
     `,
     {
       variables: {

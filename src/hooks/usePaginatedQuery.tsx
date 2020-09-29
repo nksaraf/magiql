@@ -36,17 +36,21 @@ export type UsePaginatedQueryResult<
 
 export function usePaginatedQuery<TQuery extends Query, TError = Error>(
   query: GraphQLTaggedNode | string,
-  {
-    variables = {} as Variables<TQuery>,
-    fetchOptions = {},
-    ...options
-  }: UsePaginatedQueryOptions<TQuery, TError> = {}
+  options: UsePaginatedQueryOptions<TQuery, TError> = {}
 ): UsePaginatedQueryResult<TQuery, TError> {
   type TData = Response<TQuery>;
+  const {
+    variables = {} as Variables<TQuery>,
+    fetchOptions = {},
+    ...queryOptions
+  } = options;
   const client = useGraphQLClient();
   const store = useGraphQLStore();
   const variablesRef = React.useRef(variables);
-  const latestOperation = client.buildOperation(query, variables, fetchOptions);
+  const latestOperation = client.buildOperation(query, {
+    variables,
+    fetchOptions,
+  });
   const queryKey = client.getQueryKey(latestOperation);
   const execute = client.useExecutor();
   const { resolvedData, latestData, ...baseQuery } = useBasePaginatedQuery<
@@ -59,17 +63,16 @@ export function usePaginatedQuery<TQuery extends Query, TError = Error>(
       const { data } = await execute(latestOperation);
       return data;
     },
-    options
+    queryOptions
   );
   if (latestData) {
     variablesRef.current = variables;
   }
 
-  const resolvedOperation = client.buildOperation(
-    query,
-    variablesRef.current,
-    fetchOptions
-  );
+  const resolvedOperation = client.buildOperation(query, {
+    variables: variablesRef.current,
+    fetchOptions,
+  });
 
   const resolvedSnapshot = store.useOperation(resolvedOperation);
   return {

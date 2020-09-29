@@ -18,7 +18,7 @@ import {
 } from "relay-runtime";
 
 import { assertBabelPlugin, throwError } from "../../utils";
-import { createOperation } from "../operation";
+import { createOperation } from "../parser";
 import {
   Operation,
   Query,
@@ -33,7 +33,7 @@ import {
   ReaderScalarField,
   ReaderSelection,
 } from "../types";
-import { createRelayNormalizer, defaultGetDataId } from "../normalizer/relayNormalizer";
+import { createNormalizer, defaultGetDataId } from "../normalizer/relayNormalizer";
 
 function atomFamily<T, TParam>({
   default: defaultValue,

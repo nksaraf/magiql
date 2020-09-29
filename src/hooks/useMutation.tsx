@@ -36,13 +36,14 @@ export interface UseMutationOptions<TMutation extends Query, TError = Error>
 
 export function useMutation<TMutation extends Query, TError = Error>(
   mutation: GraphQLTaggedNode | string,
-  {
+  options: UseMutationOptions<TMutation, TError> = {}
+): UseMutationResult<TMutation, TError> {
+  const {
     onSuccess,
     invalidateQueries = [],
     fetchOptions = {},
-    ...options
-  }: UseMutationOptions<TMutation, TError> = {}
-): UseMutationResult<TMutation, TError> {
+    ...mutationOptions
+  } = options;
   type TData = Response<TMutation>;
   type TVariables = Variables<TMutation>;
   const client = useGraphQLClient();
@@ -50,15 +51,14 @@ export function useMutation<TMutation extends Query, TError = Error>(
   const execute = client.useExecutor();
   const [mutateFn, state] = useBaseMutation<TData, TError, TVariables>(
     (variables) => {
-      const operation = client.buildOperation(
-        mutation,
+      const operation = client.buildOperation(mutation, {
         variables,
-        fetchOptions
-      );
+        fetchOptions,
+      });
       return execute<TMutation>(operation).then(({ data }) => data);
     },
     {
-      ...options,
+      ...mutationOptions,
       onSuccess: (data, variables) => {
         if (onSuccess) {
           onSuccess(data, variables);

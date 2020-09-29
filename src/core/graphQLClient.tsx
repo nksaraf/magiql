@@ -10,7 +10,7 @@ import {
 } from "./exchanges";
 
 import { resolveFetchOptions } from "./fetchGraphQL";
-import { createOperation } from "./operation";
+import { createOperation } from "./parser";
 import { createQueryCacheStore } from "./store/cacheStore";
 import {
   Operation,
@@ -131,10 +131,12 @@ export class GraphQLClient {
 
   buildOperation<TQuery extends Query>(
     node: string | GraphQLTaggedNode,
-    variables: Variables<TQuery> = {},
-    fetchOptions: FetchOptions<Variables<TQuery>> = {}
+    options: {
+      variables?: Variables<TQuery>;
+      fetchOptions?: FetchOptions<Variables<TQuery>>;
+    } = {}
   ) {
-    return createOperation(node, variables, fetchOptions) as Operation<TQuery>;
+    return createOperation(node, options) as Operation<TQuery>;
   }
 
   buildSubscription<TQuery extends Query>(

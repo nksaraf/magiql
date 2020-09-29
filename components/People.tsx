@@ -7,8 +7,8 @@ import { NavBar } from "./NavBar";
 export function People() {
   const { data, status } = useQuery<PeopleQuery>(
     graphql`
-      query PeopleQuery($limit: Int = 10, $after: String) {
-        allPeople(first: $limit, after: $after) {
+      query PeopleQuery($after: String) {
+        allPeople(first: 10, after: $after) {
           edges {
             node {
               id
@@ -27,9 +27,6 @@ export function People() {
       }
     `,
     {
-      variables: {
-        limit: 10,
-      },
       getFetchMore: (lastpage) => ({
         after: lastpage.allPeople.pageInfo.hasNextPage
           ? lastpage.allPeople.pageInfo.endCursor
