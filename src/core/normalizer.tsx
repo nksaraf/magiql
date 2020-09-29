@@ -1,13 +1,14 @@
 import {
-  RelayConcreteNode,
   NormalizationOperation,
   NormalizationLinkedField,
   NormalizationScalarField,
   NormalizationDefer,
   NormalizationSplitOperation,
   NormalizationStream,
-  getStorageKey,
 } from "relay-runtime";
+const RelayConcreteNode = require("relay-runtime/lib/util/RelayConcreteNode");
+import { getStorageKey } from "relay-runtime/lib/store/RelayStoreUtils";
+
 import {
   NormalizationClientExtension,
   NormalizationCondition,

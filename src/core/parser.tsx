@@ -1,15 +1,18 @@
 // Piggybacking off relay-runtime here
 import {
-  createOperationDescriptor,
   ConcreteRequest,
   ReaderFragment,
-  getRequest as baseGetRequest,
-  getFragment as baseGetFragment,
   NormalizationOperation,
   NormalizationField,
   NormalizationScalarField,
   NormalizationSelection,
 } from "relay-runtime";
+
+import {
+  getRequest as baseGetRequest,
+  getFragment as baseGetFragment,
+} from "relay-runtime/lib/query/GraphQLTag";
+import { createOperationDescriptor } from "relay-runtime/lib/store/RelayModernOperationDescriptor";
 
 import {
   Query,

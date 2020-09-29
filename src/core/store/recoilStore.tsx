@@ -9,11 +9,9 @@ import {
   useSetRecoilState,
   RecoilRoot,
 } from "recoil";
-import {
-  getSelector,
-  ConcreteRequest,
-  SingularReaderSelector,
-} from "relay-runtime";
+import { ConcreteRequest, SingularReaderSelector } from "relay-runtime";
+
+import { getSelector } from "relay-runtime/lib/store/RelayModernSelector";
 
 import { throwError } from "../../utils";
 import { createOperation } from "../parser";

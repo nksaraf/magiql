@@ -1,7 +1,7 @@
 import React from "react";
 
 import { QueryCache } from "react-query";
-import { getSelector } from "relay-runtime";
+import { getSelector } from "relay-runtime/lib/store/RelayModernSelector";
 
 import { stableStringify } from "../../utils";
 import { useRerenderer } from "../../hooks/useRerenderer";

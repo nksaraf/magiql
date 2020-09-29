@@ -24,8 +24,6 @@ export type {
 
 export type { QueryObserver } from "react-query/types/core/queryObserver";
 
-export { RelayConcreteNode } from "relay-runtime";
-
 export type {
   ReaderFragmentSpread,
   ReaderLinkedField,

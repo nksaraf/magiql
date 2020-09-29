@@ -1,13 +1,14 @@
+import { getStorageKey } from "relay-runtime/lib/store/RelayStoreUtils";
 import {
-  getStorageKey,
   SelectorData,
   NormalizationLinkedField,
   ReaderField,
   ReaderSelector,
 } from "relay-runtime";
+const RelayConcreteNode = require("relay-runtime/lib/util/RelayConcreteNode");
+
 import {
   constants,
-  RelayConcreteNode,
   SingularReaderSelector,
   ReaderFragmentSpread,
   ReaderLinkedField,

@@ -19,7 +19,6 @@ import {
   Query,
   Variables,
   Response,
-  ConcreteRequest,
   Store,
   FetchOptions,
   Exchange,
