@@ -13,6 +13,7 @@ export * from "./core/store/cacheStore";
 export * from "./core/store/normalizedCacheStore";
 export * from "./core/normalizer";
 export * from "./core/reader";
+export * from "./core/parser";
 export * from "./hooks";
 export * from "./core/store/batchedUpdates";
 export * from "./core/parser";
