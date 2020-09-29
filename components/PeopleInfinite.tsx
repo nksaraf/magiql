@@ -48,6 +48,8 @@ export function PeopleInfinite() {
     }
   );
 
+  console.log(data, status)
+
   return (
     <>
       <NavBar />

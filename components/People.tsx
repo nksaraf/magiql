@@ -3,6 +3,7 @@ import { graphql, useQuery } from "magiql";
 import { PeopleQuery } from "generated/PeopleQuery.graphql";
 import { Actions, ActionButton, Header } from "./ActionButton";
 import { NavBar } from "./NavBar";
+import { Person_person, Person } from "./Person";
 
 export function People() {
   const { data, status } = useQuery<PeopleQuery>(
@@ -12,10 +13,7 @@ export function People() {
           edges {
             node {
               id
-              name
-              homeworld {
-                name
-              }
+              ...Person_person
             }
             cursor
           }
@@ -25,6 +23,8 @@ export function People() {
           }
         }
       }
+
+      ${Person_person}
     `,
     {
       getFetchMore: (lastpage) => ({
@@ -50,9 +50,7 @@ export function People() {
           <div style={{ flex: 1 }}>
             {data
               ? data.allPeople?.edges?.map((edge) => (
-                  <div key={edge.node.id}>
-                    <b>{edge.node.name}</b> ({edge.node.homeworld?.name})
-                  </div>
+                  <Person key={edge.node.id} person={edge.node} />
                 ))
               : null}
           </div>

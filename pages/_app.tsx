@@ -3,7 +3,11 @@ import "prismjs/themes/prism.css";
 
 import React from "react";
 import Head from "next/head";
-import { GraphQLClient, GraphQLClientProvider } from "magiql";
+import {
+  GraphQLClient,
+  GraphQLClientProvider,
+  createNormalizedQueryCacheStore,
+} from "magiql";
 import GraphQLDevtools from "magiql/devtools";
 import { createRecoilStore } from "magiql/recoil-store";
 

@@ -22,6 +22,7 @@ import {
   ReaderSelector,
   RecordSource,
 } from "../types";
+import { readFragment, createFieldReader } from "../reader2";
 
 function atomFamily<T, TParam>({
   default: defaultValue,
@@ -144,8 +145,8 @@ export const record = selectorFamily<any, any>({
 export const fragmentSelector = selectorFamily<any, any>({
   key: (param) => `fragment/${stableStringify(param)}`,
   get: (fragment) => ({ get }) => {
-    return readFragmentAsFields(
-      ({ id, field }) => get(recordField({ id, field })),
+    return readFragment(
+      createFieldReader(({ id, field }) => get(recordField({ id, field }))),
       fragment
     );
   },
@@ -154,11 +155,11 @@ export const fragmentSelector = selectorFamily<any, any>({
 export const fragmentPagesSelector = selectorFamily<any, any>({
   key: (param) => `fragment/${stableStringify(param)}`,
   get: ([node, pageVariables]) => ({ get }) => {
+    const reader = createFieldReader(({ id, field }) =>
+      get(recordField({ id, field }))
+    );
     return pageVariables.map((page: any) =>
-      readFragmentAsFields(
-        ({ id, field }) => get(recordField({ id, field })),
-        createOperation(node, page).fragment
-      )
+      readFragment(reader, createOperation(node, page).fragment)
     );
   },
 });

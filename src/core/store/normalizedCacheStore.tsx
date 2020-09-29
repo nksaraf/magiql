@@ -18,6 +18,7 @@ import {
 } from "../types";
 import { batchedUpdates } from "./batchedUpdates";
 import { readFragmentAsRecords, createReader } from "../reader";
+import { createRecordReader, readFragment } from "../reader2";
 
 export function createNormalizedQueryCacheStore(
   options: Partial<Store> & {
@@ -52,6 +53,8 @@ export function createNormalizedQueryCacheStore(
       });
     },
   } = options;
+
+  const reader = createRecordReader(get);
 
   function useSubscriptions(dataIDs: string[]) {
     const rerender = useRerenderer();
@@ -95,9 +98,19 @@ export function createNormalizedQueryCacheStore(
     if (!selector) {
       throw new Error("No selector specified");
     }
+    const seenRecords = new Set();
+    const data = readFragment<TData, object>(
+      reader,
+      selector as SingularReaderSelector,
+      {
+        onReadRecord: (dataID) => seenRecords.add(dataID),
+      }
+    );
 
-    const { data, seenRecords } = readFragmentAsRecords(selector, get);
-    useSubscriptions([...seenRecords]);
+    console.log(seenRecords);
+
+    // @ts-ignore
+    useSubscriptions([...seenRecords.values()]);
 
     return data;
   }
@@ -135,20 +148,20 @@ export function createNormalizedQueryCacheStore(
     operation: Operation<TQuery>,
     pageVariables: any[]
   ) {
-    const dataReader = createReader(get);
+    const seenRecords = new Set();
 
     const data = pageVariables.map((variables) => {
       const pageOperation = createOperation(operation.request.node, variables);
 
-      const snapshot = dataReader.read<Response<TQuery>>(
-        pageOperation.fragment as SingularReaderSelector
-      );
+      const data = readFragment<any, object>(reader, pageOperation.fragment, {
+        onReadRecord: (dataID) => seenRecords.add(dataID),
+      });
 
-      return snapshot;
+      return data;
     });
 
     // @ts-ignore
-    useSubscriptions([...dataReader.seenRecords.values()]);
+    useSubscriptions([...seenRecords.values()]);
 
     return data;
   }
@@ -170,79 +183,3 @@ export function createNormalizedQueryCacheStore(
     return store;
   };
 }
-
-// class Stttor implements Store {
-//   type = "normalized" as const;
-//   cache: QueryCache;
-//   entities = new Set<string>();
-
-//   constructor({ cache = new QueryCache() }: { cache?: QueryCache }) {
-//     this.cache = cache;
-//   }
-
-//   update(recordSource: any): void {
-//     throw new Error("Method not implemented.");
-//   }
-
-//   updateRecord(id: string, record: any): void {
-//     throw new Error("Method not implemented.");
-//   }
-//   get(dataID: string) {
-//     throw new Error("Method not implemented.");
-//   }
-//   commit<TQuery extends Query>(
-//     operation: Operation<TQuery>,
-//     data: TQuery["response"]
-//   ): void {
-//     throw new Error("Method not implemented.");
-//   }
-//   useFragment<TKey extends import("../types").KeyType>(
-//     fragmentNode: import("relay-runtime").ReaderFragment,
-//     fragmentRef: TKey
-//   ): NonNullable<TKey[" $data"]> {
-//     throw new Error("Method not implemented.");
-//   }
-//   useOperation<TQuery extends Query>(
-//     operation: Operation<TQuery>
-//   ): TQuery["response"] {
-//     throw new Error("Method not implemented.");
-//   }
-//   useEntities(): [string, { [key: string]: any }][] {
-//     const data: any = [];
-//     this.entities.forEach((entry: string) => {
-//       data.push([entry, this.get(entry)]);
-//     });
-//     const rerender = useRerenderer();
-
-//     React.useEffect(() => {
-//       const sub = this.cache.subscribe(() => rerender());
-//       return () => {
-//         sub();
-//       };
-//     }, [rerender]);
-
-//     return data;
-//   }
-//   useOperationPages<TQuery extends Query>(
-//     operation: Operation<TQuery>,
-//     pageVariables: any[]
-//   ): TQuery["response"][] {
-//     const dataReader = createReader(this.get);
-
-//     const data = pageVariables.map((variables) => {
-//       const pageOperation = createOperation(operation.request.node, variables);
-
-//       const snapshot = dataReader.read<Response<TQuery>>(
-//         pageOperation.fragment as SingularReaderSelector
-//       );
-
-//       return snapshot;
-//     });
-
-//     // @ts-ignore
-//     useSubscriptions([...dataReader.seenRecords.values()]);
-
-//     return data;
-//   }
-//   Provider?: React.FC<{ children: React.ReactNode }>;
-// }
