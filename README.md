@@ -7,8 +7,6 @@ A set of React hooks to work with GraphQL data. `magiql` stands on the shoulders
 
 `magiql` is designed to be easy to adopt (moving from vanilla `react-query` or other GraphQL clients). Most features (like normalized caching, `recoil`-based store implementation, `relay-compiler` and build-time optimizations) are completely optional and configurable. But everything is included under one installed dependency so that you don't have to install things again and again (don't worry, the different entry-points are code-split and you will only include things that you actually use). You can start using `magiql` as a GraphQL Client immediately and it grows to cater to your needs as they arise by allowing extensive customization and incrementally adoption of more speciliazed features.
 
-It then brings in the Relay compiler and [`recoil`](https://github.com/facebookexperimental/Recoil) to add normalized caching and the `useFragment` hook to bring a delightful and highly productive authoring experience.
-
 # Features
 
 Most of the features that we are providing are thanks to [`react-query`](https://github.com/tannerlinsley/react-query). Using inspiration from `relay` and `urql`, we are able to provide a bunch of additional awesome GraphQL-specific features that you can find below
