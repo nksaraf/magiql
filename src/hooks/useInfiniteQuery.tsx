@@ -95,8 +95,6 @@ export function useInfiniteQuery<TQuery extends Query, TError = Error>(
     };
   }) ?? [variables];
 
-  console.log(pageQueries);
-
   const data = store.useOperationPages(operation, pageQueries);
 
   const { canFetchMore, fetchMore: baseFetchMore } = infiniteQuery;

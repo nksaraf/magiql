@@ -224,7 +224,6 @@ type SelectionMap = Map<string, FieldNode>;
 
 const deepTraverse = (node, selectionMap: SelectionMap = new Map()) => {
   let hasFlattened = false;
-  console.log("here");
   const flatter = (node: SelectionSetNode) => {
     node.selections.forEach((sel) => {
       if (sel.kind === "InlineFragment") {

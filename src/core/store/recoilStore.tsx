@@ -9,7 +9,11 @@ import {
   useSetRecoilState,
   RecoilRoot,
 } from "recoil";
-import { getSelector } from "relay-runtime";
+import {
+  getSelector,
+  ConcreteRequest,
+  SingularReaderSelector,
+} from "relay-runtime";
 
 import { throwError } from "../../utils";
 import { createOperation } from "../parser";
@@ -108,7 +112,7 @@ export const recordRoot = atomFamily<Set<string> | null, string>({
   key: (id) => `${id}`,
 });
 
-export const record = selectorFamily<any, any>({
+export const record = selectorFamily<any, string>({
   key: (param) => `record/${param}`,
   get: (param) => ({ get }) => {
     const root = get(recordRoot(param));
@@ -141,7 +145,7 @@ export const record = selectorFamily<any, any>({
   },
 });
 
-export const fragmentSelector = selectorFamily<any, any>({
+export const fragmentSelector = selectorFamily<any, SingularReaderSelector>({
   key: (param) => `fragment/${stableStringify(param)}`,
   get: (fragment) => ({ get }) => {
     return readFragment(
@@ -151,7 +155,10 @@ export const fragmentSelector = selectorFamily<any, any>({
   },
 });
 
-export const fragmentPagesSelector = selectorFamily<any, any>({
+export const fragmentPagesSelector = selectorFamily<
+  any,
+  [ConcreteRequest, any[]]
+>({
   key: (param) => `fragment/${stableStringify(param)}`,
   get: ([node, pageVariables]) => ({ get }) => {
     const reader = createFieldReader(({ id, field }) =>
@@ -171,7 +178,7 @@ const storeMock = atom({
   key: "storeAtom",
 });
 
-export const storeAtom = selector<any>({
+export const storeReader = selector<any>({
   key: "store",
   get: ({ get }) => {
     get(storeMock);
@@ -192,7 +199,7 @@ export const storeUpdater = selector({
     for (var id in recordSource) {
       set(record(id), recordSource[id]);
     }
-    set(storeAtom, []);
+    set(storeReader, []);
   },
 });
 
@@ -202,7 +209,9 @@ export function createRecoilStore(): () => Store {
   };
 
   const useSelector = function <TData>(fragment: ReaderSelector) {
-    return useRecoilValueLoadable(fragmentSelector(fragment)).contents as TData;
+    return useRecoilValueLoadable(
+      fragmentSelector(fragment as SingularReaderSelector)
+    ).contents as TData;
   };
 
   const useOperation = function <TQuery extends Query>(
@@ -215,7 +224,6 @@ export function createRecoilStore(): () => Store {
     operation: Operation<TQuery>,
     pageVariables: any[]
   ) {
-    console.log(pageVariables);
     const data = useRecoilValueLoadable(
       fragmentPagesSelector([operation.request.node, pageVariables])
     ).contents as any;
@@ -232,7 +240,7 @@ export function createRecoilStore(): () => Store {
   };
 
   function useEntities() {
-    return useRecoilValueLoadable(storeAtom).contents;
+    return useRecoilValueLoadable(storeReader).contents;
   }
 
   function useStore() {

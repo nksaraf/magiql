@@ -15,7 +15,7 @@ const client = new GraphQLClient({
   endpoint: "https://swapi-graphql.netlify.app/.netlify/functions/index",
   onDebugEvent: (event) => {
     console.log(
-      `[${event.source}]: ${event.operation.request.node.operation.name} ${event.message}`,
+      `${event.operation.request.node.operation.name} => ${event.source} ${event.message}`,
       event.data
     );
   },
