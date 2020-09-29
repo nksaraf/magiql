@@ -79,9 +79,11 @@ export const Entry = styled("div", {
   outline: "none",
 });
 
-export const Label = styled("span", {
+export const Label = styled("div", {
   cursor: "pointer",
+  display: "flex",
   color: "white",
+  alignItems: "center",
 });
 
 export const Value = styled("span", (props, theme) => ({
@@ -143,7 +145,11 @@ export const DomRenderer = createRenderer({
           style={{ color: isSelected ? "yellow" : "white" }}
           isExpanded={isExpanded}
         />{" "}
-        <span style={{ color: isSelected ? "yellow" : "white" }}>{label} </span>
+        <div style={{ width: 8 }} />
+        <div style={{ color: isSelected ? "yellow" : "white", flex: 1 }}>
+          {label}{" "}
+        </div>
+        <div style={{ width: 8 }} />
         <Info>{subEntries.length} items</Info>
       </Label>
     );

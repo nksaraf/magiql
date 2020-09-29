@@ -47,7 +47,7 @@ export function usePaginatedQuery<TQuery extends Query, TError = Error>(
   const client = useGraphQLClient();
   const store = useGraphQLStore();
   const variablesRef = React.useRef(variables);
-  const latestOperation = client.buildOperation(query, {
+  const latestOperation = client.buildOperation<TQuery>(query, {
     variables,
     fetchOptions,
   });
@@ -69,12 +69,12 @@ export function usePaginatedQuery<TQuery extends Query, TError = Error>(
     variablesRef.current = variables;
   }
 
-  const resolvedOperation = client.buildOperation(query, {
+  const resolvedOperation = client.buildOperation<TQuery>(query, {
     variables: variablesRef.current,
     fetchOptions,
   });
 
-  const resolvedSnapshot = store.useOperation(resolvedOperation);
+  const resolvedSnapshot = store.useOperation<TQuery>(resolvedOperation);
   return {
     resolvedData: resolvedSnapshot,
     latestData: latestData ? resolvedSnapshot.data : null,
