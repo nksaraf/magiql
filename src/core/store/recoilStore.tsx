@@ -13,7 +13,6 @@ import { getSelector } from "relay-runtime";
 
 import { throwError } from "../../utils";
 import { createOperation } from "../parser";
-import { readFragmentAsFields } from "../reader";
 import {
   Operation,
   Query,
@@ -22,7 +21,7 @@ import {
   ReaderSelector,
   RecordSource,
 } from "../types";
-import { readFragment, createFieldReader } from "../reader2";
+import { readFragment, createFieldReader } from "../reader";
 
 function atomFamily<T, TParam>({
   default: defaultValue,

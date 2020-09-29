@@ -17,8 +17,7 @@ import {
   Operation,
 } from "../types";
 import { batchedUpdates } from "./batchedUpdates";
-import { readFragmentAsRecords, createReader } from "../reader";
-import { createRecordReader, readFragment } from "../reader2";
+import { createRecordReader, readFragment } from "../reader";
 
 export function createNormalizedQueryCacheStore(
   options: Partial<Store> & {
