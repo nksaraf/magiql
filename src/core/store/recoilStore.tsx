@@ -157,9 +157,12 @@ export const fragmentPagesSelector = selectorFamily<any, any>({
     const reader = createFieldReader(({ id, field }) =>
       get(recordField({ id, field }))
     );
-    return pageVariables.map((page: any) =>
-      readFragment(reader, createOperation(node, page).fragment)
-    );
+    return pageVariables.map((page: any) => {
+      return readFragment(
+        reader,
+        createOperation(node, { variables: page }).fragment
+      );
+    });
   },
 });
 
@@ -212,6 +215,7 @@ export function createRecoilStore(): () => Store {
     operation: Operation<TQuery>,
     pageVariables: any[]
   ) {
+    console.log(pageVariables);
     const data = useRecoilValueLoadable(
       fragmentPagesSelector([operation.request.node, pageVariables])
     ).contents as any;

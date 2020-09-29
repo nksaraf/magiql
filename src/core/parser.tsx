@@ -396,9 +396,9 @@ export const getOperationName = (query: string) => {
 export const createOperation = function <TQuery extends Query>(
   query: string | GraphQLTaggedNode,
   options: {
-    variables?: Variables<TQuery>;
+    variables: Variables<TQuery>;
     fetchOptions?: FetchOptions<Variables<TQuery>>;
-  } = {}
+  } = { variables: {} }
 ): Operation<TQuery> {
   const { variables = {}, fetchOptions = {} } = options;
   const node = getRequest(query);

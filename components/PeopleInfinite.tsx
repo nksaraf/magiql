@@ -10,8 +10,11 @@ export function PeopleInfinite() {
     PeopleInfiniteQuery
   >(
     graphql`
-      query PeopleInfiniteQuery($limit: Int = 10) {
-        allPeople(first: $limit) {
+      query PeopleInfiniteQuery(
+        $limit: Int = 10
+        $after: String = "YXJyYXljb25uZWN0aW9uOjk="
+      ) {
+        allPeople(first: $limit, after: $after) {
           edges {
             node {
               id

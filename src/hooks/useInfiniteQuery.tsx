@@ -76,7 +76,6 @@ export function useInfiniteQuery<TQuery extends Query, TError = Error>(
         fetchOptions,
       });
 
-
       return execute(fetchMoreOperation).then(({ data }) => {
         return data;
       });
@@ -95,6 +94,8 @@ export function useInfiniteQuery<TQuery extends Query, TError = Error>(
       ...fetchMoreVariable,
     };
   }) ?? [variables];
+
+  console.log(pageQueries);
 
   const data = store.useOperationPages(operation, pageQueries);
 

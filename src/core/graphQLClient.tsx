@@ -133,9 +133,9 @@ export class GraphQLClient {
   buildOperation<TQuery extends Query>(
     node: string | GraphQLTaggedNode,
     options: {
-      variables?: Variables<TQuery>;
+      variables: Variables<TQuery>;
       fetchOptions?: FetchOptions<Variables<TQuery>>;
-    } = {}
+    } = { variables: {} }
   ) {
     return createOperation(node, options) as Operation<TQuery>;
   }
