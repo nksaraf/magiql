@@ -1,5 +1,5 @@
 import { getStorageKey } from "relay-runtime/lib/store/RelayStoreUtils";
-import {
+import type {
   SelectorData,
   NormalizationLinkedField,
   ReaderField,
@@ -113,6 +113,10 @@ export function readFragment<TData, TRecord>(
           );
           onReadField(reader.getDataID(record), fieldName);
 
+          if (value === null) {
+            data[fieldName] = null;
+            return;
+          }
           if (field.plural || isRefs(value)) {
             const linkedIDs = value[constants.REFS_KEY];
             if (linkedIDs == null) {
@@ -134,11 +138,6 @@ export function readFragment<TData, TRecord>(
             });
             data[fieldName] = linkedArray;
           } else {
-            if (value == null) {
-              data[fieldName] = null;
-              return null;
-            }
-
             data[fieldName] = traverse(
               field,
               value[constants.REF_KEY],

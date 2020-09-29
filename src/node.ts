@@ -1,3 +1,3 @@
 export * from "./core/fetchGraphQL";
-export * from "./core/parser";
+export * from "./core/graphQLTag";
 export * from "./core/types";

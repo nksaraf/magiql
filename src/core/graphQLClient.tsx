@@ -1,5 +1,5 @@
-import { QueryCache, QueryConfig, ReactQueryConfig } from "react-query";
-import { SubscriptionClient, Observable } from "subscriptions-transport-ws";
+import type { QueryConfig, ReactQueryConfig } from "react-query";
+import type { Observable } from "subscriptions-transport-ws";
 import {
   errorExchange,
   storeExchange,
@@ -8,11 +8,11 @@ import {
   fallbackExchange,
   normalizerExchange,
 } from "./exchanges";
+import { QueryCache } from "react-query";
 
-import { resolveFetchOptions } from "./fetchGraphQL";
-import { createOperation } from "./parser";
+import { createOperation } from "./operation";
 import { createQueryCacheStore } from "./store/cacheStore";
-import {
+import type {
   Operation,
   QueryKey,
   InfiniteQueryKey,
@@ -27,6 +27,7 @@ import {
   Normalizer,
 } from "./types";
 import { createNormalizer } from "./normalizer";
+import type { GraphQLSubscriptionClient } from "./subscriptionClient";
 
 export interface GraphQLClientOptions {
   endpoint: string;
@@ -34,11 +35,7 @@ export interface GraphQLClientOptions {
   queryConfig: ReactQueryConfig;
   queryCache: QueryCache;
   onDebugEvent: <TQuery extends Query>(event: DebugEvent<TQuery>) => void;
-  subscriptions: {
-    client: SubscriptionClient;
-    endpoint: string;
-    fetchOptions: FetchOptions<object>;
-  };
+  subscriptionClient: GraphQLSubscriptionClient | undefined;
   useStore: (() => Store) & {
     Provider?: React.FC<{}>;
   };
@@ -72,22 +69,18 @@ export class GraphQLClient {
   };
   normalizer?: Normalizer;
   private useExchanges: (client: GraphQLClient) => Exchange[];
-  subscriptions?: {
-    client: SubscriptionClient;
-    endpoint: string;
-    fetchOptions: FetchOptions<object>;
-  };
+  subscriptionClient?: GraphQLSubscriptionClient;
 
   constructor({
     endpoint = "/graphql",
-    fetchOptions = () => ({}),
+    fetchOptions = {},
     queryConfig = {},
     queryCache = new QueryCache(),
     useStore = createQueryCacheStore(),
     normalizer = createNormalizer(),
     onDebugEvent = () => {},
     useExchanges = useDefaultExchanges,
-    subscriptions,
+    subscriptionClient,
   }: Partial<GraphQLClientOptions>) {
     this.endpoint = endpoint;
     this.fetchOptions = fetchOptions;
@@ -97,27 +90,7 @@ export class GraphQLClient {
     this.useExchanges = useExchanges;
     this.onDebugEvent = onDebugEvent;
     this.normalizer = normalizer;
-
-    if (subscriptions && typeof window !== "undefined") {
-      const {
-        endpoint: subscriptionEndpoint = endpoint,
-        fetchOptions: subscriptionFetchOptions = fetchOptions,
-        client = new SubscriptionClient(subscriptionEndpoint, {
-          reconnect: true,
-          connectionParams: async () => {
-            return await resolveFetchOptions(subscriptionFetchOptions, {
-              operationKind: "subscription",
-              endpoint: subscriptionEndpoint,
-            });
-          },
-        }),
-      } = subscriptions;
-      this.subscriptions = {
-        client,
-        endpoint: subscriptionEndpoint,
-        fetchOptions: subscriptionFetchOptions,
-      };
-    }
+    this.subscriptionClient = subscriptionClient;
   }
 
   getInfinteQueryKey<TQuery extends Query>(
@@ -148,10 +121,10 @@ export class GraphQLClient {
       ...options
     }: QueryConfig<Response<TQuery>, Error>
   ) {
-    if (!this.subscriptions) {
+    if (!this.subscriptionClient) {
       throw new Error("No subscription client found!");
     }
-    const subscriptionsClient = this.subscriptions.client;
+    const subscriptionsClient = this.subscriptionClient;
     const queryKey = this.getQueryKey(operation);
     const query = this.cache.buildQuery<Response<TQuery>, Error>(queryKey, {
       ...options,

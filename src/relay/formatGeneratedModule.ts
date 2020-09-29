@@ -54,7 +54,7 @@ export default node;
   try {
     const prettier = require("prettier");
     if (prettier) {
-      prettier.format(text, { parser: "typescript" });
+      return prettier.format(text, { parser: "typescript" });
     }
     return text;
   } catch (e) {
@@ -96,7 +96,7 @@ export default node;
   try {
     const prettier = require("prettier");
     if (prettier) {
-      prettier.format(text, { parser: "babel" });
+      return prettier.format(text, { parser: "babel" });
     }
     return text;
   } catch (e) {

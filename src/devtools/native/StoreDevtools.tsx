@@ -8,12 +8,11 @@ import {
 } from "react-native";
 
 import { Explorer } from "../common/Explorer";
-import { useGraphQLClient } from "../../hooks";
 import { NativeRenderer } from "./NativeRenderer";
+import { useGraphQLStore } from "../../hooks/useGraphQLStore";
 
-export function StoreDevtools({ onClose }) {
-  const client = useGraphQLClient();
-  const store = client.useStore();
+export function StoreDevtools({ onClose }: { onClose: () => void }) {
+  const store = useGraphQLStore();
   const entities = store.useEntities();
   const [search, setSearch] = React.useState("");
   const [selected, setSelected] = React.useState(null);

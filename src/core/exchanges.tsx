@@ -4,7 +4,7 @@
  */
 
 import { fetchGraphQL, resolveFetchOptions } from "./fetchGraphQL";
-import {
+import type {
   OperationKind,
   Store,
   Exchange,
@@ -16,7 +16,7 @@ import {
   CombinedError,
 } from "./types";
 import deepMerge from "deepmerge";
-import { GraphQLClient } from "./graphQLClient";
+import type { GraphQLClient } from "./graphQLClient";
 
 export const composeExchanges = (exchanges: Exchange[]) => ({
   client,

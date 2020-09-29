@@ -1,7 +1,7 @@
 import React from "react";
 import { ReactQueryCacheProvider } from "react-query";
 import { ReactQueryDevtoolsPanel } from "react-query-devtools";
-import { useGraphQLClient } from "../../hooks";
+import { useGraphQLClient } from "../../hooks/useGraphQLClient";
 
 export function QueriesDevtools() {
   const client = useGraphQLClient();

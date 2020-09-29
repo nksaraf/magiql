@@ -10,7 +10,7 @@
     "prepublishOnly": "yarn clean && run-p build:node build:common",
     "clean": "rm -rf dist",
     "build:node": "yarn tsup src/babel.ts src/cli.ts --format cjs",
-    "build:common": "yarn tsup src/index.ts src/node.ts src/recoil-store.ts src/native.ts src/devtools.ts src/devtools-native.ts --format esm,cjs --legacy-output --dts --external react --external react-dom --external react-native",
+    "build:common": "yarn tsup src/index.ts src/node.ts src/subscriptions.ts src/recoil-store.ts src/native.ts src/devtools.ts src/devtools-native.ts --format esm,cjs --legacy-output --dts --external react --external react-dom --external react-native",
     "watch:node": "yarn build:node --watch",
     "watch:common": "yarn build:common --watch",
     "build": "run-p build:node build:common && next build",
@@ -103,12 +103,19 @@
       "node": "./dist/node.js",
       "default": "./dist/esm/node.js"
     },
-    "./recoil-store": {
+    "./store/recoil": {
       "import": "./dist/esm/recoil-store.js",
       "browser": "./dist/esm/recoil-store.js",
       "require": "./dist/recoil-store.js",
       "node": "./dist/recoil-store.js",
       "default": "./dist/esm/recoil-store.js"
+    },
+    "./subscriptions": {
+      "import": "./dist/esm/subscriptions.js",
+      "browser": "./dist/esm/subscriptions.js",
+      "require": "./dist/subscriptions.js",
+      "node": "./dist/subscriptions.js",
+      "default": "./dist/esm/subscriptions.js"
     },
     "./native": {
       "import": "./dist/esm/native.js",
@@ -126,7 +133,8 @@
     "devtools",
     "babel",
     "macro",
-    "recoil-store",
+    "store",
+    "subscriptions",
     "node",
     "README.md"
   ]

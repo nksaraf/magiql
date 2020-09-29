@@ -33,6 +33,19 @@ function stableStringifyReplacer(_key: string, value: any): unknown {
   return value;
 }
 
+export const stringifyData = (data: any) => {
+  return JSON.stringify(
+    data,
+    (old, value) =>
+      old === "__fragmentOwner"
+        ? undefined
+        : old === "__fragments"
+        ? Object.keys(value)
+        : value,
+    2
+  );
+};
+
 export function stableStringify(value: any): string {
   return JSON.stringify(value, stableStringifyReplacer);
 }

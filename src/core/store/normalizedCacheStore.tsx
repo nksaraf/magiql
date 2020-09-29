@@ -5,7 +5,7 @@ import { getSelector } from "relay-runtime/lib/store/RelayModernSelector";
 
 import { stableStringify } from "../../utils";
 import { useRerenderer } from "../../hooks/useRerenderer";
-import { createOperation } from "../parser";
+import { createOperation } from "../operation";
 import {
   Response,
   Query,

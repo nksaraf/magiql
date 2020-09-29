@@ -1,5 +1,5 @@
 import React from "react";
-import { getRequest } from "../core/parser";
+import { getRequest } from "../core/operation";
 
 import { Query, Variables, GraphQLTaggedNode } from "../core/types";
 import { useRerenderer } from "./useRerenderer";
@@ -26,7 +26,7 @@ export function useSubscription<
   const instanceRef = React.useRef<{ unsubscribe: () => void }>();
 
   React.useEffect(() => {
-    if (!client.subscriptions) {
+    if (!client.subscriptionClient) {
       throw new Error(
         "Subscriptions have not been enabled. Pass the subscriptions option to createClient."
       );

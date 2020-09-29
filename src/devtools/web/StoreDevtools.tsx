@@ -2,11 +2,10 @@ import React from "react";
 import { DomRenderer } from "./DomRenderer";
 import { Explorer } from "../common/Explorer";
 import { theme } from "../common/theme";
-import { useGraphQLClient } from "../../hooks";
+import { useGraphQLStore } from "../../hooks/useGraphQLStore";
 
 export function StoreDevtools() {
-  const client = useGraphQLClient();
-  const store = client.useStore();
+  const store = useGraphQLStore();
   const entities = store.useEntities();
   const [search, setSearch] = React.useState("");
   const [selected, setSelected] = React.useState(null);

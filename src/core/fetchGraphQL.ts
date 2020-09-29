@@ -1,8 +1,8 @@
 import fetch from "isomorphic-unfetch";
 
 import { CombinedError } from "./error";
-import { getRequest } from "./parser";
-import {
+import { getRequest } from "./operation";
+import type {
   FetchOperation,
   FetchOptions,
   FetchResult,

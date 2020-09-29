@@ -14,7 +14,7 @@ import { ConcreteRequest, SingularReaderSelector } from "relay-runtime";
 import { getSelector } from "relay-runtime/lib/store/RelayModernSelector";
 
 import { throwError } from "../../utils";
-import { createOperation } from "../parser";
+import { createOperation } from "../operation";
 import {
   Operation,
   Query,

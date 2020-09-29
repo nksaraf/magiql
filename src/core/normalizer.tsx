@@ -1,4 +1,4 @@
-import {
+import type {
   NormalizationOperation,
   NormalizationLinkedField,
   NormalizationScalarField,
@@ -9,7 +9,7 @@ import {
 const RelayConcreteNode = require("relay-runtime/lib/util/RelayConcreteNode");
 import { getStorageKey } from "relay-runtime/lib/store/RelayStoreUtils";
 
-import {
+import type {
   NormalizationClientExtension,
   NormalizationCondition,
   NormalizationInlineFragment,

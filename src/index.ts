@@ -11,10 +11,18 @@ export * from "./core/store/cacheStore";
 export * from "./core/store/normalizedCacheStore";
 export * from "./core/normalizer";
 export * from "./core/reader";
+export * from "./utils";
 export * from "./core/parser";
-export * from "./hooks";
+export * from "./core/operation";
+export * from "./core/graphQLTag";
+export * from "./hooks/useGraphQLClient";
+export * from "./hooks/useGraphQLStore";
+export * from "./hooks/useQuery";
+export * from "./hooks/useInfiniteQuery";
+export * from "./hooks/usePaginatedQuery";
+export * from "./hooks/useMutation";
+export * from "./hooks/useFragment";
 export * from "./core/store/batchedUpdates";
-export * from "./core/parser";
 
 setConsole({
   log: console.log,

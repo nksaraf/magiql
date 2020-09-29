@@ -1,6 +1,5 @@
 // Piggybacking off relay-runtime here
-import {
-  ConcreteRequest,
+import type {
   ReaderFragment,
   NormalizationOperation,
   NormalizationField,
@@ -8,18 +7,8 @@ import {
   NormalizationSelection,
 } from "relay-runtime";
 
-import {
-  getRequest as baseGetRequest,
-  getFragment as baseGetFragment,
-} from "relay-runtime/lib/query/GraphQLTag";
-import { createOperationDescriptor } from "relay-runtime/lib/store/RelayModernOperationDescriptor";
 
 import {
-  Query,
-  Operation,
-  Variables,
-  GraphQLTaggedNode,
-  FetchOptions,
   constants,
 } from "./types";
 
@@ -302,7 +291,7 @@ const flattenFragments = (node: DocumentNode): DocumentNode => {
   return doc;
 };
 
-const parseRequest = (taggedNode: string) => {
+export const parseRequest = (taggedNode: string) => {
   const node = parse(taggedNode);
   const flatNode = flattenFragments(inlineFragments(node));
   const flatNodeWithTypename = addTypeName(flatNode);
@@ -332,7 +321,7 @@ const parseRequest = (taggedNode: string) => {
   };
 };
 
-const parseFragment = (taggedNode: string) => {
+export const parseFragment = (taggedNode: string) => {
   const node = parse(taggedNode);
 
   const fragment = node.definitions.find(
@@ -350,72 +339,4 @@ const parseFragment = (taggedNode: string) => {
   } as ReaderFragment;
 };
 
-export const getRequest = (
-  taggedNode: GraphQLTaggedNode | string
-): ConcreteRequest => {
-  if (typeof taggedNode === "string") {
-    return parseRequest(taggedNode);
-  }
 
-  const request = baseGetRequest(taggedNode);
-  if (
-    typeof request === "object" &&
-    request.params.metadata?.parser === "graphql"
-  ) {
-    return request as ConcreteRequest;
-  } else {
-    (request.params as any).text = (request as any).query;
-    (request.params as any).metadata = {
-      ...(request.params as any).metadata,
-      parser: "relay",
-    };
-    return request;
-  }
-};
-
-export const getFragment = (
-  taggedNode: GraphQLTaggedNode | string
-): ReaderFragment | null => {
-  return typeof taggedNode === "string"
-    ? parseFragment(taggedNode)
-    : baseGetFragment(taggedNode);
-};
-
-export const getOperationName = (query: string) => {
-  const name = /(query|mutation|subscription) ([\w\d-_]+)/.exec(query);
-  if (name && name.length && name[2]) {
-    return {
-      operationName: name[2],
-      operationKind: name[1],
-    };
-  } else {
-    throw new Error(
-      "Invalid query. Must have a query name, eg. query MyQuery { ... }"
-    );
-  }
-};
-
-export const createOperation = function <TQuery extends Query>(
-  query: string | GraphQLTaggedNode,
-  options: {
-    variables: Variables<TQuery>;
-    fetchOptions?: FetchOptions<Variables<TQuery>>;
-  } = { variables: {} }
-): Operation<TQuery> {
-  const { variables = {}, fetchOptions = {} } = options;
-  const node = getRequest(query);
-  const operationDescriptor = createOperationDescriptor(node, variables);
-  return {
-    ...operationDescriptor,
-    request: {
-      ...operationDescriptor.request,
-      fetchOptions,
-    },
-    response: null,
-  };
-};
-
-export const graphql: (
-  strings: TemplateStringsArray,
-  ...values: (GraphQLTaggedNode | string)[]
-) => GraphQLTaggedNode | string = String.raw;

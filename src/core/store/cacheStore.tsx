@@ -1,4 +1,4 @@
-import { useGraphQLClient } from "../../hooks";
+import { useGraphQLClient } from "../../hooks/useGraphQLClient";
 import { throwError } from "../../utils";
 import { Store } from "../types";
 
