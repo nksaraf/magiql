@@ -5,7 +5,6 @@ import * as ts from "typescript";
 import addAnyTypeCast from "./addAnyTypeCast";
 
 // @ts-ignore
-const prettier = require("prettier");
 // import * as Transformer from "relay-compiler/lib/core/IRTransformer";
 
 export const typescriptFormatterFactory = (
@@ -38,8 +37,7 @@ export const typescriptFormatterFactory = (
     query = matched[1];
   }
 
-  return prettier.format(
-    `/* tslint:disable */
+  const text = `/* tslint:disable */
 /* eslint-disable */
 // @ts-nocheck
 ${hash ? `/* ${hash} */\n` : ""}
@@ -51,9 +49,17 @@ ${nodeStatement}
 (node as any).hash = '${sourceHash}';
 ${query ? `(node as any).query = ${JSON.stringify(query)}` : ""}
 export default node;
-`,
-    { parser: "typescript" }
-  );
+`;
+
+  try {
+    const prettier = require("prettier");
+    if (prettier) {
+      prettier.format(text, { parser: "typescript" });
+    }
+    return text;
+  } catch (e) {
+    return text;
+  }
 };
 
 export const javascriptFormatterFactory = (): FormatModule => ({
@@ -76,8 +82,7 @@ export const javascriptFormatterFactory = (): FormatModule => ({
     query = matched[1];
   }
 
-  return prettier.format(
-    `/* tslint:disable */
+  const text = `/* tslint:disable */
 /* eslint-disable */
 // @ts-nocheck
 ${hash ? `/* ${hash} */\n` : ""}
@@ -87,7 +92,14 @@ ${nodeStatement}
 node.hash = '${sourceHash}';
 ${query ? `node.query = ${JSON.stringify(query)}` : ""}
 export default node;
-`,
-    { parser: "babel" }
-  );
+`;
+  try {
+    const prettier = require("prettier");
+    if (prettier) {
+      prettier.format(text, { parser: "babel" });
+    }
+    return text;
+  } catch (e) {
+    return text;
+  }
 };

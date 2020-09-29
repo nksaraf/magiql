@@ -7,172 +7,228 @@ import { relayCompiler } from "relay-compiler";
 
 import { loadConfig } from "./relay/config";
 
-// console.log(relayCompiler, config);
+import meow from "meow";
+import fetch from "node-fetch";
+import * as fs from "fs";
+import * as path from "path";
+import mkdirp from "mkdirp";
+import { getIntrospectionQuery } from "../node_modules/graphql/utilities/getIntrospectionQuery";
+import { buildClientSchema } from "../node_modules/graphql/utilities/buildClientSchema";
+import { printSchema } from "../node_modules/graphql/utilities/printSchema";
+import * as query from "querystringify";
 
-// const options = {
-//   schema: {
-//     describe: "Path to schema.graphql or schema.json",
-//     demandOption: true,
-//     type: "string",
-//     array: false,
-//   },
-//   src: {
-//     describe: "Root directory of application code",
-//     demandOption: true,
-//     type: "string",
-//     array: false,
-//   },
-//   include: {
-//     describe: "Directories to include under src",
-//     type: "string",
-//     array: true,
-//     default: ["**"],
-//   },
-//   exclude: {
-//     describe: "Directories to ignore under src",
-//     type: "string",
-//     array: true,
-//     default: ["**/node_modules/**", "**/__mocks__/**", "**/__generated__/**"],
-//   },
-//   extensions: {
-//     array: true,
-//     describe:
-//       "File extensions to compile (defaults to extensions provided by the " +
-//       "language plugin)",
-//     type: "string",
-//   },
-//   verbose: {
-//     describe: "More verbose logging",
-//     type: "boolean",
-//     default: false,
-//   },
-//   quiet: {
-//     describe: "No output to stdout",
-//     type: "boolean",
-//     default: false,
-//   },
-//   watchman: {
-//     describe: "Use watchman when not in watch mode",
-//     type: "boolean",
-//     default: true,
-//   },
-//   watch: {
-//     describe: "If specified, watches files and regenerates on changes",
-//     type: "boolean",
-//     default: false,
-//   },
-//   validate: {
-//     describe:
-//       "Looks for pending changes and exits with non-zero code instead of " +
-//       "writing to disk",
-//     type: "boolean",
-//     default: false,
-//   },
-//   persistFunction: {
-//     describe:
-//       "An async function (or path to a module exporting this function) which will persist the query text and return the id.",
-//     demandOption: false,
-//     type: "string",
-//     array: false,
-//   },
-//   persistOutput: {
-//     describe:
-//       "A path to a .json file where persisted query metadata should be saved. Will use the default implementation (md5 hash) if `persistFunction` is not passed.",
-//     demandOption: false,
-//     type: "string",
-//     array: false,
-//   },
-//   repersist: {
-//     describe: "Run the persist function even if the query has not changed.",
-//     type: "boolean",
-//     default: false,
-//   },
-//   noFutureProofEnums: {
-//     describe:
-//       "This option controls whether or not a catch-all entry is added to enum type definitions " +
-//       "for values that may be added in the future. Enabling this means you will have to update " +
-//       "your application whenever the GraphQL server schema adds new enum values to prevent it " +
-//       "from breaking.",
-//     type: "boolean",
-//     default: false,
-//   },
-//   language: {
-//     describe:
-//       "The name of the language plugin used for input files and artifacts",
-//     demandOption: false,
-//     type: "string",
-//     array: false,
-//     default: "javascript",
-//   },
-//   artifactDirectory: {
-//     describe:
-//       "A specific directory to output all artifacts to. When enabling this " +
-//       "the babel plugin needs `artifactDirectory` set as well.",
-//     demandOption: false,
-//     type: "string",
-//     array: false,
-//   },
-//   customScalars: {
-//     describe:
-//       "Mappings from custom scalars in your schema to built-in GraphQL " +
-//       "types, for type emission purposes. (Uses yargs dot-notation, e.g. " +
-//       "--customScalars.URL=String)",
-//     type: "object",
-//   },
-//   eagerESModules: {
-//     describe: "This option enables emitting es modules artifacts.",
-//     type: "boolean",
-//     default: false,
-//   },
-// };
+/**
+ *
+ * Normalizes header input from CLI
+ *
+ * @param cli
+ */
+export function getHeadersFromInput(
+  cli: meow.Result<any>
+): { key: string; value: string }[] {
+  switch (typeof cli.flags.header) {
+    case "string": {
+      const keys = query.parse(cli.flags.header);
+      const key = Object.keys(keys)[0];
+      return [{ key: key, value: keys[key] }];
+    }
+    case "object": {
+      return (cli.flags.header as any).map((header) => {
+        const keys = query.parse(header);
+        const key = Object.keys(keys)[0];
+        return { key: key, value: keys[key] };
+      });
+    }
+    default: {
+      return [];
+    }
+  }
+}
 
-// // Parse CLI args
-// let yargs = _yargs
-//   .usage(
-//     "Create Relay generated files\n\n" +
-//       "$0 --schema <path> --src <path> [--watch]"
-//   )
-//   .options(options)
-//   .strict();
+interface Options {
+  method?: "GET" | "POST" | "PUT" | "DELETE";
+  headers?: { [key: string]: string };
+  json?: boolean;
+}
 
-// // Load external config
-// const config = RelayConfig && RelayConfig.loadConfig();
-// if (config) {
-//   // Apply externally loaded config through the yargs API so that we can leverage yargs' defaults and have them show up
-//   // in the help banner. We add it conditionally otherwise yargs would add new option `--config` which is confusing for
-//   // Relay users (it's not Relay Config file).
-//   yargs = yargs.config(config);
-// }
+/**
+ *
+ * Fetch remote schema and turn it into string
+ *
+ * @param endpoint
+ * @param options
+ */
+export async function getRemoteSchema(
+  endpoint: string,
+  options: Options
+): Promise<
+  { status: "ok"; schema: string } | { status: "err"; message: string }
+> {
+  try {
+    const { data, errors } = await fetch(endpoint, {
+      method: options.method,
+      headers: options.headers,
+      body: JSON.stringify({ query: getIntrospectionQuery() }),
+    }).then((res) => res.json());
 
-// const argv: Config = yargs.help().argv;
+    if (errors) {
+      return { status: "err", message: JSON.stringify(errors, null, 2) };
+    }
 
-const {
-  schema,
-  src,
-  artifactDirectory,
-  extensions,
-  verbose,
-  quiet,
-  validate,
-  watchman,
-  language,
-  languagePlugin,
-  runWithBabel,
-  include,
-  exclude,
-} = loadConfig();
+    if (options.json) {
+      return {
+        status: "ok",
+        schema: JSON.stringify(data, null, 2),
+      };
+    } else {
+      const schema = buildClientSchema(data);
+      return {
+        status: "ok",
+        schema: printSchema(schema),
+      };
+    }
+  } catch (err) {
+    return { status: "err", message: err.message };
+  }
+}
 
-relayCompiler({
-  schema,
-  src,
-  artifactDirectory,
-  extensions,
-  verbose,
-  quiet,
-  watch: process.argv.includes("--watch"),
-  validate,
-  watchman,
-  language: languagePlugin,
-  include,
-  exclude,
-});
+/**
+ *
+ * Prints schema to file.
+ *
+ * @param dist
+ * @param schema
+ */
+export function printToFile(
+  dist: string,
+  schema: string
+): { status: "ok"; path: string } | { status: "err"; message: string } {
+  try {
+    const output = path.dirname(path.join(process.cwd(), dist));
+
+    if (!fs.existsSync(output)) {
+      mkdirp.sync(output);
+    }
+
+    fs.writeFileSync(path.join(process.cwd(), dist), schema);
+
+    return { status: "ok", path: output };
+  } catch (err) {
+    return { status: "err", message: err.message };
+  }
+}
+
+const magiql = meow(
+  `
+Usage: 
+  $ magiql schema ENDPOINT_URL --output schema.graphql
+Fetch and print the GraphQL schema from a GraphQL HTTP endpoint (Outputs schema in IDL syntax by default).
+Options:
+  --header, -h    Add a custom header (ex. 'X-API-KEY=ABC123'), can be used multiple times
+  --json, -j      Output in JSON format (based on introspection query)
+  --method        Use method (GET,POST, PUT, DELETE)
+  --output       Save schema to file.
+`,
+  {
+    flags: {
+      header: {
+        type: "string",
+        alias: "h",
+      },
+      json: {
+        type: "boolean",
+        alias: "j",
+        default: false,
+      },
+      method: {
+        type: "string",
+        default: "POST",
+      },
+      output: {
+        type: "string",
+      },
+      watch: {
+        type: "boolean",
+        default: false,
+      },
+    },
+  }
+);
+
+/* istanbul ignore next */
+if (process.env.NODE_ENV !== "test") main(magiql);
+
+/**
+ * Main
+ */
+export async function main(cli: typeof magiql): Promise<void> {
+  /* Get remote endpoint from args */
+  const [command, endpoint] = cli.input;
+
+  if (command && command === "schema") {
+    if (!endpoint) {
+      console.warn("No endpoint provided");
+      return;
+    }
+
+    /* Headers */
+    const defaultHeaders = {
+      "Content-Type": "application/json",
+    };
+
+    const headers = getHeadersFromInput(cli).reduce(
+      (acc, { key, value }) => ({ ...acc, [key]: value }),
+      defaultHeaders
+    );
+
+    /* Fetch schema */
+
+    const schema = await getRemoteSchema(endpoint, {
+      method: cli.flags.method as any,
+      headers,
+      json: cli.flags.json,
+    });
+
+    if (schema.status === "err") {
+      console.warn(schema.message);
+      return;
+    }
+
+    if (cli.flags.output !== undefined) {
+      printToFile(cli.flags.output, schema.schema);
+    } else {
+      console.log(schema.schema);
+    }
+  } else {
+    const {
+      schema,
+      src,
+      artifactDirectory,
+      extensions,
+      verbose,
+      quiet,
+      validate,
+      watchman,
+      language,
+      languagePlugin,
+      runWithBabel,
+      include,
+      exclude,
+    } = loadConfig();
+
+    relayCompiler({
+      schema,
+      src,
+      artifactDirectory,
+      extensions,
+      verbose,
+      quiet,
+      watch: cli.flags.watch,
+      validate,
+      watchman,
+      language: languagePlugin,
+      include,
+      exclude,
+    });
+  }
+}
