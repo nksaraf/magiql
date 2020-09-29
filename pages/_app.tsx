@@ -3,33 +3,9 @@ import "prismjs/themes/prism.css";
 
 import React from "react";
 import Head from "next/head";
-import {
-  GraphQLClient,
-  GraphQLClientProvider,
-  createNormalizedQueryCacheStore,
-  createQueryCacheStore,
-  debugExchange,
-  errorExchange,
-  storeExchange,
-  fetchExchange,
-} from "magiql";
+import { GraphQLClient, GraphQLClientProvider } from "magiql";
 import GraphQLDevtools from "magiql/devtools";
 import { createRecoilStore } from "magiql/recoil-store";
-import { createNormalizer } from "magiql";
-
-// function useExchanges(client: GraphQLClient) {
-//   const store = client.useStore();
-
-//   return [
-//     errorExchange({
-//       onError: (error) => {
-//         throw error;
-//       },
-//     }),
-//     storeExchange(store),
-//     fetchExchange,
-//   ];
-// }
 
 const client = new GraphQLClient({
   endpoint: "https://swapi-graphql.netlify.app/.netlify/functions/index",
