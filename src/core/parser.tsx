@@ -23,7 +23,7 @@ import {
 import { parse } from "graphql/language/parser";
 import { print } from "graphql/language/printer";
 import { visit } from "graphql/language/visitor";
-import assert from "assert";
+
 import {
   OperationTypeNode,
   OperationDefinitionNode,
@@ -32,6 +32,7 @@ import {
   SelectionSetNode,
   FragmentDefinitionNode,
   InlineFragmentNode,
+  FieldNode,
 } from "graphql";
 
 const parseSelections = (selectionSet: SelectionSetNode) => {
@@ -219,32 +220,78 @@ const inlineFragments = (node: DocumentNode): DocumentNode => {
   };
 };
 
+type SelectionMap = Map<string, FieldNode>;
+
+const deepTraverse = (node, selectionMap: SelectionMap = new Map()) => {
+  let hasFlattened = false;
+  console.log("here");
+  const flatter = (node: SelectionSetNode) => {
+    node.selections.forEach((sel) => {
+      if (sel.kind === "InlineFragment") {
+        flatter(sel.selectionSet);
+        hasFlattened = true;
+      } else if (sel.kind === "Field") {
+        const val = selectionMap.get(sel.alias?.value ?? sel.name.value);
+        const key = sel.alias?.value ?? sel.name.value;
+        if (sel.selectionSet) {
+          const set =
+            val && val.selectionSet
+              ? (val.selectionSet.selections as any)
+              : new Map();
+
+          const {
+            selectionMap: fresh,
+            hasFlattened: hasChildFlattened,
+          } = deepTraverse(sel.selectionSet, set);
+          if (hasChildFlattened) {
+            hasFlattened = true;
+          }
+          selectionMap.set(sel.alias?.value ?? sel.name.value, {
+            ...sel,
+            selectionSet: {
+              ...sel.selectionSet,
+              selections: fresh as any,
+            },
+          });
+        } else {
+          selectionMap.set(sel.alias?.value ?? sel.name.value, sel);
+        }
+      }
+    });
+  };
+
+  flatter(node);
+
+  return { selectionMap, hasFlattened };
+};
+
 const flattenFragments = (node: DocumentNode): DocumentNode => {
   const doc = visit(node, {
     SelectionSet: (node) => {
-      const selections = new Map();
-      let hasFlattened = false;
+      const { selectionMap, hasFlattened } = deepTraverse(node);
 
-      const visit = (node: SelectionSetNode) => {
-        node.selections.forEach((sel) => {
-          if (sel.kind === "InlineFragment") {
-            visit(sel.selectionSet);
-            hasFlattened = true;
-          } else if (sel.kind === "Field") {
-            const key = sel.alias?.value ?? sel.name.value;
-            if (sel.selectionSet) {
+      function transform(selectionMap: SelectionMap) {
+        return Array.from(selectionMap.values()).map((val) => {
+          if (val.kind === "Field") {
+            if (val.selectionSet) {
+              return {
+                ...val,
+                selectionSet: {
+                  ...val.selectionSet,
+                  selections: transform(val.selectionSet.selections as any),
+                },
+              };
+            } else {
+              return val;
             }
-            selections.set(sel.alias?.value ?? sel.name.value, sel);
           }
         });
-      };
-
-      visit(node);
+      }
 
       return hasFlattened
         ? {
             ...node,
-            selections: Array.from(selections.values()),
+            selections: transform(selectionMap),
           }
         : node;
     },
@@ -355,16 +402,18 @@ export const createOperation = function <TQuery extends Query>(
 ): Operation<TQuery> {
   const { variables = {}, fetchOptions = {} } = options;
   const node = getRequest(query);
-
-  const operationDescriptor = createOperationDescriptor(node, variables) as any;
+  const operationDescriptor = createOperationDescriptor(node, variables);
   return {
     ...operationDescriptor,
     request: {
       ...operationDescriptor.request,
       fetchOptions,
     },
+    response: null,
   };
 };
 
-export const graphql: (strings, ...values) => GraphQLTaggedNode | string =
-  String.raw;
+export const graphql: (
+  strings: TemplateStringsArray,
+  ...values: (GraphQLTaggedNode | string)[]
+) => GraphQLTaggedNode | string = String.raw;

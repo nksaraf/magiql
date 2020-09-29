@@ -1,5 +1,4 @@
 import {
-  ConcreteRequest,
   RelayConcreteNode,
   NormalizationOperation,
   NormalizationLinkedField,

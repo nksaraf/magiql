@@ -16,6 +16,10 @@ export function PeopleInfinite() {
             node {
               id
               name
+              homeworld {
+                id
+                name
+              }
               ...Person_person
             }
             cursor
@@ -47,8 +51,6 @@ export function PeopleInfinite() {
       }),
     }
   );
-
-  console.log(data, status)
 
   return (
     <>
