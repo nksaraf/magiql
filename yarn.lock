@@ -5017,9 +5017,9 @@ react-is@16.13.1, react-is@^16.8.1:
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
 react-notion@^0.8.1:
-  version "0.8.1"
-  resolved "https://registry.yarnpkg.com/react-notion/-/react-notion-0.8.1.tgz#2a6df3a1a9ecf2d4719a79d2a4fc0a055de3a9f1"
-  integrity sha512-i6eozvgqtJCfoGSty5FuclE7wPIw3JdXiPgzoXU7+9a+I8SvnMS016NLRbUaQva6EeM+tsziQT2OVj+rMgv26w==
+  version "0.8.2"
+  resolved "https://registry.yarnpkg.com/react-notion/-/react-notion-0.8.2.tgz#996fd660b5473062ffd5ea88b8aade84476b6a5b"
+  integrity sha512-xvjH06cO+lFPNB24CxpCB8ZIVHfQyu7JpwPE7PMRxmCx2rwf4qQyGgUB1RRxEEj9pVLB4SzaxI2L5asRTx/Lzg==
   dependencies:
     prismjs "^1.21.0"
 
