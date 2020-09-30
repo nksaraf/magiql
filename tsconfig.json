@@ -16,8 +16,8 @@
     "jsx": "preserve",
     "baseUrl": "./",
     "paths": {
-      "magiql/*": ["./src/*"],
-      "magiql": ["./src/index.ts"]
+      "magiql/*": ["lib/*"],
+      "magiql": ["lib/index.ts"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

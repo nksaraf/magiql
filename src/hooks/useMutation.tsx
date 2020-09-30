@@ -4,7 +4,7 @@ import {
   MutateFunction,
   MutationResult,
 } from "react-query";
-import { GraphQLClient } from "../core/graphQLClient";
+import { GraphQLClient } from "../client";
 
 import {
   Query,
@@ -15,7 +15,7 @@ import {
   Operation,
   FetchOptions,
   CombinedError,
-} from "../core/types";
+} from "../types";
 import { useGraphQLClient } from "./useGraphQLClient";
 import { useGraphQLStore } from "./useGraphQLStore";
 

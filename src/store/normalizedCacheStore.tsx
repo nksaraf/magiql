@@ -3,9 +3,9 @@ import React from "react";
 import { QueryCache } from "react-query";
 import { getSelector } from "relay-runtime/lib/store/RelayModernSelector";
 
-import { stableStringify } from "../../utils";
-import { useRerenderer } from "../../hooks/useRerenderer";
-import { createOperation } from "../operation";
+import { stableStringify } from "../utils";
+import { useRerenderer } from "../hooks/useRerenderer";
+import { createOperation } from "../operation/descriptor";
 import {
   Response,
   Query,
@@ -17,7 +17,7 @@ import {
   Operation,
 } from "../types";
 import { batchedUpdates } from "./batchedUpdates";
-import { createRecordReader, readFragment } from "../reader";
+import { createRecordReader, readFragment } from "../operation/reader";
 
 export function createNormalizedQueryCacheStore(
   options: Partial<Store> & {

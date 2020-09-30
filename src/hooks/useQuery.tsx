@@ -13,10 +13,10 @@ import {
   GraphQLTaggedNode,
   FetchOptions,
   CombinedError,
-} from "../core/types";
+} from "../types";
 import { useGraphQLClient } from "./useGraphQLClient";
 import { useGraphQLStore } from "./useGraphQLStore";
-import { GraphQLClient } from "../core/graphQLClient";
+import { GraphQLClient } from "../client";
 
 export interface UseQueryOptions<TQuery extends Query, TError = CombinedError>
   extends QueryConfig<Response<TQuery>, TError> {

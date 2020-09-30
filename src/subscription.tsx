@@ -1,5 +1,5 @@
 import { SubscriptionClient } from "subscriptions-transport-ws";
-import { resolveFetchOptions } from "./fetchGraphQL";
+import { resolveFetchOptions } from "./fetch";
 import { FetchOptions } from "./types";
 
 export class GraphQLSubscriptionClient extends SubscriptionClient {

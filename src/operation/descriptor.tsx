@@ -11,7 +11,7 @@ import type {
   Variables,
   GraphQLTaggedNode,
   FetchOptions,
-} from "./types";
+} from "../types";
 import { parseRequest, parseFragment } from "./parser";
 
 export const getRequest = (

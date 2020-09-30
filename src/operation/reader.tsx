@@ -16,7 +16,7 @@ import {
   ReaderSelection,
   ReaderNode,
   Record,
-} from "./types";
+} from "../types";
 
 export const createFieldReader = (get): Reader<string> => ({
   readField: (field: ReaderField, variables, dataID) => {

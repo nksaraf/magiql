@@ -1,7 +1,7 @@
 import React from "react";
-import { getRequest } from "../core/operation";
+import { getRequest } from "../operation/descriptor";
 
-import { Query, Variables, GraphQLTaggedNode } from "../core/types";
+import { Query, Variables, GraphQLTaggedNode } from "../types";
 import { useRerenderer } from "./useRerenderer";
 import { useGraphQLClient } from "./useGraphQLClient";
 import { UseQueryOptions, UseQueryResult } from "./useQuery";

@@ -1,16 +1,16 @@
 import type { QueryConfig, ReactQueryConfig } from "react-query";
 import type { Observable } from "subscriptions-transport-ws";
 import {
-  errorExchange,
   storeExchange,
-  fetchExchange,
   composeExchanges,
-  fallbackExchange,
   normalizerExchange,
-} from "./exchanges";
+} from "./exchanges/exchanges";
+import { fetchExchange } from "./exchanges/createFetchOperation";
+import { fallbackExchange } from "./exchanges/fallbackExchange";
+import { errorExchange } from "./exchanges/errorExchange";
 import { QueryCache } from "react-query";
 
-import { createOperation } from "./operation";
+import { createOperation } from "./operation/descriptor";
 import { createQueryCacheStore } from "./store/cacheStore";
 import type {
   Operation,
@@ -26,8 +26,8 @@ import type {
   GraphQLTaggedNode,
   Normalizer,
 } from "./types";
-import { createNormalizer } from "./normalizer";
-import type { GraphQLSubscriptionClient } from "./subscriptionClient";
+import { createNormalizer } from "./operation/normalizer";
+import type { GraphQLSubscriptionClient } from "./subscription";
 
 export interface GraphQLClientOptions {
   endpoint: string;

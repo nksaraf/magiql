@@ -1,5 +1,5 @@
-import { useGraphQLClient } from "../../hooks/useGraphQLClient";
-import { throwError } from "../../utils";
+import { useGraphQLClient } from "../hooks/useGraphQLClient";
+import { throwError } from "../utils";
 import { Store } from "../types";
 
 export function createQueryCacheStore() {

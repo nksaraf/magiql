@@ -3,20 +3,15 @@
  * https://github.com/FormidableLabs/urql/blob/main/packages/core/src/exchanges
  */
 
-import { fetchGraphQL, resolveFetchOptions } from "./fetchGraphQL";
 import type {
-  OperationKind,
   Store,
   Exchange,
   ExchangeInput,
   Operation,
   Query,
-  FetchOperation,
-  Variables,
   CombinedError,
-} from "./types";
-import deepMerge from "deepmerge";
-import type { GraphQLClient } from "./graphQLClient";
+} from "../types";
+import type { GraphQLClient } from "../client";
 
 export const composeExchanges = (exchanges: Exchange[]) => ({
   client,
@@ -38,129 +33,6 @@ export const composeExchanges = (exchanges: Exchange[]) => ({
       }),
     forward
   );
-
-export const errorExchange = ({
-  onError = (error) => {
-    throw error;
-  },
-}: {
-  onError?: (error: CombinedError) => void;
-}) => {
-  const errorExchange: Exchange = ({ forward }) => {
-    return async (operation) => {
-      const operationResult = await forward(operation);
-      const { error } = operationResult;
-      if (error) {
-        onError(error);
-      }
-
-      return operationResult;
-    };
-  };
-  errorExchange.emoji = "❗";
-  return errorExchange;
-};
-
-export const fallbackExchange: Exchange = function fallbackExchange() {
-  return async () => {
-    throw new Error("operation is not supported");
-  };
-};
-fallbackExchange.emoji = "❓";
-
-export const debugExchange: Exchange = function debugExchange({ forward }) {
-  return async (operation) => {
-    console.log(
-      "🚀",
-      operation.request.node.params.name,
-      JSON.stringify(operation.request.variables),
-      "fetching"
-    );
-    const operationResult = await forward(operation);
-    console.log(
-      "📦",
-      operation.request.node.params.name,
-      JSON.stringify(operation.request.variables),
-      ...[operationResult.data && "success", operationResult.error].filter(
-        Boolean
-      )
-    );
-    return operationResult;
-  };
-};
-
-export async function createFetchOperation<TQuery extends Query>(
-  operation: Operation<TQuery>,
-  client: GraphQLClient
-): Promise<FetchOperation<Variables<TQuery>>> {
-  const fetchOperation = {
-    query: operation.request.node,
-    operationName: operation.request.node.params.name,
-    operationKind: operation.request.node.params.operationKind as OperationKind,
-    variables: operation.request.variables,
-    endpoint: client.endpoint,
-  };
-
-  const clientFetchOptions = await resolveFetchOptions(
-    client.fetchOptions ?? {},
-    fetchOperation
-  );
-
-  const operationFetchOptions = await resolveFetchOptions(
-    operation.request.fetchOptions ?? {},
-    fetchOperation
-  );
-
-  const fetchOptions = deepMerge(clientFetchOptions, operationFetchOptions);
-  return {
-    fetchOptions,
-    ...fetchOperation,
-  };
-}
-
-export const fetchExchange: Exchange = function fetchExchange({
-  forward,
-  client,
-  dispatchDebug,
-}) {
-  return async (operation) => {
-    if (
-      operation.request.node.params.operationKind === "query" ||
-      operation.request.node.params.operationKind === "mutation"
-    ) {
-      const fetchOperation = await createFetchOperation(operation, client);
-
-      dispatchDebug({
-        type: "fetchRequest",
-        message: "fetching",
-        operation,
-        data: fetchOperation,
-      });
-
-      const result = await fetchGraphQL(fetchOperation);
-
-      const error = !result.data ? result.error : undefined;
-
-      dispatchDebug({
-        type: error ? "fetchError" : "fetchSuccess",
-        message: `${error ? "fetch failed" : "fetch successful"}`,
-        operation,
-        data: {
-          ...fetchOperation,
-          value: error || result,
-        },
-      });
-
-      return {
-        ...result,
-        operation,
-      };
-    } else {
-      return await forward(operation);
-    }
-  };
-};
-fetchExchange.emoji = "🚀";
 
 export const storeExchange = (store: Store) => {
   const storeExchange: Exchange = ({ forward, dispatchDebug }) => {

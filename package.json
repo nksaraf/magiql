@@ -9,8 +9,8 @@
   "scripts": {
     "prepublishOnly": "yarn clean && run-p build:node build:common",
     "clean": "rm -rf dist",
-    "build:node": "yarn tsup src/babel.ts src/cli.ts --format cjs",
-    "build:common": "yarn tsup src/index.ts src/node.ts src/subscriptions.ts src/recoil-store.ts src/native.ts src/devtools.ts src/devtools-native.ts --format esm,cjs --legacy-output --dts --external react --external react-dom --external react-native",
+    "build:node": "yarn tsup lib/babel.ts lib/cli.ts --format cjs",
+    "build:common": "yarn tsup lib/index.ts lib/node.ts lib/subscriptions.ts lib/recoil-store.ts lib/native.ts lib/devtools.ts lib/devtools-native.ts --format esm,cjs --legacy-output --dts --external react --external react-dom --external react-native",
     "watch:node": "yarn build:node --watch",
     "watch:common": "yarn build:common --watch",
     "build": "run-p build:node build:common && next build",

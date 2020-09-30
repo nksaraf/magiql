@@ -1,10 +1,10 @@
-import { getFragment } from "../core/operation";
+import { getFragment } from "../operation/descriptor";
 import {
   $Call,
   KeyType,
   KeyReturnType,
   GraphQLTaggedNode,
-} from "../core/types";
+} from "../types";
 import { assertBabelPlugin } from "../utils";
 import { useGraphQLStore } from "./useGraphQLStore";
 
