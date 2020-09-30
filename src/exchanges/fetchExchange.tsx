@@ -1,4 +1,4 @@
-import { fetchGraphQL, resolveFetchOptions } from "../fetch";
+import { fetchGraphQL, resolveFetchOptions } from "../fetchGraphQL";
 import { OperationKind, Exchange, Operation, Query, FetchOperation, Variables } from "../types";
 import deepMerge from "deepmerge";
 import { GraphQLClient } from "../client";

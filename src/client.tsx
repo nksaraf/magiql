@@ -1,11 +1,11 @@
 import type { QueryConfig, ReactQueryConfig } from "react-query";
 import type { Observable } from "subscriptions-transport-ws";
 import {
-  storeExchange,
   composeExchanges,
-  normalizerExchange,
-} from "./exchanges/exchanges";
-import { fetchExchange } from "./exchanges/createFetchOperation";
+} from "./exchanges/composeExchanges";
+import { normalizerExchange } from "./exchanges/normalizerExchange";
+import { storeExchange } from "./exchanges/storeExchange";
+import { fetchExchange } from "./exchanges/fetchExchange";
 import { fallbackExchange } from "./exchanges/fallbackExchange";
 import { errorExchange } from "./exchanges/errorExchange";
 import { QueryCache } from "react-query";

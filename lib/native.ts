@@ -6,8 +6,8 @@ import { setConsole, setFocusHandler } from "react-query";
 import { setBatch } from "../src/store/batchedUpdates";
 
 export * from "../src/client";
-export * from "../src/fetch";
-export * from "../src/exchanges/exchanges";
+export * from "../src/fetchGraphQL";
+export * from "../src/exchanges/composeExchanges";
 export * from "../src/types";
 export * from "../src/store/cacheStore";
 export * from "../src/store/normalizedCacheStore";
