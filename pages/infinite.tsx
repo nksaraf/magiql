@@ -1,5 +1,5 @@
 import React from "react";
-import { useInfiniteQuery, graphql } from "magiql";
+import { useInfiniteQuery, graphql } from "src/lib";
 import { Person, Person_person } from "../components/Person";
 import { NavBar } from "../components/NavBar";
 import { Header, Actions, ActionButton } from "../components/ActionButton";

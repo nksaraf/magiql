@@ -1,5 +1,5 @@
 import React from "react";
-import { graphql, usePaginatedQuery } from "magiql";
+import { graphql, usePaginatedQuery } from "src/lib";
 import { Person, Person_person } from "../components/Person";
 import Link from "next/link";
 import { NavBar } from "../components/NavBar";

@@ -1,5 +1,5 @@
 import React from "react";
-import { useFragment, graphql } from "magiql";
+import { useFragment, graphql } from "src/lib";
 
 export const Person_person = graphql`
   fragment Person_person on Person {

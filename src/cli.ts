@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 //  @ts-ignore
 /**
  * Adapted from https://github.com/facebook/relay/blob/master/packages/relay-compiler/bin/RelayCompilerBin.js
@@ -12,9 +11,9 @@ import fetch from "node-fetch";
 import * as fs from "fs";
 import * as path from "path";
 import mkdirp from "mkdirp";
-import { getIntrospectionQuery } from "../node_modules/graphql/utilities/getIntrospectionQuery";
-import { buildClientSchema } from "../node_modules/graphql/utilities/buildClientSchema";
-import { printSchema } from "../node_modules/graphql/utilities/printSchema";
+import { getIntrospectionQuery } from "graphql/utilities/getIntrospectionQuery";
+import { buildClientSchema } from "graphql/utilities/buildClientSchema";
+import { printSchema } from "graphql/utilities/printSchema";
 import * as query from "querystringify";
 
 /**

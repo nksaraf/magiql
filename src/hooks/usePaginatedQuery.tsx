@@ -14,7 +14,7 @@ import {
   Operation,
   FetchOptions,
   CombinedError,
-} from "../core/types";
+} from "../types";
 import { useGraphQLClient } from "./useGraphQLClient";
 import { useGraphQLStore } from "./useGraphQLStore";
 

@@ -16,7 +16,7 @@ import type {
   NormalizationField,
 } from "relay-runtime/lib/util/NormalizationNode";
 
-import { constants, GetDataID, Operation, Query, Record } from "./types";
+import { constants, GetDataID, Operation, Query, Record } from "../types";
 
 export const PREFIX = "client:";
 

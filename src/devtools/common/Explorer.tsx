@@ -2,7 +2,7 @@
 
 import React from "react";
 
-import { constants } from "../../core/types";
+import { constants } from "../../types";
 import { theme } from "./theme";
 
 export const createRenderer = ({

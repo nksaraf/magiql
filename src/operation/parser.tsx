@@ -10,7 +10,7 @@ import type {
 
 import {
   constants,
-} from "./types";
+} from "../types";
 
 import { parse } from "graphql/language/parser";
 import { print } from "graphql/language/printer";

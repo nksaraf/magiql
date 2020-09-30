@@ -1,7 +1,7 @@
 import fetch from "isomorphic-unfetch";
 
 import { CombinedError } from "./error";
-import { getRequest } from "./operation";
+import { getRequest } from "./operation/descriptor";
 import type {
   FetchOperation,
   FetchOptions,

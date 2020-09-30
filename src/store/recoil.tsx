@@ -1,5 +1,5 @@
 import React from "react";
-import { stableStringify } from "../../utils";
+import { stableStringify } from "../utils";
 import {
   atom,
   ReadWriteSelectorOptions,
@@ -13,8 +13,8 @@ import { ConcreteRequest, SingularReaderSelector } from "relay-runtime";
 
 import { getSelector } from "relay-runtime/lib/store/RelayModernSelector";
 
-import { throwError } from "../../utils";
-import { createOperation } from "../operation";
+import { throwError } from "../utils";
+import { createOperation } from "../operation/descriptor";
 import {
   Operation,
   Query,
@@ -23,7 +23,7 @@ import {
   ReaderSelector,
   RecordSource,
 } from "../types";
-import { readFragment, createFieldReader } from "../reader";
+import { readFragment, createFieldReader } from "../operation/reader";
 
 function atomFamily<T, TParam>({
   default: defaultValue,

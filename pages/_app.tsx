@@ -7,9 +7,9 @@ import {
   GraphQLClient,
   GraphQLClientProvider,
   createNormalizedQueryCacheStore,
-} from "magiql";
-import GraphQLDevtools from "magiql/devtools";
-import { createRecoilStore } from "magiql/recoil-store";
+} from "src/lib";
+import GraphQLDevtools from "src/lib/devtools";
+import { createRecoilStore } from "src/lib/store/recoil";
 
 const client = new GraphQLClient({
   endpoint: "https://swapi-graphql.netlify.app/.netlify/functions/index",

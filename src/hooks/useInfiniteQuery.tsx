@@ -5,7 +5,7 @@ import {
   InfiniteQueryResult,
   QueryConfig,
 } from "react-query";
-import { GraphQLClient } from "../core/graphQLClient";
+import { GraphQLClient } from "../client";
 
 import {
   Variables,
@@ -16,7 +16,7 @@ import {
   Store,
   FetchOptions,
   CombinedError,
-} from "../core/types";
+} from "../types";
 import { useGraphQLClient } from "./useGraphQLClient";
 import { useGraphQLStore } from "./useGraphQLStore";
 
