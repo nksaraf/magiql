@@ -54,7 +54,7 @@ export type NormalizationNode =
 export const defaultGetDataId = (record, type) =>
   record.id ? `${type}:${record.id}` : null;
 
-export function createNormalizer<TQuery extends Query>({
+export function createNormalizer({
   getDataID = defaultGetDataId,
 }: {
   getDataID?: GetDataID;
