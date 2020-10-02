@@ -8,7 +8,6 @@ import type {
 } from "relay-runtime";
 const RelayConcreteNode = require("relay-runtime/lib/util/RelayConcreteNode");
 import { getStorageKey } from "relay-runtime/lib/store/RelayStoreUtils";
-
 import type {
   NormalizationClientExtension,
   NormalizationCondition,
@@ -16,7 +15,14 @@ import type {
   NormalizationField,
 } from "relay-runtime/lib/util/NormalizationNode";
 
-import { constants, GetDataID, Operation, Query, Record } from "./types";
+import {
+  constants,
+  GetDataID,
+  Operation,
+  Query,
+  Record,
+  Response,
+} from "./types";
 
 export const PREFIX = "client:";
 
@@ -48,7 +54,7 @@ export type NormalizationNode =
 export const defaultGetDataId = (record, type) =>
   record.id ? `${type}:${record.id}` : null;
 
-export function createNormalizer({
+export function createNormalizer<TQuery extends Query>({
   getDataID = defaultGetDataId,
 }: {
   getDataID?: GetDataID;
@@ -181,7 +187,10 @@ export function createNormalizer({
     });
   }
 
-  function normalizeResponse(data: any, operation: Operation<Query>) {
+  function normalizeResponse<TQuery extends Query>(
+    data: Response<TQuery>,
+    operation: Operation<TQuery>
+  ) {
     const node = operation.request.node;
 
     variables = operation.root?.variables;

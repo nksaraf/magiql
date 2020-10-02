@@ -100,14 +100,10 @@ export function useMutation<TMutation extends Query, TError = CombinedError>(
       ...state,
       client,
       store,
-      operation: {
-        request: {
-          fetchOptions: fetchOptions,
-          node: mutation,
-          // identifier: mutation.params.id,
-          variables: {},
-        },
-      } as any,
+      operation: client.buildOperation(mutation, {
+        fetchOptions,
+        variables: {},
+      }),
     },
   ];
 }

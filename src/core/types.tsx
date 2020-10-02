@@ -153,7 +153,10 @@ export type $Call<Fn extends (...args: any[]) => any> = Fn extends (
   : never;
 
 export interface Normalizer {
-  normalizeResponse: (data: any, operation: Operation<Query>) => any;
+  normalizeResponse: <TQuery extends Query>(
+    data: Response<TQuery>,
+    operation: Operation<TQuery>
+  ) => { [key: string]: object };
 }
 
 export interface Store {
