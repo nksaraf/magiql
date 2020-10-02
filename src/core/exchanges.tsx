@@ -167,7 +167,7 @@ export const storeExchange = (store: Store) => {
     return async (operation) => {
       const result = await forward(operation);
       if (result.extensions?.normalizedData && store.type === "normalized") {
-        store.commit(operation, result.extensions?.normalizedData);
+        store.update(result.extensions?.normalizedData);
         dispatchDebug({
           type: "commit",
           message: "commited to store",
@@ -177,7 +177,7 @@ export const storeExchange = (store: Store) => {
       } else if (store.type === "normalized") {
         throw new Error("Normalized store expects normalized data");
       } else {
-        store.commit(operation, result.data);
+        store.update(result.data);
         dispatchDebug({
           type: "commit",
           message: "commited to store",

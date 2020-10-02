@@ -260,16 +260,6 @@ export function createRecoilStore(): () => Store {
       [updateStore]
     );
 
-    const commit = React.useCallback(
-      function <TQuery extends Query>(
-        operation: Operation<TQuery>,
-        data: Response<TQuery>
-      ) {
-        update(data);
-      },
-      [update]
-    );
-
     return {
       ...store,
       useSelector,
@@ -278,7 +268,6 @@ export function createRecoilStore(): () => Store {
       useFragment,
       useOperation,
       useOperationPages,
-      commit,
       useEntities,
       type: "normalized" as const,
       Provider: RecoilRoot as any,

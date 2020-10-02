@@ -121,9 +121,6 @@ export function createNormalizedQueryCacheStore(
     useOperation = (operation) => {
       return useSelector(operation.fragment);
     },
-    commit = (operation, data) => {
-      update(data);
-    },
   } = options;
 
   function useEntities() {
@@ -168,7 +165,6 @@ export function createNormalizedQueryCacheStore(
   const store = {
     update,
     updateRecord,
-    commit,
     useSelector,
     useOperationPages,
     useFragment,

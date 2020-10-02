@@ -161,10 +161,10 @@ export interface Store {
   update(recordSource: any): void;
   updateRecord(id: string, record: any): void;
   get(dataID: string): any;
-  commit<TQuery extends Query>(
-    operation: Operation<TQuery>,
-    data: Response<TQuery>
-  ): void;
+  // commit<TQuery extends Query>(
+  //   operation: Operation<TQuery>,
+  //   data: Response<TQuery>
+  // ): void;
   useFragment<TKey extends KeyType>(
     fragmentNode: ReaderFragment,
     fragmentRef: TKey

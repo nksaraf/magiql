@@ -67,7 +67,7 @@ export class GraphQLClient {
   useStore: (() => Store) & {
     Provider?: React.FC<{}>;
   };
-  normalizer?: Normalizer;
+  normalizer: Normalizer;
   private useExchanges: (client: GraphQLClient) => Exchange[];
   subscriptionClient?: GraphQLSubscriptionClient;
 

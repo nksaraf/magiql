@@ -4,7 +4,6 @@ import { Store } from "../types";
 
 export function createQueryCacheStore() {
   const useFragment = (_, fragmentRef) => fragmentRef;
-  const commit = (_operation, _data) => {};
 
   const useOperation: Store["useOperation"] = (operation) => {
     const client = useGraphQLClient();
@@ -21,11 +20,10 @@ export function createQueryCacheStore() {
   };
 
   const store: Store = {
-    commit,
     useFragment,
     useOperation,
     updateRecord: throwError(),
-    update: throwError(),
+    update: (data) => {},
     get: throwError(),
     useEntities,
     type: "unnormalized",
