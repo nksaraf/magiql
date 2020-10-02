@@ -19,7 +19,10 @@ import {
 import { useGraphQLClient } from "./useGraphQLClient";
 import { useGraphQLStore } from "./useGraphQLStore";
 
-export type UseMutationResult<TMutation extends Query, TError = CombinedError> = [
+export type UseMutationResult<
+  TMutation extends Query,
+  TError = CombinedError
+> = [
   MutateFunction<Response<TMutation>, TError, Variables<TMutation>>,
   MutationResult<Response<TMutation>, TError> & {
     client: GraphQLClient;
@@ -28,11 +31,14 @@ export type UseMutationResult<TMutation extends Query, TError = CombinedError> =
   }
 ];
 
-export interface UseMutationOptions<TMutation extends Query, TError = CombinedError>
-  extends MutationConfig<Response<TMutation>, TError, Variables<TMutation>> {
+export interface UseMutationOptions<
+  TMutation extends Query,
+  TError = CombinedError
+> extends MutationConfig<Response<TMutation>, TError, Variables<TMutation>> {
   operationName?: string;
   invalidateQueries?: any[];
   fetchOptions?: FetchOptions<Variables<TMutation>>;
+  optimisticResponse?: Response<TMutation>;
 }
 
 export function useMutation<TMutation extends Query, TError = CombinedError>(
@@ -43,6 +49,7 @@ export function useMutation<TMutation extends Query, TError = CombinedError>(
     onSuccess,
     invalidateQueries = [],
     fetchOptions = {},
+    optimisticResponse,
     ...mutationOptions
   } = options;
   type TData = Response<TMutation>;
@@ -77,14 +84,10 @@ export function useMutation<TMutation extends Query, TError = CombinedError>(
       ...state,
       client,
       store,
-      operation: {
-        request: {
-          fetchOptions: fetchOptions,
-          node: mutation,
-          // identifier: mutation.params.id,
-          variables: {},
-        },
-      } as any,
+      operation: client.buildOperation(mutation, {
+        fetchOptions,
+        variables: {},
+      }),
     },
   ];
 }

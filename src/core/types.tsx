@@ -153,7 +153,10 @@ export type $Call<Fn extends (...args: any[]) => any> = Fn extends (
   : never;
 
 export interface Normalizer {
-  normalizeResponse: (data: any, operation: Operation<Query>) => any;
+  normalizeResponse: <TQuery extends Query>(
+    data: Response<TQuery>,
+    operation: Operation<TQuery>
+  ) => { [key: string]: object };
 }
 
 export interface Store {
@@ -161,10 +164,7 @@ export interface Store {
   update(recordSource: any): void;
   updateRecord(id: string, record: any): void;
   get(dataID: string): any;
-  commit<TQuery extends Query>(
-    operation: Operation<TQuery>,
-    data: Response<TQuery>
-  ): void;
+  commit<TQuery extends Query>(operation: Operation<TQuery>, data: any): void;
   useFragment<TKey extends KeyType>(
     fragmentNode: ReaderFragment,
     fragmentRef: TKey
