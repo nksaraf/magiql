@@ -3714,12 +3714,12 @@ jest-worker@24.9.0:
     merge-stream "^2.0.0"
     supports-color "^6.1.0"
 
-jotai@^0.7.1:
-  version "0.7.1"
-  resolved "https://registry.yarnpkg.com/jotai/-/jotai-0.7.1.tgz#b3128fcfc70a22ebeeb7dc93ca0c753d634012a5"
-  integrity sha512-24VdRfBnCrks1t04napgiZzpn8Fz3Gsv/70WMA2yVcrLUEA34rlnOINUXAP2Y803FynVhzIRMrkrj5yO+q0R6Q==
+jotai@^0.8.0:
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/jotai/-/jotai-0.8.0.tgz#d90ec7ccecdf736729d3c6137f3bddd2517b87d4"
+  integrity sha512-9gkNyP49rJwgLXlxjAmXkVeoflwgPb1FVDA1wcEU3X5djb5WHcKPdTPABYNNVCOf7yzhQJ2tL9JMu3+GWyCSTg==
   dependencies:
-    use-context-selector "^1.1.4"
+    use-context-selector "1.2.2"
 
 joycon@^2.2.5:
   version "2.2.5"
@@ -6202,10 +6202,10 @@ url@^0.11.0:
     punycode "1.3.2"
     querystring "0.2.0"
 
-use-context-selector@^1.1.4:
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/use-context-selector/-/use-context-selector-1.1.4.tgz#11c1cc3856a7ea06972a7b1e0402ce86b9a8ed31"
-  integrity sha512-qJ1KFw6G7XUTdyiUODz+XO0fRdfB6qApjZP/R+uqtO5ptGdmmq276z2my5hU8SFhzFEwXCj7tFNFA9w8LVkjJQ==
+use-context-selector@1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/use-context-selector/-/use-context-selector-1.2.2.tgz#b1a7d0899e7ab4391a5a08a3d7ab71f1e27cf5de"
+  integrity sha512-1kkfRrlk3ol422nWurgdGq1M2xig4n/cYNd9Xqly1MtrNPiEbxQYLBE1adE5BeGu374pIq0garxtf6/wd1GNbw==
 
 use-subscription@1.4.1:
   version "1.4.1"

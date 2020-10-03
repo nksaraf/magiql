@@ -54,7 +54,7 @@
     "babel-plugin-relay": "^10.0.1",
     "cosmiconfig": "^7.0.0",
     "isomorphic-unfetch": "^3.0.0",
-    "jotai": "^0.7.1",
+    "jotai": "^0.8.0",
     "react-query": "^2.23.0",
     "recoil": "^0.0.13",
     "relay-compiler": "^10.0.1"
