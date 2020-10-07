@@ -2559,9 +2559,9 @@ dir-glob@^3.0.1:
     path-type "^4.0.0"
 
 docs-ts@^0.5.1:
-  version "0.5.1"
-  resolved "https://registry.yarnpkg.com/docs-ts/-/docs-ts-0.5.1.tgz#20d55f537f6605095b779899e06bd4a6e888b0a7"
-  integrity sha512-zdBt4P6X7h577/Vku0YHAw/RR1+zpKklK+DOzed1HJltwAAciQG14qy18TzcMbVUFxrnT9OO4Y1K/lQLdX1i/Q==
+  version "0.5.2"
+  resolved "https://registry.yarnpkg.com/docs-ts/-/docs-ts-0.5.2.tgz#2680273f2cb9bc939f0b8ae2d581c10ee17715d9"
+  integrity sha512-TZHZ0PuSvjd9lGXlITsxp1g9/RishJjOE55gflDlhSDIu26zYKjqnR3YP0/V5IG6/MTDSGeFhF/WVnWZvMazQQ==
   dependencies:
     chalk "^2.4.2"
     doctrine "^3.0.0"
