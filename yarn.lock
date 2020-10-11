@@ -4016,15 +4016,7 @@ markdown-toc@^1.2.0:
     repeat-string "^1.6.1"
     strip-color "^0.1.0"
 
-match-sorter@^4.1.0:
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/match-sorter/-/match-sorter-4.2.0.tgz#70c4e7443dacf5fa2503bc5afc189024092e9d27"
-  integrity sha512-oEvLn8R+a30YZ9l5XdCTkYQuLsOs8frxEqQTAuxoqkQx/qV5pQpx/NqAWvJ5xbYecqfXoF/ZevaIS1+NkbRymg==
-  dependencies:
-    "@babel/runtime" "^7.10.5"
-    remove-accents "0.4.2"
-
-match-sorter@^4.2.1:
+match-sorter@^4.1.0, match-sorter@^4.2.1:
   version "4.2.1"
   resolved "https://registry.yarnpkg.com/match-sorter/-/match-sorter-4.2.1.tgz#575b4b3737185ba9518b67612b66877ea0b37358"
   integrity sha512-s+3h9TiZU9U1pWhIERHf8/f4LmBN6IXaRgo2CI17+XGByGS1GvG5VvXK9pcGyCjGe3WM3mSYRC3ipGrd5UEVgw==
@@ -5024,9 +5016,9 @@ react-notion@^0.8.1:
     prismjs "^1.21.0"
 
 react-query-devtools@^2.5.1:
-  version "2.5.1"
-  resolved "https://registry.yarnpkg.com/react-query-devtools/-/react-query-devtools-2.5.1.tgz#aaabc66538fd196f3f40b385c36059e4b3f8f55b"
-  integrity sha512-9d5lQFb3jrQ+8Bu53VUu7P2xJdgie9z494JPph5G04ETijGBkyYk2TVS3RGSupsRA1geXaSaAhICU+Sn2ru9tg==
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/react-query-devtools/-/react-query-devtools-2.6.0.tgz#69699af6303c90dbbdc2b6b7664d8b24504e39eb"
+  integrity sha512-cz807LJNcXFfL1VVWJm3iJo0CqG4XyKClDzTqZOEMbSgs7K74bEjv4YDcZw8wjulKiKi+6LX/uX2qMWcnqwRNg==
   dependencies:
     match-sorter "^4.1.0"
 
