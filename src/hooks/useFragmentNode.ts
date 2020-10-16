@@ -16,7 +16,7 @@ export function useFragmentNode<TKey extends KeyType>(
   fragmentNode: ReaderFragment,
   fragmentRef: TKey,
   componentDisplayName: string
-): $Call<KeyReturnType<TKey>> {
+): { data: $Call<KeyReturnType<TKey>> } {
   const environment = useEnvironment();
   // const FragmentResource = getFragmentResourceForEnvironment(environment);
 
@@ -129,8 +129,7 @@ export function useFragmentNode<TKey extends KeyType>(
           fragmentResult.data.length > 0 &&
           fragmentResult.data.every((data) => data === undefined)))
     ) {
-      warning(
-        false,
+      console.warn(
         "Relay: Expected to have been able to read non-null data for " +
           "fragment `%s` declared in " +
           "`%s`, since fragment reference was non-null. " +

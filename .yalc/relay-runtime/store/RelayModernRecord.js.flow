@@ -18,14 +18,20 @@ const invariant = require('invariant');
 const warning = require('warning');
 
 const {isClientID} = require('./ClientID');
-const {
-  ID_KEY,
-  REF_KEY,
-  REFS_KEY,
-  TYPENAME_KEY,
-  INVALIDATED_AT_KEY,
-  ROOT_ID,
-} = require('./RelayStoreUtils');
+const {ID_KEY, REF_KEY, REFS_KEY, TYPENAME_KEY, INVALIDATED_AT_KEY, ROOT_ID} = {
+  FRAGMENTS_KEY: '__fragments',
+  FRAGMENT_OWNER_KEY: '__fragmentOwner',
+  FRAGMENT_PROP_NAME_KEY: '__fragmentPropName',
+  MODULE_COMPONENT_KEY: '__module_component', // alias returned by Reader
+  ID_KEY: '__id',
+  REF_KEY: '__ref',
+  REFS_KEY: '__refs',
+  ROOT_ID: 'client:root',
+  ROOT_TYPE: '__Root',
+  TYPENAME_KEY: '__typename',
+  INVALIDATED_AT_KEY: '__invalidated_at',
+  IS_WITHIN_UNMATCHED_TYPE_REFINEMENT: '__isWithinUnmatchedTypeRefinement',
+};
 
 import type {DataID} from '../util/RelayRuntimeTypes';
 import type {Record} from './RelayStoreTypes';

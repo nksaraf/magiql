@@ -4,7 +4,6 @@ import { Actions, ActionButton, Header } from "../components/ActionButton";
 import { NavBar } from "../components/NavBar";
 import { Person_person, Person } from "../components/Person";
 import { useEnvironment } from "magiql/core/EnvironmentContext";
-
 export default function People() {
   const environment = useEnvironment();
 

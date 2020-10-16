@@ -29,13 +29,27 @@ var warning = require("fbjs/lib/warning");
 var _require = require('./ClientID'),
     isClientID = _require.isClientID;
 
-var _require2 = require('./RelayStoreUtils'),
-    ID_KEY = _require2.ID_KEY,
-    REF_KEY = _require2.REF_KEY,
-    REFS_KEY = _require2.REFS_KEY,
-    TYPENAME_KEY = _require2.TYPENAME_KEY,
-    INVALIDATED_AT_KEY = _require2.INVALIDATED_AT_KEY,
-    ROOT_ID = _require2.ROOT_ID;
+var _FRAGMENTS_KEY$FRAGME = {
+  FRAGMENTS_KEY: '__fragments',
+  FRAGMENT_OWNER_KEY: '__fragmentOwner',
+  FRAGMENT_PROP_NAME_KEY: '__fragmentPropName',
+  MODULE_COMPONENT_KEY: '__module_component',
+  // alias returned by Reader
+  ID_KEY: '__id',
+  REF_KEY: '__ref',
+  REFS_KEY: '__refs',
+  ROOT_ID: 'client:root',
+  ROOT_TYPE: '__Root',
+  TYPENAME_KEY: '__typename',
+  INVALIDATED_AT_KEY: '__invalidated_at',
+  IS_WITHIN_UNMATCHED_TYPE_REFINEMENT: '__isWithinUnmatchedTypeRefinement'
+},
+    ID_KEY = _FRAGMENTS_KEY$FRAGME.ID_KEY,
+    REF_KEY = _FRAGMENTS_KEY$FRAGME.REF_KEY,
+    REFS_KEY = _FRAGMENTS_KEY$FRAGME.REFS_KEY,
+    TYPENAME_KEY = _FRAGMENTS_KEY$FRAGME.TYPENAME_KEY,
+    INVALIDATED_AT_KEY = _FRAGMENTS_KEY$FRAGME.INVALIDATED_AT_KEY,
+    ROOT_ID = _FRAGMENTS_KEY$FRAGME.ROOT_ID;
 
 /**
  * @public
