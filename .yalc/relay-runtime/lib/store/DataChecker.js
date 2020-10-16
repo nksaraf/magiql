@@ -40,16 +40,12 @@ var invariant = require("fbjs/lib/invariant");
 var _require = require('./ClientID'),
     isClientID = _require.isClientID;
 
-var _require2 = require('./ReactFlight'),
-    REACT_FLIGHT_TREE_STORAGE_KEY = _require2.REACT_FLIGHT_TREE_STORAGE_KEY,
-    REACT_FLIGHT_QUERIES_STORAGE_KEY = _require2.REACT_FLIGHT_QUERIES_STORAGE_KEY;
+var _require2 = require('./RelayRecordState'),
+    EXISTENT = _require2.EXISTENT,
+    UNKNOWN = _require2.UNKNOWN;
 
-var _require3 = require('./RelayRecordState'),
-    EXISTENT = _require3.EXISTENT,
-    UNKNOWN = _require3.UNKNOWN;
-
-var _require4 = require('./TypeID'),
-    generateTypeID = _require4.generateTypeID;
+var _require3 = require('./TypeID'),
+    generateTypeID = _require3.generateTypeID;
 
 var CONDITION = RelayConcreteNode.CONDITION,
     CLIENT_EXTENSION = RelayConcreteNode.CLIENT_EXTENSION,
@@ -366,6 +362,7 @@ var DataChecker = /*#__PURE__*/function () {
           _this2._traverseSelections(selection.selections, dataID);
 
           break;
+        // $FlowFixMe[incompatible-type]
 
         case FRAGMENT_SPREAD:
           !false ? process.env.NODE_ENV !== "production" ? invariant(false, 'RelayAsyncLoader(): Unexpected ast kind `%s`.', selection.kind) : invariant(false) : void 0; // $FlowExpectedError[unreachable-code] - we need the break; for OSS linter
@@ -521,9 +518,9 @@ var DataChecker = /*#__PURE__*/function () {
       return;
     }
 
-    var tree = this._mutator.getValue(linkedID, REACT_FLIGHT_TREE_STORAGE_KEY);
+    var tree = this._mutator.getValue(linkedID, RelayStoreUtils.REACT_FLIGHT_TREE_STORAGE_KEY);
 
-    var reachableQueries = this._mutator.getValue(linkedID, REACT_FLIGHT_QUERIES_STORAGE_KEY);
+    var reachableQueries = this._mutator.getValue(linkedID, RelayStoreUtils.REACT_FLIGHT_QUERIES_STORAGE_KEY);
 
     if (tree == null || !Array.isArray(reachableQueries)) {
       this._handleMissing();

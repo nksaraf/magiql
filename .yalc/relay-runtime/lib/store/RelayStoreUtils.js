@@ -22,12 +22,18 @@ var invariant = require("fbjs/lib/invariant");
 
 var stableCopy = require('../util/stableCopy');
 
+var _require = require('./RelayModernRecord'),
+    getType = _require.getType;
+
 var VARIABLE = RelayConcreteNode.VARIABLE,
     LITERAL = RelayConcreteNode.LITERAL,
     OBJECT_VALUE = RelayConcreteNode.OBJECT_VALUE,
     LIST_VALUE = RelayConcreteNode.LIST_VALUE;
 var MODULE_COMPONENT_KEY_PREFIX = '__module_component_';
 var MODULE_OPERATION_KEY_PREFIX = '__module_operation_';
+var REACT_FLIGHT_QUERIES_STORAGE_KEY = 'queries';
+var REACT_FLIGHT_TREE_STORAGE_KEY = 'tree';
+var REACT_FLIGHT_TYPE_NAME = 'ReactFlightComponent';
 
 function getArgumentValue(arg, variables) {
   if (arg.kind === VARIABLE) {
@@ -186,6 +192,25 @@ function getModuleComponentKey(documentName) {
 function getModuleOperationKey(documentName) {
   return "".concat(MODULE_OPERATION_KEY_PREFIX).concat(documentName);
 }
+
+function refineToReactFlightPayloadData(payload) {
+  if (payload == null || typeof payload !== 'object' || !Array.isArray(payload.tree) || !Array.isArray(payload.queries)) {
+    return null;
+  }
+
+  return payload;
+}
+
+function getReactFlightClientResponse(record) {
+  !(getType(record) === REACT_FLIGHT_TYPE_NAME) ? process.env.NODE_ENV !== "production" ? invariant(false, 'getReactFlightClientResponse(): Expected a ReactFlightComponentRecord, ' + 'got %s.', record) : invariant(false) : void 0;
+  var response = record[REACT_FLIGHT_TREE_STORAGE_KEY];
+
+  if (response != null) {
+    return response;
+  }
+
+  return null;
+}
 /**
  * Constants shared by all implementations of RecordSource/MutableRecordSource/etc.
  */
@@ -205,6 +230,12 @@ var RelayStoreUtils = {
   TYPENAME_KEY: '__typename',
   INVALIDATED_AT_KEY: '__invalidated_at',
   IS_WITHIN_UNMATCHED_TYPE_REFINEMENT: '__isWithinUnmatchedTypeRefinement',
+  // ReactFlight constants and utilities
+  REACT_FLIGHT_QUERIES_STORAGE_KEY: REACT_FLIGHT_QUERIES_STORAGE_KEY,
+  REACT_FLIGHT_TREE_STORAGE_KEY: REACT_FLIGHT_TREE_STORAGE_KEY,
+  REACT_FLIGHT_TYPE_NAME: REACT_FLIGHT_TYPE_NAME,
+  getReactFlightClientResponse: getReactFlightClientResponse,
+  refineToReactFlightPayloadData: refineToReactFlightPayloadData,
   formatStorageKey: formatStorageKey,
   getArgumentValue: getArgumentValue,
   getArgumentValues: getArgumentValues,

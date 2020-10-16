@@ -30,11 +30,8 @@ var getOperation = require('../util/getOperation');
 
 var invariant = require("fbjs/lib/invariant");
 
-var _require = require('./ReactFlight'),
-    REACT_FLIGHT_QUERIES_STORAGE_KEY = _require.REACT_FLIGHT_QUERIES_STORAGE_KEY;
-
-var _require2 = require('./TypeID'),
-    generateTypeID = _require2.generateTypeID;
+var _require = require('./TypeID'),
+    generateTypeID = _require.generateTypeID;
 
 var CONDITION = RelayConcreteNode.CONDITION,
     CLIENT_EXTENSION = RelayConcreteNode.CLIENT_EXTENSION,
@@ -145,6 +142,7 @@ var RelayReferenceMarker = /*#__PURE__*/function () {
           }
 
           break;
+        // $FlowFixMe[incompatible-type]
 
         case FRAGMENT_SPREAD:
           !false ? process.env.NODE_ENV !== "production" ? invariant(false, 'RelayReferenceMarker(): Unexpected fragment spread `...%s`, ' + 'expected all fragments to be inlined.', selection.name) : invariant(false) : void 0;
@@ -286,7 +284,7 @@ var RelayReferenceMarker = /*#__PURE__*/function () {
       return;
     }
 
-    var reachableQueries = RelayModernRecord.getValue(reactFlightClientResponseRecord, REACT_FLIGHT_QUERIES_STORAGE_KEY);
+    var reachableQueries = RelayModernRecord.getValue(reactFlightClientResponseRecord, RelayStoreUtils.REACT_FLIGHT_QUERIES_STORAGE_KEY);
 
     if (!Array.isArray(reachableQueries)) {
       return;

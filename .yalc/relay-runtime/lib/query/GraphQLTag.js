@@ -21,7 +21,7 @@ var warning = require("fbjs/lib/warning");
  * All calls to this function should be transformed by the plugin.
  */
 function graphql(strings) {
-  !false ? process.env.NODE_ENV !== "production" ? invariant(false, 'graphql: Unexpected invocation at runtime. Either the Babel transform ' + 'was not set up, or it failed to identify this call site. Make sure it ' + 'is being used verbatim as `graphql`.') : invariant(false) : void 0;
+  !false ? process.env.NODE_ENV !== "production" ? invariant(false, 'graphql: Unexpected invocation at runtime. Either the Babel transform ' + 'was not set up, or it failed to identify this call site. Make sure it ' + 'is being used verbatim as `graphql`. Note also that there cannot be ' + 'a space between graphql and the backtick that follows.') : invariant(false) : void 0;
 }
 
 function getNode(taggedNode) {
@@ -100,6 +100,7 @@ function getInlineDataFragment(taggedNode) {
 
 module.exports = {
   getFragment: getFragment,
+  getNode: getNode,
   getPaginationFragment: getPaginationFragment,
   getRefetchableFragment: getRefetchableFragment,
   getRequest: getRequest,

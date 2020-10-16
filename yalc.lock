@@ -2,7 +2,7 @@
   "version": "v1",
   "packages": {
     "relay-runtime": {
-      "signature": "4b7720bf298b46b3acf98e19ea7fbb27",
+      "signature": "88a5f5ed72851369b64a984de0c56142",
       "file": true,
       "replaced": "^10.0.1"
     }

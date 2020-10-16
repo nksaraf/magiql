@@ -31,7 +31,6 @@ const {
   SCALAR_FIELD,
   STREAM,
 } = require('../util/RelayConcreteNode');
-const {getReactFlightClientResponse} = require('./ReactFlight');
 const {
   FRAGMENTS_KEY,
   FRAGMENT_OWNER_KEY,
@@ -45,6 +44,7 @@ const {
   getArgumentValues,
   getStorageKey,
   getModuleComponentKey,
+  getReactFlightClientResponse,
 } = require('./RelayStoreUtils');
 const {generateTypeID} = require('./TypeID');
 
@@ -201,6 +201,12 @@ class RelayReader {
     action: 'LOG' | 'THROW',
     record: Record,
   ) {
+    if (this._missingRequiredFields?.action === 'THROW') {
+      // Chained @requried directives may cause a parent `@required(action:
+      // THROW)` field to become null, so the first missing field we
+      // encounter is likely to be the root cause of the error.
+      return;
+    }
     const owner = this._selector.node.name;
 
     switch (action) {
@@ -208,9 +214,6 @@ class RelayReader {
         this._missingRequiredFields = {action, field: {path: fieldPath, owner}};
         return;
       case 'LOG':
-        if (this._missingRequiredFields?.action === 'THROW') {
-          return;
-        }
         if (this._missingRequiredFields == null) {
           this._missingRequiredFields = {action, fields: []};
         }

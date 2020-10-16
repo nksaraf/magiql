@@ -17,6 +17,16 @@ function reportMissingRequiredFields(environment, missingRequiredFields) {
         var _missingRequiredField = missingRequiredFields.field,
             path = _missingRequiredField.path,
             owner = _missingRequiredField.owner;
+
+        if (environment.requiredFieldLogger != null) {
+          // This gives the consumer the chance to throw their own error if they so wish.
+          environment.requiredFieldLogger({
+            kind: 'missing_field.throw',
+            owner: owner,
+            fieldPath: path
+          });
+        }
+
         throw new Error("Relay: Missing @required value at path '".concat(path, "' in '").concat(owner, "'."));
       }
 
@@ -30,6 +40,14 @@ function reportMissingRequiredFields(environment, missingRequiredFields) {
           owner: owner,
           fieldPath: path
         });
+
+        if (environment.requiredFieldLogger != null) {
+          environment.requiredFieldLogger({
+            kind: 'missing_field.log',
+            owner: owner,
+            fieldPath: path
+          });
+        }
       });
       break;
 

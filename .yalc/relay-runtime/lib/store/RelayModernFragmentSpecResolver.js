@@ -228,10 +228,6 @@ var SelectorResolver = /*#__PURE__*/function () {
   };
 
   _proto2.resolve = function resolve() {
-    if (this._missingRequiredFields != null) {
-      reportMissingRequiredFields(this._environment, this._missingRequiredFields);
-    }
-
     if (RelayFeatureFlags.ENABLE_RELAY_CONTAINERS_SUSPENSE === true && this._isMissingData === true) {
       var _getPromiseForActiveR;
 
@@ -262,6 +258,10 @@ var SelectorResolver = /*#__PURE__*/function () {
         process.env.NODE_ENV !== "production" ? warning(false, 'Relay: Relay Container for fragment `%s` suspended. When using ' + 'features such as @defer or @module, use `useFragment` instead ' + 'of a Relay Container.', this._selector.node.name) : void 0;
         throw promise;
       }
+    }
+
+    if (this._missingRequiredFields != null) {
+      reportMissingRequiredFields(this._environment, this._missingRequiredFields);
     }
 
     return this._data;
@@ -296,7 +296,7 @@ var SelectorResolver = /*#__PURE__*/function () {
     } // NOTE: We manually create the request descriptor here instead of
     // calling createOperationDescriptor() because we want to set a
     // descriptor with *unaltered* variables as the fragment owner.
-    // This is a hack that allows us to preserve exisiting (broken)
+    // This is a hack that allows us to preserve existing (broken)
     // behavior of RelayModern containers while using fragment ownership
     // to propagate variables instead of Context.
     // For more details, see the summary of D13999308

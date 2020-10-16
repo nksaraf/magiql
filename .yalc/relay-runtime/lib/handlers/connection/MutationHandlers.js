@@ -41,11 +41,55 @@ var DeleteRecordHandler = {
     }
   }
 };
+var DeleteEdgeHandler = {
+  update: function update(store, payload) {
+    var record = store.get(payload.dataID);
+
+    if (record == null) {
+      return;
+    }
+
+    var connections = payload.handleArgs.connections;
+    !(connections != null) ? process.env.NODE_ENV !== "production" ? invariant(false, 'MutationHandlers: Expected connection IDs to be specified.') : invariant(false) : void 0;
+    var idOrIds = record.getValue(payload.fieldKey);
+    var idList = Array.isArray(idOrIds) ? idOrIds : [idOrIds];
+    idList.forEach(function (id) {
+      if (typeof id === 'string') {
+        var _iterator = _createForOfIteratorHelper(connections),
+            _step;
+
+        try {
+          for (_iterator.s(); !(_step = _iterator.n()).done;) {
+            var connectionID = _step.value;
+            var connection = store.get(connectionID);
+
+            if (connection == null) {
+              process.env.NODE_ENV !== "production" ? warning(false, "[Relay][Mutation] The connection with id '".concat(connectionID, "' doesn't exist.")) : void 0;
+              continue;
+            }
+
+            ConnectionHandler.deleteNode(connection, id);
+          }
+        } catch (err) {
+          _iterator.e(err);
+        } finally {
+          _iterator.f();
+        }
+      }
+    });
+  }
+};
 var AppendEdgeHandler = {
   update: edgeUpdater(ConnectionHandler.insertEdgeAfter)
 };
 var PrependEdgeHandler = {
   update: edgeUpdater(ConnectionHandler.insertEdgeBefore)
+};
+var AppendNodeHandler = {
+  update: nodeUpdater(ConnectionHandler.insertEdgeAfter)
+};
+var PrependNodeHandler = {
+  update: nodeUpdater(ConnectionHandler.insertEdgeBefore)
 };
 
 function edgeUpdater(insertFn) {
@@ -60,12 +104,12 @@ function edgeUpdater(insertFn) {
     !(connections != null) ? process.env.NODE_ENV !== "production" ? invariant(false, 'MutationHandlers: Expected connection IDs to be specified.') : invariant(false) : void 0;
     var serverEdge = record.getLinkedRecord(payload.fieldKey, payload.args);
 
-    var _iterator = _createForOfIteratorHelper(connections),
-        _step;
+    var _iterator2 = _createForOfIteratorHelper(connections),
+        _step2;
 
     try {
-      for (_iterator.s(); !(_step = _iterator.n()).done;) {
-        var connectionID = _step.value;
+      for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+        var connectionID = _step2.value;
         var connection = store.get(connectionID);
 
         if (connection == null) {
@@ -78,9 +122,82 @@ function edgeUpdater(insertFn) {
         insertFn(connection, clientEdge);
       }
     } catch (err) {
-      _iterator.e(err);
+      _iterator2.e(err);
     } finally {
-      _iterator.f();
+      _iterator2.f();
+    }
+  };
+}
+
+function nodeUpdater(insertFn) {
+  return function (store, payload) {
+    var _serverNodes;
+
+    var record = store.get(payload.dataID);
+
+    if (record == null) {
+      return;
+    }
+
+    var _payload$handleArgs = payload.handleArgs,
+        connections = _payload$handleArgs.connections,
+        edgeTypeName = _payload$handleArgs.edgeTypeName;
+    !(connections != null) ? process.env.NODE_ENV !== "production" ? invariant(false, 'MutationHandlers: Expected connection IDs to be specified.') : invariant(false) : void 0;
+    !(edgeTypeName != null) ? process.env.NODE_ENV !== "production" ? invariant(false, 'MutationHandlers: Expected edge typename to be specified.') : invariant(false) : void 0;
+    var singleServerNode;
+    var serverNodes;
+
+    try {
+      singleServerNode = record.getLinkedRecord(payload.fieldKey, payload.args);
+    } catch (_unused) {}
+
+    if (!singleServerNode) {
+      try {
+        serverNodes = record.getLinkedRecords(payload.fieldKey, payload.args);
+      } catch (_unused2) {}
+    }
+
+    !(singleServerNode != null || serverNodes != null) ? process.env.NODE_ENV !== "production" ? invariant(false, 'MutationHandlers: Expected target node to exist.') : invariant(false) : void 0;
+    var serverNodeList = (_serverNodes = serverNodes) !== null && _serverNodes !== void 0 ? _serverNodes : [singleServerNode];
+
+    var _iterator3 = _createForOfIteratorHelper(serverNodeList),
+        _step3;
+
+    try {
+      for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+        var serverNode = _step3.value;
+
+        if (serverNode == null) {
+          continue;
+        }
+
+        var _iterator4 = _createForOfIteratorHelper(connections),
+            _step4;
+
+        try {
+          for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
+            var connectionID = _step4.value;
+            var connection = store.get(connectionID);
+
+            if (connection == null) {
+              process.env.NODE_ENV !== "production" ? warning(false, "[Relay][Mutation] The connection with id '".concat(connectionID, "' doesn't exist.")) : void 0;
+              continue;
+            }
+
+            var clientEdge = ConnectionHandler.createEdge(store, connection, serverNode, edgeTypeName);
+            !(clientEdge != null) ? process.env.NODE_ENV !== "production" ? invariant(false, 'MutationHandlers: Failed to build the edge.') : invariant(false) : void 0;
+            insertFn(connection, clientEdge);
+          }
+        } catch (err) {
+          _iterator4.e(err);
+        } finally {
+          _iterator4.f();
+        }
+      }
+    } catch (err) {
+      _iterator3.e(err);
+    } finally {
+      _iterator3.f();
     }
   };
 }
@@ -88,5 +205,8 @@ function edgeUpdater(insertFn) {
 module.exports = {
   AppendEdgeHandler: AppendEdgeHandler,
   DeleteRecordHandler: DeleteRecordHandler,
-  PrependEdgeHandler: PrependEdgeHandler
+  PrependEdgeHandler: PrependEdgeHandler,
+  AppendNodeHandler: AppendNodeHandler,
+  PrependNodeHandler: PrependNodeHandler,
+  DeleteEdgeHandler: DeleteEdgeHandler
 };

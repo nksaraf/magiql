@@ -30,25 +30,23 @@ var _require = require('../util/RelayConcreteNode'),
     SCALAR_FIELD = _require.SCALAR_FIELD,
     STREAM = _require.STREAM;
 
-var _require2 = require('./ReactFlight'),
+var _require2 = require('./RelayStoreUtils'),
+    FRAGMENTS_KEY = _require2.FRAGMENTS_KEY,
+    FRAGMENT_OWNER_KEY = _require2.FRAGMENT_OWNER_KEY,
+    FRAGMENT_PROP_NAME_KEY = _require2.FRAGMENT_PROP_NAME_KEY,
+    REF_KEY = _require2.REF_KEY,
+    REFS_KEY = _require2.REFS_KEY,
+    ID_KEY = _require2.ID_KEY,
+    IS_WITHIN_UNMATCHED_TYPE_REFINEMENT = _require2.IS_WITHIN_UNMATCHED_TYPE_REFINEMENT,
+    MODULE_COMPONENT_KEY = _require2.MODULE_COMPONENT_KEY,
+    ROOT_ID = _require2.ROOT_ID,
+    getArgumentValues = _require2.getArgumentValues,
+    getStorageKey = _require2.getStorageKey,
+    getModuleComponentKey = _require2.getModuleComponentKey,
     getReactFlightClientResponse = _require2.getReactFlightClientResponse;
 
-var _require3 = require('./RelayStoreUtils'),
-    FRAGMENTS_KEY = _require3.FRAGMENTS_KEY,
-    FRAGMENT_OWNER_KEY = _require3.FRAGMENT_OWNER_KEY,
-    FRAGMENT_PROP_NAME_KEY = _require3.FRAGMENT_PROP_NAME_KEY,
-    REF_KEY = _require3.REF_KEY,
-    REFS_KEY = _require3.REFS_KEY,
-    ID_KEY = _require3.ID_KEY,
-    IS_WITHIN_UNMATCHED_TYPE_REFINEMENT = _require3.IS_WITHIN_UNMATCHED_TYPE_REFINEMENT,
-    MODULE_COMPONENT_KEY = _require3.MODULE_COMPONENT_KEY,
-    ROOT_ID = _require3.ROOT_ID,
-    getArgumentValues = _require3.getArgumentValues,
-    getStorageKey = _require3.getStorageKey,
-    getModuleComponentKey = _require3.getModuleComponentKey;
-
-var _require4 = require('./TypeID'),
-    generateTypeID = _require4.generateTypeID;
+var _require3 = require('./TypeID'),
+    generateTypeID = _require3.generateTypeID;
 
 function read(recordSource, selector) {
   var reader = new RelayReader(recordSource, selector);
@@ -165,6 +163,13 @@ var RelayReader = /*#__PURE__*/function () {
   _proto._maybeReportUnexpectedNull = function _maybeReportUnexpectedNull(fieldPath, action, record) {
     var _this$_missingRequire;
 
+    if (((_this$_missingRequire = this._missingRequiredFields) === null || _this$_missingRequire === void 0 ? void 0 : _this$_missingRequire.action) === 'THROW') {
+      // Chained @requried directives may cause a parent `@required(action:
+      // THROW)` field to become null, so the first missing field we
+      // encounter is likely to be the root cause of the error.
+      return;
+    }
+
     var owner = this._selector.node.name;
 
     switch (action) {
@@ -179,10 +184,6 @@ var RelayReader = /*#__PURE__*/function () {
         return;
 
       case 'LOG':
-        if (((_this$_missingRequire = this._missingRequiredFields) === null || _this$_missingRequire === void 0 ? void 0 : _this$_missingRequire.action) === 'THROW') {
-          return;
-        }
-
         if (this._missingRequiredFields == null) {
           this._missingRequiredFields = {
             action: action,

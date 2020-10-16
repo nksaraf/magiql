@@ -397,17 +397,17 @@ var Executor = /*#__PURE__*/function () {
         nonIncrementalResponses = _partitionGraphQLResp[0],
         incrementalResponses = _partitionGraphQLResp[1]; // In theory this doesn't preserve the ordering of the batch.
     // The idea is that a batch is always:
-    //  * at-most one non-incremental payload
-    //  * followed zero or more incremental payloads
+    //  * at most one non-incremental payload
+    //  * followed by zero or more incremental payloads
     // The non-incremental payload can appear if the server sends a batch
-    // w the initial payload followed by some early-to-resolve incremental
+    // with the initial payload followed by some early-to-resolve incremental
     // payloads (although, can that even happen?)
 
 
     if (nonIncrementalResponses.length > 0) {
-      var payloadFollowups = this._processResponses(nonIncrementalResponses); // Please note, that we're passing `this._operation` to the publish
+      var payloadFollowups = this._processResponses(nonIncrementalResponses); // Please note that we're passing `this._operation` to the publish
       // queue here, which will later passed to the store (via notify)
-      // to indicate that this is an operation that cause the store to update
+      // to indicate that this is an operation that caused the store to update
 
 
       var updatedOwners = this._publishQueue.run(this._operation);

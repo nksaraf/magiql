@@ -50,28 +50,26 @@ var _require2 = require('./ClientID'),
     generateClientID = _require2.generateClientID,
     isClientID = _require2.isClientID;
 
-var _require3 = require('./ReactFlight'),
-    REACT_FLIGHT_QUERIES_STORAGE_KEY = _require3.REACT_FLIGHT_QUERIES_STORAGE_KEY,
-    REACT_FLIGHT_TREE_STORAGE_KEY = _require3.REACT_FLIGHT_TREE_STORAGE_KEY,
-    REACT_FLIGHT_TYPE_NAME = _require3.REACT_FLIGHT_TYPE_NAME,
-    refineToReactFlightPayloadData = _require3.refineToReactFlightPayloadData;
+var _require3 = require('./RelayModernSelector'),
+    createNormalizationSelector = _require3.createNormalizationSelector;
 
-var _require4 = require('./RelayModernSelector'),
-    createNormalizationSelector = _require4.createNormalizationSelector;
+var _require4 = require('./RelayStoreUtils'),
+    getArgumentValues = _require4.getArgumentValues,
+    getHandleStorageKey = _require4.getHandleStorageKey,
+    getModuleComponentKey = _require4.getModuleComponentKey,
+    getModuleOperationKey = _require4.getModuleOperationKey,
+    getStorageKey = _require4.getStorageKey,
+    refineToReactFlightPayloadData = _require4.refineToReactFlightPayloadData,
+    TYPENAME_KEY = _require4.TYPENAME_KEY,
+    ROOT_ID = _require4.ROOT_ID,
+    ROOT_TYPE = _require4.ROOT_TYPE,
+    REACT_FLIGHT_QUERIES_STORAGE_KEY = _require4.REACT_FLIGHT_QUERIES_STORAGE_KEY,
+    REACT_FLIGHT_TREE_STORAGE_KEY = _require4.REACT_FLIGHT_TREE_STORAGE_KEY,
+    REACT_FLIGHT_TYPE_NAME = _require4.REACT_FLIGHT_TYPE_NAME;
 
-var _require5 = require('./RelayStoreUtils'),
-    getArgumentValues = _require5.getArgumentValues,
-    getHandleStorageKey = _require5.getHandleStorageKey,
-    getModuleComponentKey = _require5.getModuleComponentKey,
-    getModuleOperationKey = _require5.getModuleOperationKey,
-    getStorageKey = _require5.getStorageKey,
-    TYPENAME_KEY = _require5.TYPENAME_KEY,
-    ROOT_ID = _require5.ROOT_ID,
-    ROOT_TYPE = _require5.ROOT_TYPE;
-
-var _require6 = require('./TypeID'),
-    generateTypeID = _require6.generateTypeID,
-    TYPE_SCHEMA_TYPE = _require6.TYPE_SCHEMA_TYPE;
+var _require5 = require('./TypeID'),
+    generateTypeID = _require5.generateTypeID,
+    TYPE_SCHEMA_TYPE = _require5.TYPE_SCHEMA_TYPE;
 
 /**
  * Normalizes the results of a query and standard GraphQL response, writing the

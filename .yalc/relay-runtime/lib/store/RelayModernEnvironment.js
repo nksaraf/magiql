@@ -62,6 +62,7 @@ var RelayModernEnvironment = /*#__PURE__*/function () {
     }
 
     this.__log = (_config$log = config.log) !== null && _config$log !== void 0 ? _config$log : emptyFunction;
+    this.requiredFieldLogger = config.requiredFieldLogger;
     this._defaultRenderPolicy = ((_config$UNSTABLE_defa = config.UNSTABLE_defaultRenderPolicy) !== null && _config$UNSTABLE_defa !== void 0 ? _config$UNSTABLE_defa : RelayFeatureFlags.ENABLE_PARTIAL_RENDERING_DEFAULT === true) ? 'partial' : 'full';
     this._operationLoader = operationLoader;
     this._operationExecutions = new Map();
