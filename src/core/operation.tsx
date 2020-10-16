@@ -1,3 +1,4 @@
+// https://github.com/facebook/relay/blob/7c67b4750592e469d499128108fe16afe2adaf51/packages/relay-runtime/store/RelayModernSelector.js
 import type { ConcreteRequest, ReaderFragment } from "relay-runtime";
 import {
   getRequest as baseGetRequest,
@@ -12,27 +13,29 @@ import type {
   GraphQLTaggedNode,
   FetchOptions,
 } from "./types";
-import { parseRequest, parseFragment } from "./parser";
+import { parseGraphQLTag } from "./parser";
 
 export const getRequest = (
   taggedNode: GraphQLTaggedNode | string
 ): ConcreteRequest => {
   if (typeof taggedNode === "string") {
-    return parseRequest(taggedNode);
+    return parseGraphQLTag(taggedNode) as ConcreteRequest;
   }
 
+  // resolves the node from the require call for artifacts from relay-compiler, otherwise returns
   const request = baseGetRequest(taggedNode);
+
+  // Previously parsed by magiql
   if (
     typeof request === "object" &&
     request.params.metadata?.parser === "graphql"
   ) {
     return request as ConcreteRequest;
-  } else {
+  }
+  // Parsed by relay (require call for artifact from relay-compiler)
+  else {
     (request.params as any).text = (request as any).query;
-    (request.params as any).metadata = {
-      ...(request.params as any).metadata,
-      parser: "relay",
-    };
+    (request.params as any).metadata.parser = "relay";
     return request;
   }
 };
@@ -41,7 +44,7 @@ export const getFragment = (
   taggedNode: GraphQLTaggedNode | string
 ): ReaderFragment | null => {
   return typeof taggedNode === "string"
-    ? parseFragment(taggedNode)
+    ? (parseGraphQLTag(taggedNode) as ReaderFragment)
     : baseGetFragment(taggedNode);
 };
 

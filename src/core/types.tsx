@@ -157,6 +157,7 @@ export interface Normalizer {
     data: Response<TQuery>,
     operation: Operation<TQuery>
   ) => { [key: string]: object };
+  getDataID: GetDataID;
 }
 
 export interface Store {

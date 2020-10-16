@@ -12,7 +12,7 @@ import { QueryCache } from "react-query";
 
 import { createOperation } from "./operation";
 import { createQueryCacheStore } from "./store/cacheStore";
-import type {
+import {
   Operation,
   QueryKey,
   InfiniteQueryKey,
@@ -25,6 +25,7 @@ import type {
   DebugEvent,
   GraphQLTaggedNode,
   Normalizer,
+  constants,
 } from "./types";
 import { createNormalizer } from "./normalizer";
 import type { GraphQLSubscriptionClient } from "./subscriptionClient";
@@ -110,6 +111,14 @@ export class GraphQLClient {
     } = { variables: {} }
   ) {
     return createOperation(node, options) as Operation<TQuery>;
+  }
+
+  createFragmentRef(record, type, fragmentName) {
+    return {
+      [constants.ID_KEY]: this.normalizer.getDataID(record, type),
+      [constants.FRAGMENTS_KEY]: { [fragmentName]: {} },
+      [constants.FRAGMENT_OWNER_KEY]: { variables: {} },
+    };
   }
 
   buildSubscription<TQuery extends Query>(

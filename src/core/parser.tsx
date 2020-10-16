@@ -1,16 +1,15 @@
 // Piggybacking off relay-runtime here
+// https://github.com/facebook/relay/blob/7c67b4750592e469d499128108fe16afe2adaf51/packages/relay-runtime/store/RelayModernSelector.js
 import type {
   ReaderFragment,
   NormalizationOperation,
   NormalizationField,
   NormalizationScalarField,
   NormalizationSelection,
+  ConcreteRequest,
 } from "relay-runtime";
 
-
-import {
-  constants,
-} from "./types";
+import { constants } from "./types";
 
 import { parse } from "graphql/language/parser";
 import { print } from "graphql/language/printer";
@@ -26,6 +25,7 @@ import {
   InlineFragmentNode,
   FieldNode,
 } from "graphql";
+import { stableStringify } from "../utils";
 
 const parseSelections = (selectionSet: SelectionSetNode) => {
   const selections: NormalizationSelection[] = selectionSet.selections.map(
@@ -118,7 +118,7 @@ const parseSelections = (selectionSet: SelectionSetNode) => {
   return selections;
 };
 
-const parsedOperation = (
+const parseOperation = (
   op: OperationDefinitionNode
 ): NormalizationOperation => {
   return {
@@ -291,39 +291,90 @@ const flattenFragments = (node: DocumentNode): DocumentNode => {
   return doc;
 };
 
-export const parseRequest = (taggedNode: string) => {
-  const node = parse(taggedNode);
+const memoized = <T extends any[], V>(
+  fn: (...args: T) => V,
+  serialize: (...args: T) => string
+) => {
+  const cache: { [key: string]: V } = {};
+  return (...vars: T) => {
+    const key = serialize(...vars);
+    if (cache[key]) {
+      return cache[key];
+    } else {
+      const val = fn(...vars);
+      if (val) {
+        cache[key] = val;
+      }
+      return val;
+    }
+  };
+};
+
+export const parseGraphQLTag = memoized(
+  (taggedNode: string): ReaderFragment | ConcreteRequest => {
+    try {
+      const node = parse(taggedNode);
+
+      const document = node.definitions.find(
+        (def) =>
+          def.kind === "OperationDefinition" ||
+          def.kind === "FragmentDefinition"
+      ) as OperationDefinitionNode | FragmentDefinitionNode;
+
+      if (!document) {
+        throw new Error(
+          "No GraphQL query/mutation/subscription/fragment found"
+        );
+      }
+      if (document.kind === "FragmentDefinition") {
+        return parseFragment(node, taggedNode);
+      } else {
+        return parseRequest(node, taggedNode);
+      }
+    } catch (e) {
+      console.log("Error parsing GraphQL", e.message, taggedNode);
+    }
+  },
+  (s) => s
+);
+
+export const parseRequest = (
+  node: DocumentNode,
+  taggedNode: string
+): ConcreteRequest => {
   const flatNode = flattenFragments(inlineFragments(node));
   const flatNodeWithTypename = addTypeName(flatNode);
 
-  const document = flatNodeWithTypename.definitions.find(
+  const queryDocument = flatNodeWithTypename.definitions.find(
+    (def) => def.kind === "OperationDefinition"
+  ) as OperationDefinitionNode;
+
+  const fragmentDocument = node.definitions.find(
     (def) => def.kind === "OperationDefinition"
   ) as OperationDefinitionNode;
 
   return {
     kind: "Request",
-    fragment: parsedOperation(
-      node.definitions.find(
-        (def) => def.kind === "OperationDefinition"
-      ) as OperationDefinitionNode
-    ) as ReaderFragment,
-    operation: parsedOperation(document),
+    fragment: parseOperation(fragmentDocument) as ReaderFragment,
+    operation: parseOperation(queryDocument),
+    text: taggedNode,
     params: {
-      operationKind: document.operation,
-      name: document.name.value,
-      id: document.name.value,
+      operationKind: queryDocument.operation,
+      name: queryDocument.name.value,
+      id: queryDocument.name.value,
       cacheID: "",
-      text: print(document),
+      text: print(queryDocument),
       metadata: {
         parser: "graphql",
+        // TODO: parse plural
       },
     },
-  };
+  } as ConcreteRequest;
 };
-
-export const parseFragment = (taggedNode: string) => {
-  const node = parse(taggedNode);
-
+export const parseFragment = (
+  node: DocumentNode,
+  taggedNode: string
+): ReaderFragment => {
   const fragment = node.definitions.find(
     (def) => def.kind === "FragmentDefinition"
   ) as FragmentDefinitionNode;
@@ -336,7 +387,6 @@ export const parseFragment = (taggedNode: string) => {
     selections: parseSelections(fragment.selectionSet),
     type: fragment.typeCondition.name.value,
     abstractKey: null,
+    text: taggedNode,
   } as ReaderFragment;
 };
-
-

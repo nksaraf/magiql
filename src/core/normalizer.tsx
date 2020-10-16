@@ -207,5 +207,6 @@ export function createNormalizer({
 
   return {
     normalizeResponse,
+    getDataID,
   };
 }
