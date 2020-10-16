@@ -88,7 +88,7 @@ export interface Operation<TQuery extends Query> {
   readonly fragment: SingularReaderSelector;
   /** Description of query: text, variables, hash, etc */
   readonly request: RequestDescriptor<Variables<TQuery>>;
-  readonly root?: NormalizationSelector;
+  readonly root: NormalizationSelector;
   readonly response: Response<TQuery>;
 }
 
@@ -97,7 +97,7 @@ export interface FetchRequestOptions extends Omit<RequestInit, "body"> {
 }
 
 export interface FetchOperation<TVariables> {
-  query: string | GraphQLTaggedNode;
+  query: string | ConcreteRequest;
   operationName?: string;
   operationKind?: OperationKind;
   variables?: TVariables;
@@ -113,9 +113,11 @@ export type FetchOptions<TVariables> =
   | FetchOptionsFn<TVariables>
   | FetchRequestOptions;
 
+export type TODO = any;
 export interface FetchResult<TQuery extends Query> {
   data?: Response<TQuery>;
   error?: CombinedError;
+  errors?: TODO[];
   extensions?: any;
 }
 

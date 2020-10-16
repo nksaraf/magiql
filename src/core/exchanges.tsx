@@ -94,7 +94,7 @@ export async function createFetchOperation<TQuery extends Query>(
   client: GraphQLClient
 ): Promise<FetchOperation<Variables<TQuery>>> {
   const fetchOperation = {
-    query: operation.request.node,
+    query: operation.request.node.params.text,
     operationName: operation.request.node.params.name,
     operationKind: operation.request.node.params.operationKind as OperationKind,
     variables: operation.request.variables,
@@ -107,7 +107,7 @@ export async function createFetchOperation<TQuery extends Query>(
   );
 
   const operationFetchOptions = await resolveFetchOptions(
-    operation.request.fetchOptions ?? {},
+    operation.request.node.params.metadata.fetchOptions ?? {},
     fetchOperation
   );
 

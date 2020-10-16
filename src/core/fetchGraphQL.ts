@@ -1,7 +1,6 @@
 import fetch from "isomorphic-unfetch";
 
 import { CombinedError } from "./error";
-import { getRequest } from "./operation";
 import type {
   FetchOperation,
   FetchOptions,
@@ -39,6 +38,7 @@ export const makeResult = <TQuery extends Query>(
         response,
       })
     : undefined,
+  errors: [...(result.errors ?? [])],
   extensions:
     (typeof result.extensions === "object" && result.extensions) || undefined,
 });
@@ -52,6 +52,7 @@ export const makeErrorResult = <TQuery extends Query>(
     networkError: error,
     response,
   }),
+  errors: [error],
   extensions: undefined,
 });
 
@@ -67,7 +68,8 @@ export async function fetchGraphQL<TQuery extends Query>({
     throw new Error("Query not found");
   }
 
-  const query: string = getRequest(rawQuery).params.text!;
+  const query: string =
+    typeof rawQuery === "string" ? rawQuery : rawQuery.params.text!;
 
   const operation = {
     endpoint,

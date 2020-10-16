@@ -7,7 +7,9 @@ import type {
   NormalizationScalarField,
   NormalizationSelection,
   ConcreteRequest,
+  RequestParameters,
 } from "relay-runtime";
+import sum from "hash-sum";
 
 import { constants } from "./types";
 
@@ -16,7 +18,6 @@ import { print } from "graphql/language/printer";
 import { visit } from "graphql/language/visitor";
 
 import {
-  OperationTypeNode,
   OperationDefinitionNode,
   SelectionNode,
   DocumentNode,
@@ -25,7 +26,6 @@ import {
   InlineFragmentNode,
   FieldNode,
 } from "graphql";
-import { stableStringify } from "../utils";
 
 const parseSelections = (selectionSet: SelectionSetNode) => {
   const selections: NormalizationSelection[] = selectionSet.selections.map(
@@ -141,37 +141,58 @@ const parseOperation = (
 };
 
 const addTypeName = (node: DocumentNode): DocumentNode => {
-  const doc = visit(node, {
-    SelectionSet: (node) => {
-      const typeName = node.selections.find(
-        (sel) =>
-          sel.kind === "Field" && sel.name.value === constants.TYPENAME_KEY
-      );
+  const doc = visit(
+    visit(node, {
+      SelectionSet: (node) => {
+        const typeName = node.selections.find(
+          (sel) =>
+            sel.kind === "Field" && sel.name.value === constants.TYPENAME_KEY
+        );
 
-      if (!typeName) {
+        if (!typeName) {
+          return {
+            ...node,
+            selections: [
+              ...node.selections,
+              {
+                arguments: [],
+                selectionSet: null,
+                alias: null,
+                name: {
+                  value: constants.TYPENAME_KEY,
+                  kind: "Name",
+                },
+                kind: "Field",
+              } as SelectionNode,
+            ],
+          };
+        } else {
+          return node;
+        }
+      },
+    }),
+    {
+      OperationDefinition: (node) => {
         return {
           ...node,
-          selections: [
-            ...node.selections,
-            {
-              arguments: [],
-              selectionSet: null,
-              alias: null,
-              name: {
-                value: constants.TYPENAME_KEY,
-                kind: "Name",
-              },
-              kind: "Field",
-            } as SelectionNode,
-          ],
+          selectionSet: {
+            ...node.selectionSet,
+            selections: node.selectionSet.selections.filter(
+              (sel) =>
+                !(sel.kind === "Field" && sel.name.value === "__typename")
+            ),
+          },
         };
-      } else {
-        return node;
-      }
-    },
-  });
+      },
+    }
+  );
 
-  return doc;
+  console.log(doc);
+
+  return {
+    ...doc,
+    // selections: doc.selections.filter((sel) => sel.kind === "Field"),
+  };
 };
 
 const inlineFragments = (node: DocumentNode): DocumentNode => {
@@ -353,6 +374,7 @@ export const parseRequest = (
     (def) => def.kind === "OperationDefinition"
   ) as OperationDefinitionNode;
 
+  const queryText = print(queryDocument);
   return {
     kind: "Request",
     fragment: parseOperation(fragmentDocument) as ReaderFragment,
@@ -361,14 +383,15 @@ export const parseRequest = (
     params: {
       operationKind: queryDocument.operation,
       name: queryDocument.name.value,
-      id: queryDocument.name.value,
-      cacheID: "",
-      text: print(queryDocument),
+      id: null,
+      cacheID: queryDocument.name.value,
+      // cacheID: sum(queryText),
+      text: queryText,
       metadata: {
         parser: "graphql",
         // TODO: parse plural
       },
-    },
+    } as RequestParameters,
   } as ConcreteRequest;
 };
 export const parseFragment = (

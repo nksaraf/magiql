@@ -1,0 +1,10 @@
+{
+  "version": "v1",
+  "packages": {
+    "relay-runtime": {
+      "signature": "4b7720bf298b46b3acf98e19ea7fbb27",
+      "file": true,
+      "replaced": "^10.0.1"
+    }
+  }
+}
