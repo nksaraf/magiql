@@ -3,6 +3,7 @@ import { graphql, useQuery } from "magiql";
 import { Actions, ActionButton, Header } from "../components/ActionButton";
 import { NavBar } from "../components/NavBar";
 import { Person_person, Person } from "../components/Person";
+import Link from "next/link";
 
 export default function People() {
   const { data, status } = useQuery(
@@ -49,7 +50,11 @@ export default function People() {
           <div style={{ flex: 1 }}>
             {data
               ? data.allPeople?.edges?.map((edge) => (
-                  <Person key={edge.node.id} person={edge.node} />
+                  <Link key={edge.node.id} href={`/person/${edge.node.id}`}>
+                    <a>
+                      <Person person={edge.node} />
+                    </a>
+                  </Link>
                 ))
               : null}
           </div>

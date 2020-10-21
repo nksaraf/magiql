@@ -22,6 +22,7 @@ import {
   Store,
   ReaderSelector,
   RecordSource,
+  Snapshot,
 } from "../types";
 import { readFragment, createFieldReader } from "../reader";
 
@@ -101,12 +102,12 @@ function selectorFamily<T, TParam>({
 }
 
 export const recordField = atomFamily<any, { id: string; field: string }>({
-  default: null,
+  default: undefined,
   key: ({ id, field }) => `${id}/${field}`,
 });
 
 export const recordRoot = atomFamily<Set<string> | null, string>({
-  default: null,
+  default: undefined,
   key: (id) => `${id}`,
 });
 
@@ -114,8 +115,8 @@ export const record = selectorFamily<any, string>({
   key: (param) => `record/${param}`,
   get: (param) => ({ get }) => {
     const root = get(recordRoot(param));
-    if (root === null) {
-      return null;
+    if (root === undefined) {
+      return undefined;
     }
 
     const data = {};
@@ -129,7 +130,7 @@ export const record = selectorFamily<any, string>({
   set: (param) => ({ set, get }, recordData) => {
     let oldRoot = get(recordRoot(param));
 
-    if (oldRoot === null) {
+    if (oldRoot === undefined) {
       oldRoot = new Set();
     }
 
@@ -209,13 +210,13 @@ export function createRecoilStore(): () => Store {
   const useSelector = function <TData>(fragment: ReaderSelector) {
     return useRecoilValueLoadable(
       fragmentSelector(fragment as SingularReaderSelector)
-    ).contents as TData;
+    ).contents as Snapshot<TData>;
   };
 
   const useOperation = function <TQuery extends Query>(
     operation: Operation<TQuery>
   ) {
-    return useSelector(operation.fragment);
+    return useSelector<Response<TQuery>>(operation.fragment);
   };
 
   const useOperationPages = function <TQuery extends Query>(
@@ -224,7 +225,7 @@ export function createRecoilStore(): () => Store {
   ) {
     const data = useRecoilValueLoadable(
       fragmentPagesSelector([operation.request.node, pageVariables])
-    ).contents as any;
+    ).contents as Snapshot<Response<TQuery>>[];
 
     return data;
   };
@@ -234,7 +235,7 @@ export function createRecoilStore(): () => Store {
     fragmentRef
   ) {
     const selector = getSelector(fragmentNode, fragmentRef);
-    return useSelector(selector);
+    return useSelector(selector).data as any;
   };
 
   function useEntities() {

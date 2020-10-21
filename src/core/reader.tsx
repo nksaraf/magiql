@@ -17,6 +17,7 @@ import {
   ReaderNode,
   Record,
 } from "./types";
+import { Snapshot } from "./types";
 
 export const createFieldReader = (get): Reader<string> => ({
   readField: (field: ReaderField, variables, dataID) => {
@@ -67,7 +68,10 @@ export function readFragment<TData, TRecord>(
   reader: Reader<TRecord>,
   selector: SingularReaderSelector,
   { onReadField = () => {}, onReadRecord = () => {} }: any = {}
-) {
+): Snapshot<TData> {
+  let isMissingData = false;
+  const seenRecords = new Set();
+
   function createFragmentPointer(
     fragmentSpread: ReaderFragmentSpread,
     record: TRecord,
@@ -99,6 +103,13 @@ export function readFragment<TData, TRecord>(
             selector.variables,
             record
           );
+
+          console.log(record, field, fieldName, value);
+
+          if (value === undefined) {
+            isMissingData = true;
+          }
+
           onReadField(reader.getDataID(record), fieldName);
           data[fieldName] = value;
           break;
@@ -111,15 +122,24 @@ export function readFragment<TData, TRecord>(
             selector.variables,
             record
           );
+
+          console.log(record, field, fieldName, value);
+
           onReadField(reader.getDataID(record), fieldName);
 
-          if (value === null) {
+          if (value == null) {
+            if (value === undefined) {
+              isMissingData = true;
+            }
             data[fieldName] = null;
             break;
           }
           if (field.plural || isRefs(value)) {
             const linkedIDs = value[constants.REFS_KEY];
             if (linkedIDs == null) {
+              if (linkedIDs === undefined) {
+                isMissingData = true;
+              }
               data[fieldName] = null;
               break;
             }
@@ -127,7 +147,7 @@ export function readFragment<TData, TRecord>(
             linkedIDs.forEach((linkedID: string, nextIndex: number) => {
               if (linkedID == null) {
                 if (linkedID === undefined) {
-                  return null;
+                  isMissingData = true;
                 }
                 // $FlowFixMe[cannot-write]
                 linkedArray.push(null);
@@ -171,7 +191,8 @@ export function readFragment<TData, TRecord>(
   }
 
   const { node, dataID } = selector as SingularReaderSelector;
-  return traverse(node, dataID, null) as TData;
+  const data = traverse(node, dataID, null) as TData;
+  return { data, isMissingData };
 }
 
 function isRefs(value) {

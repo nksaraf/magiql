@@ -124,8 +124,6 @@ export interface OperationResult<TQuery extends Query>
   operation: Operation<TQuery>;
 }
 
-export type Snapshot<TData> = TData;
-
 export interface GraphQLVariables<TVariables> {
   variables?: TVariables;
 }
@@ -175,16 +173,21 @@ export interface Store {
   ): $Call<KeyReturnType<TKey>>;
   useOperation<TQuery extends Query>(
     operation: Operation<TQuery>
-  ): Response<TQuery>;
+  ): Snapshot<TQuery>;
   useEntities(): [string, { [key: string]: any }][];
   useOperationPages<TQuery extends Query>(
     operation: Operation<TQuery>,
     pageVariables: any[]
-  ): Response<TQuery>[];
+  ): Snapshot<TQuery>[];
   Provider?: React.FC<{ children: React.ReactNode }>;
 }
 
 export type GetDataID = (record: any, type: any) => string | null;
+
+export interface Snapshot<TData> {
+  data: TData | null;
+  isMissingData: boolean;
+}
 
 export type ExchangeOp = (
   operation: Operation<Query>

@@ -12,7 +12,7 @@ export function createQueryCacheStore() {
   };
 
   const useOperationPages: Store["useOperationPages"] = (operation) => {
-    return useOperation(operation);
+    return useOperation(operation) as any;
   };
 
   const useEntities = () => {

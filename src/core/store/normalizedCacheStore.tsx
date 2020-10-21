@@ -98,7 +98,7 @@ export function createNormalizedQueryCacheStore(
       throw new Error("No selector specified");
     }
     const seenRecords = new Set();
-    const data = readFragment<TData, object>(
+    const snapshot = readFragment<TData, object>(
       reader,
       selector as SingularReaderSelector,
       {
@@ -111,12 +111,12 @@ export function createNormalizedQueryCacheStore(
     // @ts-ignore
     useSubscriptions([...seenRecords.values()]);
 
-    return data;
+    return snapshot;
   }
 
   const {
     useFragment = (fragmentNode, fragmentRef) => {
-      return useSelector(getSelector(fragmentNode, fragmentRef));
+      return useSelector(getSelector(fragmentNode, fragmentRef)).data as any;
     },
     useOperation = (operation) => {
       return useSelector(operation.fragment);
@@ -146,20 +146,18 @@ export function createNormalizedQueryCacheStore(
   ) {
     const seenRecords = new Set();
 
-    const data = pageVariables.map((variables) => {
+    const snapshots = pageVariables.map((variables) => {
       const pageOperation = createOperation(operation.request.node, variables);
 
-      const data = readFragment<any, object>(reader, pageOperation.fragment, {
+      return readFragment<any, object>(reader, pageOperation.fragment, {
         onReadRecord: (dataID) => seenRecords.add(dataID),
       });
-
-      return data;
     });
 
     // @ts-ignore
     useSubscriptions([...seenRecords.values()]);
 
-    return data;
+    return snapshots;
   }
 
   const store = {

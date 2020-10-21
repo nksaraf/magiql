@@ -19,6 +19,12 @@ const client = new GraphQLClient({
       event.data
     );
   },
+  queryConfig: {
+    queries: {
+      refetchOnMount: false,
+      refetchInterval: false,
+    },
+  },
   useStore: createRecoilStore(),
 });
 
