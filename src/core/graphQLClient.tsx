@@ -7,9 +7,10 @@ import {
   composeExchanges,
   fallbackExchange,
   normalizerExchange,
+  relayExchange,
 } from "./exchanges";
 import { QueryCache } from "react-query";
-
+import deepMerge from "deepmerge";
 import { createOperation } from "./operation/operation";
 import { createQueryCacheStore } from "./store/cacheStore";
 import {
@@ -19,22 +20,37 @@ import {
   Query,
   Variables,
   Response,
-  Store,
   FetchOptions,
   Exchange,
   DebugEvent,
   GraphQLTaggedNode,
   Normalizer,
   constants,
+  Store,
+  OperationKind,
 } from "./types";
-import { createNormalizer } from "./store/normalizer";
+import { createNormalizer } from "./normalizer";
 import type { GraphQLSubscriptionClient } from "./subscriptionClient";
+import RelayModernEnvironment from "relay-runtime/lib/store/RelayModernEnvironment";
+import {
+  createFetchOperation,
+  fetchGraphQL,
+  resolveFetchOptions,
+} from "./fetchGraphQL";
+import {
+  Environment,
+  GraphQLResponseWithData,
+  Network,
+  RecordSource,
+  Store as RelayStore,
+} from "relay-runtime";
 
 export interface GraphQLClientOptions {
   endpoint: string;
   fetchOptions: FetchOptions<object>;
   queryConfig: ReactQueryConfig;
   queryCache: QueryCache;
+  environment?: RelayModernEnvironment;
   onDebugEvent: <TQuery extends Query>(event: DebugEvent<TQuery>) => void;
   subscriptionClient: GraphQLSubscriptionClient | undefined;
   useStore: (() => Store) & {
@@ -49,12 +65,13 @@ export function useDefaultExchanges(client: GraphQLClient) {
 
   return [
     storeExchange(store),
-    normalizerExchange,
+    // normalizerExchange,
     errorExchange({
       onError: (error) => {
         throw error;
       },
     }),
+    relayExchange,
     fetchExchange,
   ];
 }
@@ -71,6 +88,7 @@ export class GraphQLClient {
   normalizer: Normalizer;
   private useExchanges: (client: GraphQLClient) => Exchange[];
   subscriptionClient?: GraphQLSubscriptionClient;
+  environment: RelayModernEnvironment;
 
   constructor({
     endpoint = "/graphql",
@@ -92,6 +110,18 @@ export class GraphQLClient {
     this.onDebugEvent = onDebugEvent;
     this.normalizer = normalizer;
     this.subscriptionClient = subscriptionClient;
+    this.environment = new Environment({
+      network: Network.create(async (params, variables) => {
+        const fetchOperation = await createFetchOperation(
+          params,
+          variables,
+          endpoint,
+          fetchOptions
+        );
+        return (await fetchGraphQL(fetchOperation)) as GraphQLResponseWithData;
+      }),
+      store: new RelayStore(new RecordSource()),
+    });
   }
 
   getInfinteQueryKey<TQuery extends Query>(

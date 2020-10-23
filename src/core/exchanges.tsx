@@ -3,19 +3,16 @@
  * https://github.com/FormidableLabs/urql/blob/main/packages/core/src/exchanges
  */
 
-import { fetchGraphQL, resolveFetchOptions } from "./fetchGraphQL";
+import { createFetchOperation, fetchGraphQL, makeResult } from "./fetchGraphQL";
 import type {
-  OperationKind,
   Store,
   Exchange,
   ExchangeInput,
   Operation,
   Query,
-  FetchOperation,
-  Variables,
   CombinedError,
+  FetchResult,
 } from "./types";
-import deepMerge from "deepmerge";
 import type { GraphQLClient } from "./graphQLClient";
 
 export const composeExchanges = (exchanges: Exchange[]) => ({
@@ -61,6 +58,65 @@ export const errorExchange = ({
   return errorExchange;
 };
 
+export const relayExchange: Exchange = function relayExchange({
+  client,
+  forward,
+  dispatchDebug,
+}) {
+  return async function <TQuery extends Query>(operation: Operation<TQuery>) {
+    if (
+      operation.request.node.params.operationKind === "query" ||
+      operation.request.node.params.operationKind === "mutation"
+    ) {
+      const promise = new Promise((resolve, reject) =>
+        client.environment.execute({ operation }).subscribe({
+          next: (response) => {
+            resolve(response);
+          },
+          start: () => {
+            dispatchDebug({
+              type: "fetchRequest",
+              message: "fetching",
+              operation,
+              data: {},
+            });
+          },
+          error: (error) => {
+            resolve(
+              makeResult({
+                data: null,
+                errors: error.source.errors,
+              })
+            );
+          },
+        })
+      );
+
+      const result: FetchResult<TQuery> = await promise;
+
+      const error = !result.data ? result.error : undefined;
+
+      dispatchDebug({
+        type: error ? "fetchError" : "fetchSuccess",
+        message: `${error ? "fetch failed" : "fetch successful"}`,
+        operation,
+        data: {
+          value: error || result,
+        },
+      });
+
+      return {
+        ...result,
+        operation,
+      };
+      //   return await forward(operation);
+    } else {
+      return await forward(operation);
+    }
+  };
+};
+relayExchange.emoji = "🏃";
+
 export const fallbackExchange: Exchange = function fallbackExchange() {
   return async () => {
     throw new Error("operation is not supported");
@@ -89,35 +145,6 @@ export const debugExchange: Exchange = function debugExchange({ forward }) {
   };
 };
 
-export async function createFetchOperation<TQuery extends Query>(
-  operation: Operation<TQuery>,
-  client: GraphQLClient
-): Promise<FetchOperation<Variables<TQuery>>> {
-  const fetchOperation = {
-    query: operation.request.node.params.text,
-    operationName: operation.request.node.params.name,
-    operationKind: operation.request.node.params.operationKind as OperationKind,
-    variables: operation.request.variables,
-    endpoint: client.endpoint,
-  };
-
-  const clientFetchOptions = await resolveFetchOptions(
-    client.fetchOptions ?? {},
-    fetchOperation
-  );
-
-  const operationFetchOptions = await resolveFetchOptions(
-    operation.request.node.params.metadata.fetchOptions ?? {},
-    fetchOperation
-  );
-
-  const fetchOptions = deepMerge(clientFetchOptions, operationFetchOptions);
-  return {
-    fetchOptions,
-    ...fetchOperation,
-  };
-}
-
 export const fetchExchange: Exchange = function fetchExchange({
   forward,
   client,
@@ -128,7 +155,12 @@ export const fetchExchange: Exchange = function fetchExchange({
       operation.request.node.params.operationKind === "query" ||
       operation.request.node.params.operationKind === "mutation"
     ) {
-      const fetchOperation = await createFetchOperation(operation, client);
+      const fetchOperation = await createFetchOperation(
+        operation.request.node.params,
+        operation.request.variables,
+        client.endpoint,
+        client.fetchOptions
+      );
 
       dispatchDebug({
         type: "fetchRequest",

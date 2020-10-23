@@ -36,3 +36,22 @@ export function createQueryCacheStore() {
 
   return useStore;
 }
+
+class CacheStore implements Store {
+  type = "unnormalized" as const;
+  useFragment = (_, fragmentRef) => fragmentRef;
+  useOperation(operation) {
+    const client = useGraphQLClient();
+    const queryKey = client.getQueryKey(operation);
+    return client.cache.getQueryData(queryKey);
+  }
+
+  // updateRecord = {}
+  // update: (data) => {} = {}
+  // get: throwError() = {}
+  // useEntities = {}
+  // type: "unnormalized" = {}
+  useOperationPages(operation, pageVariables) {
+    return this.useOperation(operation);
+  }
+}

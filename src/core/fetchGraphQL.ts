@@ -2,9 +2,11 @@ import fetch from "isomorphic-unfetch";
 
 import { CombinedError } from "./error";
 import type {
+  ConcreteRequest,
   FetchOperation,
   FetchOptions,
   FetchResult,
+  OperationKind,
   Query,
   Response,
   Variables,
@@ -38,7 +40,7 @@ export const makeResult = <TQuery extends Query>(
         response,
       })
     : undefined,
-  errors: [...(result.errors ?? [])],
+  errors: result.errors ?? null,
   extensions:
     (typeof result.extensions === "object" && result.extensions) || undefined,
 });
@@ -119,3 +121,37 @@ export async function fetchGraphQL<TQuery extends Query>({
 }
 
 export type FetchGraphql = typeof fetchGraphQL;
+
+import deepMerge from "deepmerge";
+import { RequestParameters } from "relay-runtime";
+
+export async function createFetchOperation<TQuery extends Query>(
+  params: RequestParameters,
+  variables: Variables<TQuery>,
+  endpoint: string,
+  basefetchOptions: FetchOptions<TQuery>
+): Promise<FetchOperation<Variables<TQuery>>> {
+  const fetchOperation = {
+    query: params.text,
+    operationName: params.name,
+    operationKind: params.operationKind as OperationKind,
+    variables: variables,
+    endpoint: endpoint,
+  };
+
+  const clientFetchOptions = await resolveFetchOptions(
+    basefetchOptions ?? {},
+    fetchOperation
+  );
+
+  const operationFetchOptions = await resolveFetchOptions(
+    params.metadata.fetchOptions ?? {},
+    fetchOperation
+  );
+
+  const fetchOptions = deepMerge(clientFetchOptions, operationFetchOptions);
+  return {
+    fetchOptions,
+    ...fetchOperation,
+  };
+}
