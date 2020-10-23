@@ -12,6 +12,7 @@ import {
 import { QueryCache } from "react-query";
 import deepMerge from "deepmerge";
 import { createOperation } from "./operation/operation";
+
 import { createQueryCacheStore } from "./store/cacheStore";
 import {
   Operation,
@@ -29,7 +30,8 @@ import {
   Store,
   OperationKind,
 } from "./types";
-import { createNormalizer } from "./normalizer";
+
+import { createNormalizer } from "./store/normalizer";
 import type { GraphQLSubscriptionClient } from "./subscriptionClient";
 import RelayModernEnvironment from "relay-runtime/lib/store/RelayModernEnvironment";
 import {

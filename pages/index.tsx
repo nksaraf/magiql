@@ -36,16 +36,6 @@ export default function People() {
     }
   );
 
-  React.useEffect(() => {
-    environment.execute({ operation }).subscribe({
-      next: () => {
-        console.log(environment.lookup(operation.fragment));
-      },
-    });
-  }, [environment]);
-
-  console.log(operation);
-
   return (
     <>
       <NavBar />
