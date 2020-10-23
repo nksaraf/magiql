@@ -1,57 +1,33 @@
 import { useGraphQLClient } from "../../hooks/useGraphQLClient";
 import { throwError } from "../../utils";
-import { Store } from "../types";
+import { Store, UseOperation } from "../types";
 
-export function createQueryCacheStore() {
-  const useFragment = (_, fragmentRef) => fragmentRef;
+export const createStore = (store: Store) => {
+  return store;
+};
 
-  const useOperation: Store["useOperation"] = (operation) => {
+export function createQueryCacheStore(): Store {
+  const useOperation: UseOperation = (operation) => {
     const client = useGraphQLClient();
     const queryKey = client.getQueryKey(operation);
-    return client.cache.getQueryData(queryKey);
+    const data = client.cache.getQueryData(queryKey);
+    return { data, isMissingData: data ? true : false };
   };
 
-  const useOperationPages: Store["useOperationPages"] = (operation) => {
-    return useOperation(operation);
-  };
-
-  const useEntities = () => {
-    return [];
-  };
-
-  const store: Store = {
-    useFragment,
+  const store = createStore({
+    useFragment: (_, fragmentRef) => fragmentRef as any,
     useOperation,
     updateRecord: throwError(),
     update: (data) => {},
     get: throwError(),
-    useEntities,
+    useRecords: () => {
+      return [];
+    },
     type: "unnormalized",
-    useOperationPages,
-  };
+    useOperationPages: (operation) => {
+      return useOperation(operation) as any;
+    },
+  });
 
-  function useStore() {
-    return store;
-  }
-
-  return useStore;
-}
-
-class CacheStore implements Store {
-  type = "unnormalized" as const;
-  useFragment = (_, fragmentRef) => fragmentRef;
-  useOperation(operation) {
-    const client = useGraphQLClient();
-    const queryKey = client.getQueryKey(operation);
-    return client.cache.getQueryData(queryKey);
-  }
-
-  // updateRecord = {}
-  // update: (data) => {} = {}
-  // get: throwError() = {}
-  // useEntities = {}
-  // type: "unnormalized" = {}
-  useOperationPages(operation, pageVariables) {
-    return this.useOperation(operation);
-  }
+  return store;
 }

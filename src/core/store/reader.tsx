@@ -1,10 +1,5 @@
 import { getStorageKey } from "relay-runtime/lib/store/RelayStoreUtils";
-import type {
-  SelectorData,
-  NormalizationLinkedField,
-  ReaderField,
-  ReaderSelector,
-} from "relay-runtime";
+import type { SelectorData, ReaderField } from "relay-runtime";
 const RelayConcreteNode = require("relay-runtime/lib/util/RelayConcreteNode");
 
 import {
@@ -15,7 +10,7 @@ import {
   ReaderScalarField,
   ReaderSelection,
   ReaderNode,
-  Record,
+  Snapshot,
 } from "../types";
 
 export const createFieldReader = (get): Reader<string> => ({
@@ -67,7 +62,10 @@ export function readFragment<TData, TRecord>(
   reader: Reader<TRecord>,
   selector: SingularReaderSelector,
   { onReadField = () => {}, onReadRecord = () => {} }: any = {}
-) {
+): Snapshot<TData> {
+  let isMissingData = false;
+  const seenRecords = new Set();
+
   function createFragmentPointer(
     fragmentSpread: ReaderFragmentSpread,
     record: TRecord,
@@ -99,6 +97,13 @@ export function readFragment<TData, TRecord>(
             selector.variables,
             record
           );
+
+          // console.log(record, field, fieldName, value);
+
+          if (value === undefined) {
+            isMissingData = true;
+          }
+
           onReadField(reader.getDataID(record), fieldName);
           data[fieldName] = value;
           break;
@@ -111,23 +116,32 @@ export function readFragment<TData, TRecord>(
             selector.variables,
             record
           );
+
+          // console.log(record, field, fieldName, value);
+
           onReadField(reader.getDataID(record), fieldName);
 
-          if (value === null) {
+          if (value == null) {
+            if (value === undefined) {
+              isMissingData = true;
+            }
             data[fieldName] = null;
             break;
           }
           if (field.plural || isRefs(value)) {
             const linkedIDs = value[constants.REFS_KEY];
             if (linkedIDs == null) {
+              if (linkedIDs === undefined) {
+                isMissingData = true;
+              }
               data[fieldName] = null;
               break;
             }
             const linkedArray: any[] = [];
-            linkedIDs.forEach((linkedID: string, nextIndex: number) => {
+            linkedIDs.forEach((linkedID: string) => {
               if (linkedID == null) {
                 if (linkedID === undefined) {
-                  return null;
+                  isMissingData = true;
                 }
                 // $FlowFixMe[cannot-write]
                 linkedArray.push(null);
@@ -171,13 +185,10 @@ export function readFragment<TData, TRecord>(
   }
 
   const { node, dataID } = selector as SingularReaderSelector;
-  return traverse(node, dataID, null) as TData;
+  const data = traverse(node, dataID, null) as TData;
+  return { data, isMissingData, seenRecords: seenRecords as any, selector };
 }
 
 function isRefs(value) {
   return typeof value === "object" && Boolean(value?.[constants.REFS_KEY]);
-}
-
-function isRef(value) {
-  return typeof value === "object" && Boolean(value?.[constants.REF_KEY]);
 }

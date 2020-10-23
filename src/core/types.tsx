@@ -4,6 +4,7 @@ import {
   RequestDescriptor as RelayRequestDescriptor,
   NormalizationSelector,
   OperationDescriptor,
+  Snapshot as RelaySnapshot,
   SingularReaderSelector,
 } from "relay-runtime";
 import {
@@ -15,6 +16,7 @@ import {
 import { SubscriptionClient } from "subscriptions-transport-ws";
 import { GraphQLClient } from "./graphQLClient";
 import { CombinedError } from "./error";
+import { TypedSnapshot } from "relay-runtime/lib/store/RelayStoreTypes";
 
 export type {
   ConcreteRequest,
@@ -127,8 +129,6 @@ export interface OperationResult<TQuery extends Query>
   operation: Operation<TQuery>;
 }
 
-export type Snapshot<TData> = TData;
-
 export interface GraphQLVariables<TVariables> {
   variables?: TVariables;
 }
@@ -175,7 +175,7 @@ export interface Store {
   useOperation<TQuery extends Query>(
     operation: Operation<TQuery>
   ): Response<TQuery>;
-  useEntities(): [string, { [key: string]: any }][];
+  useRecords(): [string, { [key: string]: any }][];
   useOperationPages<TQuery extends Query>(
     operation: Operation<TQuery>,
     pageVariables: any[]
@@ -183,7 +183,14 @@ export interface Store {
   Provider?: React.FC<{ children: React.ReactNode }>;
 }
 
+export type UseOperationPages = Store["useOperationPages"];
+export type UseRecords = Store["useRecords"];
+export type UseOperation = Store["useOperation"];
+export type UpdateStore = Store["update"];
+export type UseFragment = Store["useFragment"];
 export type GetDataID = (record: any, type: any) => string | null;
+
+export type Snapshot<TData> = TypedSnapshot<TData>;
 
 export type ExchangeOp = (
   operation: Operation<Query>

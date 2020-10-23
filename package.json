@@ -27,7 +27,7 @@
     "@types/react": "^16.9.49",
     "@types/react-dom": "^16.9.8",
     "@types/react-native": "^0.63.22",
-    "@types/relay-runtime": "^10.0.4",
+    "@types/relay-runtime": "^10.0.7",
     "babel-plugin-macros": "^2.8.0",
     "deepmerge": "^4.2.2",
     "docs-ts": "^0.5.1",

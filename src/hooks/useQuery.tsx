@@ -51,6 +51,7 @@ export function useQuery<TQuery extends Query, TError = CombinedError>(
   });
   const queryKey = client.getQueryKey(operation);
   const execute = client.useExecutor();
+  const { data, isMissingData } = store.useOperation(operation);
 
   const baseQuery = useBaseQuery<Response<TQuery>, TError, typeof queryKey>(
     queryKey,
@@ -58,13 +59,15 @@ export function useQuery<TQuery extends Query, TError = CombinedError>(
       const { data } = await execute(operation);
       return data;
     },
-    queryOptions
+    {
+      ...queryOptions,
+      initialData: !isMissingData ? data : undefined,
+    }
   );
 
-  const data = store.useOperation(operation);
   return {
     ...baseQuery,
-    data: baseQuery.status === "loading" ? null : data,
+    data: isMissingData ? null : data,
     client,
     operation,
     store,

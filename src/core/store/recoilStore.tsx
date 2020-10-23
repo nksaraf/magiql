@@ -22,8 +22,10 @@ import {
   Store,
   ReaderSelector,
   RecordSource,
+  Snapshot,
 } from "../types";
 import { readFragment, createFieldReader } from "./reader";
+import { createStore } from "./cacheStore";
 
 function atomFamily<T, TParam>({
   default: defaultValue,
@@ -101,12 +103,12 @@ function selectorFamily<T, TParam>({
 }
 
 export const recordField = atomFamily<any, { id: string; field: string }>({
-  default: null,
+  default: undefined,
   key: ({ id, field }) => `${id}/${field}`,
 });
 
 export const recordRoot = atomFamily<Set<string> | null, string>({
-  default: null,
+  default: undefined,
   key: (id) => `${id}`,
 });
 
@@ -114,8 +116,8 @@ export const record = selectorFamily<any, string>({
   key: (param) => `record/${param}`,
   get: (param) => ({ get }) => {
     const root = get(recordRoot(param));
-    if (root === null) {
-      return null;
+    if (root === undefined) {
+      return undefined;
     }
 
     const data = {};
@@ -129,7 +131,7 @@ export const record = selectorFamily<any, string>({
   set: (param) => ({ set, get }, recordData) => {
     let oldRoot = get(recordRoot(param));
 
-    if (oldRoot === null) {
+    if (oldRoot === undefined) {
       oldRoot = new Set();
     }
 
@@ -201,21 +203,15 @@ export const storeUpdater = selector({
   },
 });
 
-export function createRecoilStore(): () => Store {
+export function createRecoilStore(): Store {
   const store = {
     get: throwError(),
-  };
-
-  const useSelector = function <TData>(fragment: ReaderSelector) {
-    return useRecoilValueLoadable(
-      fragmentSelector(fragment as SingularReaderSelector)
-    ).contents as TData;
   };
 
   const useOperation = function <TQuery extends Query>(
     operation: Operation<TQuery>
   ) {
-    return useSelector(operation.fragment);
+    return useSelector<Response<TQuery>>(operation.fragment);
   };
 
   const useOperationPages = function <TQuery extends Query>(
@@ -224,7 +220,7 @@ export function createRecoilStore(): () => Store {
   ) {
     const data = useRecoilValueLoadable(
       fragmentPagesSelector([operation.request.node, pageVariables])
-    ).contents as any;
+    ).contents as Snapshot<Response<TQuery>>[];
 
     return data;
   };
@@ -234,7 +230,7 @@ export function createRecoilStore(): () => Store {
     fragmentRef
   ) {
     const selector = getSelector(fragmentNode, fragmentRef);
-    return useSelector(selector);
+    return useSelector(selector).data as any;
   };
 
   function useEntities() {
@@ -274,7 +270,17 @@ export function createRecoilStore(): () => Store {
     };
   }
 
-  return Object.assign(useStore, {
-    Provider: RecoilRoot as any,
+  function useSelector(fragment: SingularReaderSelector) {
+    return useRecoilValueLoadable(
+      fragmentSelector(fragment as SingularReaderSelector)
+    ).contents as Snapshot<TData>;
+  }
+
+  return createStore({
+    useFragment: (fragment) => {
+      return useRecoilValueLoadable(
+        fragmentSelector(fragment as SingularReaderSelector)
+      ).contents as Snapshot<TData>;
+    },
   });
 }
