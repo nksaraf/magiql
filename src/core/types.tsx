@@ -1,7 +1,9 @@
 import {
   ConcreteRequest,
   GraphQLTaggedNode,
+  RequestDescriptor as RelayRequestDescriptor,
   NormalizationSelector,
+  OperationDescriptor,
   SingularReaderSelector,
 } from "relay-runtime";
 import {
@@ -73,17 +75,16 @@ export const constants = {
   IS_WITHIN_UNMATCHED_TYPE_REFINEMENT: "__isWithinUnmatchedTypeRefinement",
 };
 
-export interface RequestDescriptor<TVariables> {
+export interface RequestDescriptor<TVariables> extends RelayRequestDescriptor {
   /** Relay: Hashed ID of the query, Raw:  */
   readonly identifier: string;
   /** Contains DocumentNode of the GraphQL Tree. AST Structure */
   readonly node: ConcreteRequest;
-  readonly fetchOptions?: FetchOptions<TVariables>;
   /** Variables for GraphQL query */
   readonly variables: TVariables;
 }
 
-export interface Operation<TQuery extends Query> {
+export interface Operation<TQuery extends Query> extends OperationDescriptor {
   /** Selector to read data from store for this operation */
   readonly fragment: SingularReaderSelector;
   /** Description of query: text, variables, hash, etc */
@@ -167,10 +168,6 @@ export interface Store {
   update(recordSource: any): void;
   updateRecord(id: string, record: any): void;
   get(dataID: string): any;
-  // commit<TQuery extends Query>(
-  //   operation: Operation<TQuery>,
-  //   data: Response<TQuery>
-  // ): void;
   useFragment<TKey extends KeyType>(
     fragmentNode: ReaderFragment,
     fragmentRef: TKey
