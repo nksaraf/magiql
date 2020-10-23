@@ -24,7 +24,7 @@ import {
   flattenFragments,
   inlineFragments,
 } from "./transforms";
-import { memoized } from "../../utils";
+import { memoized } from "../utils/memoized";
 
 const parseSelections = (selectionSet: SelectionSetNode) => {
   const selections: NormalizationSelection[] = selectionSet.selections.map(

@@ -4,8 +4,7 @@
  * Adapted from https://github.com/facebook/relay/blob/master/packages/relay-compiler/bin/RelayCompilerBin.js
  */
 import { relayCompiler } from "relay-compiler";
-
-import { loadConfig } from "./relay/config";
+import { loadConfig } from "./relay-adapter/config";
 
 import meow from "meow";
 import fetch from "node-fetch";

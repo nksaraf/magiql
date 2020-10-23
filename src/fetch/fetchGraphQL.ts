@@ -1,5 +1,4 @@
 import fetch from "isomorphic-unfetch";
-
 import { CombinedError } from "./error";
 import type {
   ConcreteRequest,
@@ -10,7 +9,9 @@ import type {
   Query,
   Response,
   Variables,
-} from "./types";
+} from "../types";
+import deepMerge from "deepmerge";
+import type { RequestParameters } from "relay-runtime";
 
 export type BaseVariables = { [key: string]: any };
 
@@ -34,7 +35,7 @@ export const makeResult = <TQuery extends Query>(
   response?: any
 ): FetchResult<TQuery> => ({
   data: result.data,
-  error: Array.isArray(result.errors)
+  combinedError: Array.isArray(result.errors)
     ? new CombinedError({
         graphQLErrors: result.errors,
         response,
@@ -45,12 +46,12 @@ export const makeResult = <TQuery extends Query>(
     (typeof result.extensions === "object" && result.extensions) || undefined,
 });
 
-export const makeErrorResult = <TQuery extends Query>(
+export const makeNetworkErrorResult = <TQuery extends Query>(
   error: Error,
   response?: any
 ): FetchResult<TQuery> => ({
   data: undefined,
-  error: new CombinedError({
+  combinedError: new CombinedError({
     networkError: error,
     response,
   }),
@@ -104,7 +105,7 @@ export async function fetchGraphQL<TQuery extends Query>({
 
     if (!response.ok || !contentTypeHeader?.startsWith("application/json")) {
       const result = await response.text();
-      return makeErrorResult(
+      return makeNetworkErrorResult(
         new Error(`Expected JSON response, received "${result}"`),
         response
       );
@@ -116,14 +117,11 @@ export async function fetchGraphQL<TQuery extends Query>({
     } = await response.json();
     return makeResult(result, response);
   } catch (e) {
-    return makeErrorResult(e);
+    return makeNetworkErrorResult(e);
   }
 }
 
 export type FetchGraphql = typeof fetchGraphQL;
-
-import deepMerge from "deepmerge";
-import { RequestParameters } from "relay-runtime";
 
 export async function createFetchOperation<TQuery extends Query>(
   params: RequestParameters,

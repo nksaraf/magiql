@@ -3,12 +3,9 @@ import { graphql, useQuery } from "magiql";
 import { Actions, ActionButton, Header } from "../components/ActionButton";
 import { NavBar } from "../components/NavBar";
 import { Person_person, Person } from "../components/Person";
-import { useEnvironment } from "magiql/core/EnvironmentContext";
 import Link from "next/link";
 
 export default function People() {
-  const environment = useEnvironment();
-
   const { data, status, operation, client } = useQuery(
     graphql`
       query PeopleQuery($after: String) {
@@ -37,6 +34,8 @@ export default function People() {
       }),
     }
   );
+
+  console.log(data);
 
   return (
     <>

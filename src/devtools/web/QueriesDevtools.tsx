@@ -6,7 +6,7 @@ import { useGraphQLClient } from "../../hooks/useGraphQLClient";
 export function QueriesDevtools() {
   const client = useGraphQLClient();
   return (
-    <ReactQueryCacheProvider queryCache={client.cache}>
+    <ReactQueryCacheProvider queryCache={client.queryCache}>
       <div
         style={{
           overflow: "scroll",

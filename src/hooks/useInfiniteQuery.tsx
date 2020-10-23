@@ -16,9 +16,8 @@ import {
   Store,
   FetchOptions,
   CombinedError,
-} from "../core/types";
+} from "../types";
 import { useGraphQLClient } from "./useGraphQLClient";
-import { useGraphQLStore } from "./useGraphQLStore";
 
 export interface UseInfiniteQueryOptions<
   TQuery extends Query,
@@ -34,7 +33,6 @@ export type UseInfiniteQueryResult<
   TError
 > = InfiniteQueryResult<Response<TQuery>, TError> & {
   client: GraphQLClient;
-  store: Store;
   operation: Operation<TQuery>;
 };
 
@@ -63,23 +61,24 @@ export function useInfiniteQuery<TQuery extends Query, TError = CombinedError>(
   } = options;
   type TData = Response<TQuery>;
   const client = useGraphQLClient();
-  const operation = client.buildOperation(query, { variables, fetchOptions });
-  const store = useGraphQLStore();
-  const execute = client.useExecutor();
+  const operation = client.createOperation(query, { variables, fetchOptions });
 
   const queryKey = client.getInfinteQueryKey(operation);
   const infiniteQuery = useBaseInfiniteQuery<TData, TError, typeof queryKey>(
     queryKey,
-    (queryName, variables = {}, fetchMoreVariables) => {
-      const fetchMoreOperation = client.buildOperation(operation.request.node, {
-        variables: {
-          ...variables,
-          ...(fetchMoreVariables ?? {}),
-        },
-        fetchOptions,
-      });
+    (_, variables = {}, fetchMoreVariables) => {
+      const fetchMoreOperation = client.createOperation(
+        operation.request.node,
+        {
+          variables: {
+            ...variables,
+            ...(fetchMoreVariables ?? {}),
+          },
+          fetchOptions,
+        }
+      );
 
-      return execute(fetchMoreOperation).then(({ data }) => {
+      return client.execute(fetchMoreOperation).then(({ data }) => {
         return data;
       });
     },
@@ -98,7 +97,7 @@ export function useInfiniteQuery<TQuery extends Query, TError = CombinedError>(
     };
   }) ?? [variables];
 
-  const data = store.useOperationPages(operation, pageQueries);
+  const data = client.store.useOperationPages(operation, pageQueries);
 
   const { canFetchMore, fetchMore: baseFetchMore } = infiniteQuery;
 
@@ -113,11 +112,10 @@ export function useInfiniteQuery<TQuery extends Query, TError = CombinedError>(
 
   return {
     ...infiniteQuery,
-    data,
+    data: data.map((d) => d.data),
     operation,
     client,
     canFetchMore,
     fetchMore,
-    store,
   };
 }

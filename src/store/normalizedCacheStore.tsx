@@ -3,8 +3,8 @@ import React from "react";
 import { QueryCache } from "react-query";
 import { getSelector } from "relay-runtime/lib/store/RelayModernSelector";
 
-import { stableStringify } from "../../utils";
-import { useRerenderer } from "../../hooks/useRerenderer";
+import { stableStringify } from "../utils/stringify";
+import { useRerenderer } from "../hooks/useRerenderer";
 import { createOperation } from "../operation/operation";
 import {
   Response,
@@ -16,8 +16,8 @@ import {
   RecordSource,
   Operation,
 } from "../types";
-import { batchedUpdates } from "./batchedUpdates";
-import { createRecordReader, readFragment } from "./reader";
+import { batchedUpdates } from "../utils/batchedUpdates";
+import { createRecordReader, readFragment } from "../operation/reader";
 import { createStore } from "./cacheStore";
 
 export function createNormalizedQueryCacheStore(
@@ -116,7 +116,8 @@ export function createNormalizedQueryCacheStore(
   }
 
   return createStore({
-    type: "normalized" as const,
+    isNormalized: true,
+    type: "normalizedCacheStore",
     update,
     updateRecord,
     useOperationPages: (operation, pageVariables) => {
@@ -139,7 +140,7 @@ export function createNormalizedQueryCacheStore(
       return snapshots;
     },
     useFragment: (fragmentNode, fragmentRef) => {
-      return useSelector(getSelector(fragmentNode, fragmentRef)).data as any;
+      return useSelector(getSelector(fragmentNode, fragmentRef));
     },
     useOperation: (operation) => {
       return useSelector(operation.fragment);

@@ -3,9 +3,9 @@ import React from "react";
 import { QueryCache } from "react-query";
 import { getSelector } from "relay-runtime/lib/store/RelayModernSelector";
 
-import { stableStringify } from "../../utils";
-import { useRerenderer } from "../../hooks/useRerenderer";
-import { createOperation } from "../operation";
+import { stableStringify } from "../utils/stringify";
+import { useRerenderer } from "../hooks/useRerenderer";
+import { createOperation } from "../operation/operation";
 import {
   Response,
   Query,
@@ -15,30 +15,24 @@ import {
   QueryObserver,
   RecordSource,
   Operation,
+  Snapshot,
 } from "../types";
-import { batchedUpdates } from "./batchedUpdates";
-import { createRecordReader, readFragment } from "../reader";
-import RelayModernStore from "relay-runtime/lib/store/RelayModernStore";
-import { useEnvironment } from "../EnvironmentContext";
+import RelayModernEnvironment from "relay-runtime/lib/store/RelayModernEnvironment";
+import { createStore } from "./cacheStore";
 
-export function createRelayStore(): () => Store {
+export function createRelayStore({
+  environment,
+}: {
+  environment: RelayModernEnvironment;
+}): Store {
   function useSelector<TData>(selector: SingularReaderSelector) {
-    const environment = useEnvironment();
-    const snapshot = environment.getStore().lookup(selector);
-    return (snapshot.data as unknown) as TData;
+    const snapshot = (environment
+      .getStore()
+      .lookup(selector) as unknown) as Snapshot<TData>;
+    return snapshot;
   }
 
-  const useFragment = (fragmentNode, fragmentRef) => {
-    return useSelector(
-      getSelector(fragmentNode, fragmentRef) as SingularReaderSelector
-    );
-  };
-  const useOperation = (operation) => {
-    return useSelector(operation.fragment);
-  };
-
   function useEntities() {
-    const environment = useEnvironment();
     const [entities, setEntities] = React.useState([]);
 
     React.useEffect(() => {
@@ -86,25 +80,29 @@ export function createRelayStore(): () => Store {
     return [];
   }
 
-  const store = {
+  return createStore({
+    type: "relayStore",
+    isNormalized: false,
     update: (recordSource: RecordSource) => {
-      return;
       //   batchedUpdates(() => {
       //     Object.keys(recordSource).forEach((id) => {
       //       updateRecord(id, recordSource[id]);
       //     });
       //   });
     },
-    updateRecord: {} as any,
+    environment,
     useSelector,
+    updateRecord: () => {},
     useOperationPages,
-    useFragment,
-    useOperation,
-    useEntities,
+    useFragment: (fragmentNode, fragmentRef) => {
+      return useSelector(
+        getSelector(fragmentNode, fragmentRef) as SingularReaderSelector
+      );
+    },
+    useOperation: (operation) => {
+      return useSelector(operation.fragment);
+    },
+    useRecords: useEntities,
     get: {} as any,
-  };
-
-  return function useStore() {
-    return store;
-  };
+  });
 }

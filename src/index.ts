@@ -1,28 +1,26 @@
 import { unstable_batchedUpdates } from "react-dom";
 import { setConsole } from "react-query";
 
-import { setBatch } from "./core/store/batchedUpdates";
+import { setBatch } from "./utils/batchedUpdates";
 
 export * from "./core/graphQLClient";
-export * from "./core/exchanges";
-export * from "./core/fetchGraphQL";
-export * from "./core/types";
-export * from "./core/store/cacheStore";
-export * from "./core/store/normalizedCacheStore";
-export * from "./core/store/normalizer";
-export * from "./core/store/reader";
+export * from "./exchanges/compose";
+export * from "./fetch/fetchGraphQL";
+export * from "./types";
+export * from "./store/cacheStore";
+export * from "./store/normalizedCacheStore";
+export * from "./operation/normalizer";
+export * from "./operation/reader";
 export * from "./utils";
-export * from "./core/operation/parser";
-export * from "./core/operation/operation";
-export * from "./core/graphQLTag";
+export * from "./operation/parser";
+export * from "./operation/operation";
+export * from "./operation/graphql-tag";
 export * from "./hooks/useGraphQLClient";
-export * from "./hooks/useGraphQLStore";
 export * from "./hooks/useQuery";
 export * from "./hooks/useInfiniteQuery";
-export * from "./hooks/usePaginatedQuery";
 export * from "./hooks/useMutation";
 export * from "./hooks/useFragment";
-export * from "./core/store/batchedUpdates";
+export * from "./utils/batchedUpdates";
 
 setConsole({
   log: console.log,

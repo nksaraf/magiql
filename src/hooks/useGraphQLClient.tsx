@@ -1,8 +1,6 @@
-import { EnvironmentContext } from "magiql/core/EnvironmentContext";
-import React from "react";
 import { ReactQueryCacheProvider, ReactQueryConfigProvider } from "react-query";
-
 import { GraphQLClient } from "../core/graphQLClient";
+import React from "react";
 
 export const GraphQLClientContext = React.createContext<GraphQLClient | null>(
   null
@@ -23,21 +21,13 @@ export const GraphQLClientProvider = ({
 }: React.PropsWithChildren<{
   client: GraphQLClient;
 }>) => {
-  const useStore = client.useStore;
-  const clientProvider = (
-    <ReactQueryCacheProvider queryCache={client.cache}>
+  return (
+    <ReactQueryCacheProvider queryCache={client.queryCache}>
       <ReactQueryConfigProvider config={client.queryConfig}>
         <GraphQLClientContext.Provider value={client}>
-          <EnvironmentContext.Provider value={client.environment}>
-            {children}
-          </EnvironmentContext.Provider>
+          {children}
         </GraphQLClientContext.Provider>
       </ReactQueryConfigProvider>
     </ReactQueryCacheProvider>
-  );
-  return useStore.Provider ? (
-    <useStore.Provider>{clientProvider}</useStore.Provider>
-  ) : (
-    clientProvider
   );
 };

@@ -3,13 +3,8 @@ import "prismjs/themes/prism.css";
 
 import React from "react";
 import Head from "next/head";
-import {
-  GraphQLClient,
-  GraphQLClientProvider,
-  createNormalizedQueryCacheStore,
-} from "magiql";
+import { GraphQLClient, GraphQLClientProvider } from "magiql";
 import GraphQLDevtools from "magiql/devtools";
-import { createRecoilStore } from "magiql/recoil-store";
 
 const client = new GraphQLClient({
   endpoint: "https://swapi-graphql.netlify.app/.netlify/functions/index",
@@ -25,7 +20,6 @@ const client = new GraphQLClient({
       refetchInterval: false,
     },
   },
-  useStore: createRecoilStore(),
 });
 
 export default function App({ Component, pageProps }) {

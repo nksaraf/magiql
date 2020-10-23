@@ -4,7 +4,7 @@ import {
   MutateFunction,
   MutationResult,
 } from "react-query";
-import { createOperation } from "../core/operation/operation";
+import { createOperation } from "../operation/operation";
 import { GraphQLClient } from "../core/graphQLClient";
 
 import {
@@ -16,9 +16,8 @@ import {
   Operation,
   FetchOptions,
   CombinedError,
-} from "../core/types";
+} from "../types";
 import { useGraphQLClient } from "./useGraphQLClient";
-import { useGraphQLStore } from "./useGraphQLStore";
 
 export type UseMutationResult<
   TMutation extends Query,
@@ -27,7 +26,6 @@ export type UseMutationResult<
   MutateFunction<Response<TMutation>, TError, Variables<TMutation>>,
   MutationResult<Response<TMutation>, TError> & {
     client: GraphQLClient;
-    store: Store;
     operation: Operation<TMutation>;
   }
 ];
@@ -59,15 +57,13 @@ export function useMutation<TMutation extends Query, TError = CombinedError>(
   type TData = Response<TMutation>;
   type TVariables = Variables<TMutation>;
   const client = useGraphQLClient();
-  const store = useGraphQLStore();
-  const execute = client.useExecutor();
   const [mutateFn, state] = useBaseMutation<TData, TError, TVariables>(
     (variables) => {
-      const operation = client.buildOperation(mutation, {
+      const operation = client.createOperation(mutation, {
         variables,
         fetchOptions,
       });
-      return execute<TMutation>(operation).then(({ data }) => data);
+      return client.execute<TMutation>(operation).then(({ data }) => data);
     },
     {
       ...mutationOptions,
@@ -82,13 +78,13 @@ export function useMutation<TMutation extends Query, TError = CombinedError>(
             operation
           );
 
-          store.update(normalizedData);
+          client.store.update(normalizedData);
         }
       },
       onSuccess: (data, variables) => {
         onSuccess?.(data, variables);
         for (var query of invalidateQueries) {
-          client.cache.invalidateQueries(query);
+          client.queryCache.invalidateQueries(query);
         }
       },
     }
@@ -99,8 +95,7 @@ export function useMutation<TMutation extends Query, TError = CombinedError>(
     {
       ...state,
       client,
-      store,
-      operation: client.buildOperation(mutation, {
+      operation: client.createOperation(mutation, {
         fetchOptions,
         variables: {},
       }),

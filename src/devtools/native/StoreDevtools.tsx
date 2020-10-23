@@ -9,11 +9,11 @@ import {
 
 import { Explorer } from "../common/Explorer";
 import { NativeRenderer } from "./NativeRenderer";
-import { useGraphQLStore } from "../../hooks/useGraphQLStore";
+import { useGraphQLClient } from "../../hooks/useGraphQLClient";
 
 export function StoreDevtools({ onClose }: { onClose: () => void }) {
-  const store = useGraphQLStore();
-  const entities = store.useEntities();
+  const client = useGraphQLClient();
+  const entities = client.store.useRecords();
   const [search, setSearch] = React.useState("");
   const [selected, setSelected] = React.useState(null);
 

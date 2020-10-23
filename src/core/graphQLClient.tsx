@@ -1,26 +1,17 @@
-import type { QueryConfig, ReactQueryConfig } from "react-query";
-import type { Observable } from "subscriptions-transport-ws";
-import {
-  errorExchange,
-  storeExchange,
-  fetchExchange,
-  composeExchanges,
-  fallbackExchange,
-  normalizerExchange,
-  relayExchange,
-} from "./exchanges";
+import type { ReactQueryConfig } from "react-query";
+import { composeExchanges, fallbackExchange } from "../exchanges/compose";
+import { storeExchange } from "../exchanges/store";
+import { fetchExchange } from "../exchanges/fetch";
+import { errorExchange } from "../exchanges/error";
+import { relayExchange } from "../exchanges/relay";
 import { QueryCache } from "react-query";
-import deepMerge from "deepmerge";
-import { createOperation } from "./operation/operation";
-
-import { createQueryCacheStore } from "./store/cacheStore";
+import { createOperation } from "../operation/operation";
 import {
   Operation,
   QueryKey,
   InfiniteQueryKey,
   Query,
   Variables,
-  Response,
   FetchOptions,
   Exchange,
   DebugEvent,
@@ -28,102 +19,101 @@ import {
   Normalizer,
   constants,
   Store,
-  OperationKind,
-} from "./types";
+  GetDataID,
+} from "../types";
 
-import { createNormalizer } from "./store/normalizer";
+import { createNormalizer, defaultGetDataId } from "../operation/normalizer";
 import type { GraphQLSubscriptionClient } from "./subscriptionClient";
-import RelayModernEnvironment from "relay-runtime/lib/store/RelayModernEnvironment";
-import {
-  createFetchOperation,
-  fetchGraphQL,
-  resolveFetchOptions,
-} from "./fetchGraphQL";
+import { createFetchOperation, fetchGraphQL } from "../fetch/fetchGraphQL";
 import {
   Environment,
-  GraphQLResponseWithData,
   Network,
   RecordSource,
   Store as RelayStore,
 } from "relay-runtime";
+import { createRelayStore } from "../store/relayModernStore";
+
+export const defaultExchanges: Exchange[] = [
+  storeExchange,
+  errorExchange({
+    onError: (error) => {
+      throw error;
+    },
+  }),
+  relayExchange,
+  fetchExchange,
+];
+
+function createRelayEnvironment({ endpoint, fetchOptions }) {
+  return new Environment({
+    network: Network.create(async (params, variables) => {
+      const fetchOperation = await createFetchOperation(
+        params,
+        variables,
+        endpoint,
+        fetchOptions
+      );
+      return await fetchGraphQL(fetchOperation);
+    }),
+    store: new RelayStore(new RecordSource()),
+  });
+}
 
 export interface GraphQLClientOptions {
   endpoint: string;
-  fetchOptions: FetchOptions<object>;
-  queryConfig: ReactQueryConfig;
-  queryCache: QueryCache;
-  environment?: RelayModernEnvironment;
-  onDebugEvent: <TQuery extends Query>(event: DebugEvent<TQuery>) => void;
-  subscriptionClient: GraphQLSubscriptionClient | undefined;
-  useStore: (() => Store) & {
-    Provider?: React.FC<{}>;
-  };
-  normalizer: Normalizer;
-  useExchanges: (client: GraphQLClient) => Exchange[];
-}
-
-export function useDefaultExchanges(client: GraphQLClient) {
-  const store = client.useStore();
-
-  return [
-    storeExchange(store),
-    // normalizerExchange,
-    errorExchange({
-      onError: (error) => {
-        throw error;
-      },
-    }),
-    relayExchange,
-    fetchExchange,
-  ];
+  fetchOptions?: FetchOptions<object>;
+  queryConfig?: ReactQueryConfig;
+  queryCache?: QueryCache;
+  environment?: Environment;
+  onDebugEvent?: <TQuery extends Query>(event: DebugEvent<TQuery>) => void;
+  subscriptionClient?: GraphQLSubscriptionClient | undefined;
+  store?: Store;
+  normalizer?: Normalizer;
+  exchanges?: Exchange[];
+  getDataID?: GetDataID;
 }
 
 export class GraphQLClient {
   endpoint: string;
   fetchOptions: FetchOptions<object>;
   queryConfig: ReactQueryConfig<unknown, unknown>;
-  cache: QueryCache;
+  queryCache: QueryCache;
   onDebugEvent: <TQuery extends Query>(event: DebugEvent<TQuery>) => void;
-  useStore: (() => Store) & {
-    Provider?: React.FC<{}>;
-  };
+  store: Store;
+  environment: Environment;
   normalizer: Normalizer;
-  private useExchanges: (client: GraphQLClient) => Exchange[];
   subscriptionClient?: GraphQLSubscriptionClient;
-  environment: RelayModernEnvironment;
+  getDataID: GetDataID;
+  exchanges: Exchange[];
+  composedExchange: Exchange;
 
   constructor({
     endpoint = "/graphql",
     fetchOptions = {},
     queryConfig = {},
+    getDataID = defaultGetDataId,
     queryCache = new QueryCache(),
-    useStore = createQueryCacheStore(),
-    normalizer = createNormalizer(),
+    normalizer = createNormalizer({ getDataID }),
+    environment = createRelayEnvironment({ endpoint, fetchOptions }),
+    store = createRelayStore({ environment }),
     onDebugEvent = () => {},
-    useExchanges = useDefaultExchanges,
+    exchanges = defaultExchanges,
     subscriptionClient,
   }: Partial<GraphQLClientOptions>) {
     this.endpoint = endpoint;
     this.fetchOptions = fetchOptions;
     this.queryConfig = queryConfig;
-    this.cache = queryCache;
-    this.useStore = useStore;
-    this.useExchanges = useExchanges;
+    this.queryCache = queryCache;
+    this.store = store;
     this.onDebugEvent = onDebugEvent;
     this.normalizer = normalizer;
+    this.exchanges = exchanges;
+    this.composedExchange = composeExchanges(this.exchanges);
     this.subscriptionClient = subscriptionClient;
-    this.environment = new Environment({
-      network: Network.create(async (params, variables) => {
-        const fetchOperation = await createFetchOperation(
-          params,
-          variables,
-          endpoint,
-          fetchOptions
-        );
-        return (await fetchGraphQL(fetchOperation)) as GraphQLResponseWithData;
-      }),
-      store: new RelayStore(new RecordSource()),
-    });
+    if (this.subscriptionClient) {
+      this.subscriptionClient.queryCache = this.queryCache;
+    }
+    this.environment = environment;
   }
 
   getInfinteQueryKey<TQuery extends Query>(
@@ -135,7 +125,7 @@ export class GraphQLClient {
     ] as any;
   }
 
-  buildOperation<TQuery extends Query>(
+  createOperation<TQuery extends Query>(
     node: string | GraphQLTaggedNode,
     options: {
       variables: Variables<TQuery>;
@@ -153,67 +143,6 @@ export class GraphQLClient {
     };
   }
 
-  buildSubscription<TQuery extends Query>(
-    operation: Operation<TQuery>,
-    {
-      onSuccess,
-      onError,
-      onSettled,
-      ...options
-    }: QueryConfig<Response<TQuery>, Error>
-  ) {
-    if (!this.subscriptionClient) {
-      throw new Error("No subscription client found!");
-    }
-    const subscriptionsClient = this.subscriptionClient;
-    const queryKey = this.getQueryKey(operation);
-    const query = this.cache.buildQuery<Response<TQuery>, Error>(queryKey, {
-      ...options,
-      enabled: false,
-    });
-    let subscription: {
-      unsubscribe: () => void;
-    } | null = null;
-
-    return {
-      query,
-      unsubscribe() {
-        subscription?.unsubscribe();
-      },
-      execute() {
-        const observable = subscriptionsClient.request({
-          query: operation.request.node.params.text as string,
-          variables: operation.request.variables,
-          operationName: operation.request.node.params.name,
-        }) as Observable<{ data: Response<TQuery> }>;
-
-        if (!observable) {
-          throw new Error("No subscription client found!");
-        }
-
-        subscription = observable.subscribe({
-          next: (result) => {
-            query.setData(result.data);
-            onSuccess?.(result.data);
-            onSettled?.(result.data, null);
-          },
-          error: (error) => {
-            (query as any).dispatch({
-              type: "Error",
-              error,
-            });
-            onError?.(error);
-            onSettled?.(undefined, error);
-            subscription?.unsubscribe();
-          },
-          complete: () => {
-            subscription?.unsubscribe();
-          },
-        });
-      },
-    };
-  }
-
   getQueryKey<TQuery extends Query>(
     operation: Operation<TQuery>
   ): QueryKey<TQuery> {
@@ -223,20 +152,19 @@ export class GraphQLClient {
     ];
   }
 
-  useExecutor() {
-    const exchanges = this.useExchanges(this);
-    return async <TQuery extends Query>(operation: Operation<TQuery>) => {
-      const operate = composeExchanges(exchanges)({
-        forward: fallbackExchange({
-          client: this,
-          forward: null,
-          dispatchDebug: this.onDebugEvent,
-        }),
+  async execute<TQuery extends Query>(operation: Operation<TQuery>) {
+    return await this.composedExchange({
+      forward: fallbackExchange({
         client: this,
+        forward: null,
         dispatchDebug: this.onDebugEvent,
-      });
+      }),
+      client: this,
+      dispatchDebug: this.onDebugEvent,
+    })(operation);
+  }
 
-      return await operate(operation);
-    };
+  async commitMutation() {
+    
   }
 }

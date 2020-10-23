@@ -6,6 +6,8 @@ import {
   OperationDescriptor,
   Snapshot as RelaySnapshot,
   SingularReaderSelector,
+  GraphQLResponseWithData,
+  GraphQLResponseWithoutData,
 } from "relay-runtime";
 import {
   ReaderLinkedField,
@@ -14,8 +16,8 @@ import {
   ReaderInlineFragment,
 } from "relay-runtime/lib/util/ReaderNode";
 import { SubscriptionClient } from "subscriptions-transport-ws";
-import { GraphQLClient } from "./graphQLClient";
-import { CombinedError } from "./error";
+import { GraphQLClient } from "./core/graphQLClient";
+import { CombinedError } from "./fetch/error";
 import { TypedSnapshot } from "relay-runtime/lib/store/RelayStoreTypes";
 
 export type {
@@ -117,17 +119,25 @@ export type FetchOptions<TVariables> =
   | FetchRequestOptions;
 
 export type TODO = any;
-export interface FetchResult<TQuery extends Query> {
-  data?: Response<TQuery>;
-  error?: CombinedError;
-  errors?: TODO[];
-  extensions?: any;
+
+export interface FetchResultWithData<TQuery extends Query>
+  extends GraphQLResponseWithData {
+  data: Response<TQuery>;
+  combinedError?: CombinedError;
 }
 
-export interface OperationResult<TQuery extends Query>
-  extends FetchResult<TQuery> {
-  operation: Operation<TQuery>;
+export interface FetchResultWithoutData<TQuery extends Query>
+  extends GraphQLResponseWithoutData {
+  combinedError?: CombinedError;
 }
+
+export type FetchResult<TQuery extends Query> =
+  | FetchResultWithData<TQuery>
+  | FetchResultWithoutData<TQuery>;
+
+export type OperationResult<TQuery extends Query> = FetchResult<TQuery> & {
+  operation: Operation<TQuery>;
+};
 
 export interface GraphQLVariables<TVariables> {
   variables?: TVariables;
@@ -164,23 +174,24 @@ export interface Normalizer {
 }
 
 export interface Store {
-  type: "normalized" | "unnormalized";
+  type: string;
+  isNormalized: boolean;
   update(recordSource: any): void;
   updateRecord(id: string, record: any): void;
   get(dataID: string): any;
   useFragment<TKey extends KeyType>(
     fragmentNode: ReaderFragment,
     fragmentRef: TKey
-  ): $Call<KeyReturnType<TKey>>;
+  ): Snapshot<$Call<KeyReturnType<TKey>>>;
   useOperation<TQuery extends Query>(
     operation: Operation<TQuery>
-  ): Response<TQuery>;
+  ): Snapshot<TQuery>;
   useRecords(): [string, { [key: string]: any }][];
   useOperationPages<TQuery extends Query>(
     operation: Operation<TQuery>,
     pageVariables: any[]
-  ): Response<TQuery>[];
-  Provider?: React.FC<{ children: React.ReactNode }>;
+  ): Snapshot<TQuery>[];
+  [key: string]: any;
 }
 
 export type UseOperationPages = Store["useOperationPages"];
