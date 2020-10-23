@@ -1,4 +1,4 @@
-import { getFragment } from "../core/operation";
+import { getFragment } from "../core/operation/operation";
 import {
   $Call,
   KeyType,

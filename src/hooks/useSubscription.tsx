@@ -1,5 +1,5 @@
 import React from "react";
-import { getRequest } from "../core/operation";
+import { getRequest } from "../core/operation/operation";
 
 import { Query, Variables, GraphQLTaggedNode } from "../core/types";
 import { useRerenderer } from "./useRerenderer";

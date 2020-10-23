@@ -4,7 +4,7 @@ import {
   MutateFunction,
   MutationResult,
 } from "react-query";
-import { createOperation } from "../core/operation";
+import { createOperation } from "../core/operation/operation";
 import { GraphQLClient } from "../core/graphQLClient";
 
 import {

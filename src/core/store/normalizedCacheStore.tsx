@@ -5,7 +5,7 @@ import { getSelector } from "relay-runtime/lib/store/RelayModernSelector";
 
 import { stableStringify } from "../../utils";
 import { useRerenderer } from "../../hooks/useRerenderer";
-import { createOperation } from "../operation";
+import { createOperation } from "../operation/operation";
 import {
   Response,
   Query,
@@ -17,7 +17,7 @@ import {
   Operation,
 } from "../types";
 import { batchedUpdates } from "./batchedUpdates";
-import { createRecordReader, readFragment } from "../reader";
+import { createRecordReader, readFragment } from "./reader";
 
 export function createNormalizedQueryCacheStore(
   options: Partial<Store> & {

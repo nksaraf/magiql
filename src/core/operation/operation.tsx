@@ -5,14 +5,14 @@ import {
   getFragment as baseGetFragment,
 } from "relay-runtime/lib/query/GraphQLTag";
 
-import { createOperationDescriptor } from "relay-runtime/lib/store/RelayModernOperationDescriptor";
+import { createOperationDescriptor as createRelayOperationDescriptor } from "relay-runtime/lib/store/RelayModernOperationDescriptor";
 import type {
   Query,
   Operation,
   Variables,
   GraphQLTaggedNode,
   FetchOptions,
-} from "./types";
+} from "../types";
 import { parseGraphQLTag } from "./parser";
 
 export const getRequest = (
@@ -34,7 +34,8 @@ export const getRequest = (
   }
   // Parsed by relay (require call for artifact from relay-compiler)
   else {
-    (request.params as any).text = (request as any).query;
+    (request.params as any).text =
+      (request as any).query ?? (request.params as any).text;
     (request.params as any).metadata.parser = "relay";
     return request;
   }
@@ -71,10 +72,11 @@ export const createOperation = function <TQuery extends Query>(
 ): Operation<TQuery> {
   const { variables = {}, fetchOptions = {} } = options;
   const node = getRequest(query);
-  const operationDescriptor = createOperationDescriptor(
+  const operationDescriptor = createRelayOperationDescriptor(
     node,
     variables
   ) as Operation<TQuery>;
+
   operationDescriptor.request.node.params.metadata.fetchOptions = fetchOptions;
   return operationDescriptor;
 };

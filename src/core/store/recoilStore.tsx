@@ -14,7 +14,7 @@ import { ConcreteRequest, SingularReaderSelector } from "relay-runtime";
 import { getSelector } from "relay-runtime/lib/store/RelayModernSelector";
 
 import { throwError } from "../../utils";
-import { createOperation } from "../operation";
+import { createOperation } from "../operation/operation";
 import {
   Operation,
   Query,
@@ -23,7 +23,7 @@ import {
   ReaderSelector,
   RecordSource,
 } from "../types";
-import { readFragment, createFieldReader } from "../reader";
+import { readFragment, createFieldReader } from "./reader";
 
 function atomFamily<T, TParam>({
   default: defaultValue,

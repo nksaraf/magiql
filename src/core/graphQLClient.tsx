@@ -10,7 +10,7 @@ import {
 } from "./exchanges";
 import { QueryCache } from "react-query";
 
-import { createOperation } from "./operation";
+import { createOperation } from "./operation/operation";
 import { createQueryCacheStore } from "./store/cacheStore";
 import {
   Operation,
@@ -27,7 +27,7 @@ import {
   Normalizer,
   constants,
 } from "./types";
-import { createNormalizer } from "./normalizer";
+import { createNormalizer } from "./store/normalizer";
 import type { GraphQLSubscriptionClient } from "./subscriptionClient";
 
 export interface GraphQLClientOptions {

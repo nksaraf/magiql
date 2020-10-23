@@ -22,7 +22,7 @@ import {
   Query,
   Record,
   Response,
-} from "./types";
+} from "../types";
 
 export const PREFIX = "client:";
 

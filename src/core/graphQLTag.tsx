@@ -1,4 +1,4 @@
-import { parseGraphQLTag } from "./parser";
+import { parseGraphQLTag } from "./operation/parser";
 import { GraphQLTaggedNode } from "./types";
 
 export const graphql: (
