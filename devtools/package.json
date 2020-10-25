@@ -2,7 +2,7 @@
   "name": "magiql/devtools",
   "private": true,
   "main": "../dist/devtools.js",
-  "react-native": "../dist/esm/devtools-native.js",
+  "react-native": "../dist/esm/devtools.native.js",
   "module": "../dist/esm/devtools.js",
   "types": "../dist/devtools.d.ts"
 }

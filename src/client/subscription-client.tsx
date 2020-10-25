@@ -1,5 +1,5 @@
 import { QueryConfig } from "react-query";
-import { Observable, SubscriptionClient } from "subscriptions-transport-ws";
+import { Observable, SubscriptionClient as BaseSubscriptionClient } from "subscriptions-transport-ws";
 import { resolveFetchOptions } from "../fetch/fetchGraphQL";
 import {
   FetchOptions,
@@ -10,7 +10,7 @@ import {
   Response,
 } from "../types";
 
-export class GraphQLSubscriptionClient extends SubscriptionClient {
+export class SubscriptionClient extends BaseSubscriptionClient {
   endpoint: string;
   fetchOptions: FetchOptions<object>;
   queryCache: QueryCache;

@@ -3,11 +3,11 @@ import "prismjs/themes/prism.css";
 
 import React from "react";
 import Head from "next/head";
-import { GraphQLClient, GraphQLClientProvider } from "magiql";
+import { Client, GraphQLClientProvider } from "magiql";
 import GraphQLDevtools from "magiql/devtools";
 
-const client = new GraphQLClient({
-  endpoint: "https://swapi-graphql.netlify.app/.netlify/functions/index",
+const client = new Client({
+  endpoint: "https://todo-magiql.hasura.app/v1/graphql",
   onDebugEvent: (event) => {
     console.log(
       `${event.operation.request.node.operation.name} => ${event.source} ${event.message}`,

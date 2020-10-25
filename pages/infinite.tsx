@@ -1,56 +1,48 @@
 import React from "react";
 import { useInfiniteQuery, graphql } from "magiql";
-import { Person, Person_person } from "../components/Person";
+import { Todo, Todo_todo } from "../components/Todo";
 import { NavBar } from "../components/NavBar";
 import { Header, Actions, ActionButton } from "../components/ActionButton";
 
 export default function PeopleInfinite() {
-  const { data, fetchMore, status, isFetchingMore } = useInfiniteQuery(
+  const { data, fetchMore, status, isFetchingMore, client } = useInfiniteQuery(
     graphql`
-      query PeopleInfiniteQuery(
-        $limit: Int = 10
-        $after: String = "YXJyYXljb25uZWN0aW9uOjk="
+      query todosInfinite(
+        $limit: Int
+        $where: todos_bool_exp = { created_at: { _lt: "now()" } }
       ) {
-        allPeople(first: $limit, after: $after) {
-          edges {
-            node {
-              id
-              name
-              homeworld {
-                id
-                name
-              }
-              ...Person_person
-            }
-            cursor
-          }
-          pageInfo {
-            hasNextPage
-            endCursor
-          }
-        }
-        allFilms {
-          edges {
-            node {
-              id
-            }
-          }
+        todos(order_by: { created_at: desc }, where: $where, limit: $limit) {
+          id
+          created_at
+          ...Todo_todo
         }
       }
 
-      ${Person_person}
+      ${Todo_todo}
     `,
     {
       variables: {
-        limit: 10,
+        limit: 2,
       },
-      getFetchMore: (lastpage) => ({
-        after: lastpage.allPeople.pageInfo.hasNextPage
-          ? lastpage.allPeople.pageInfo.endCursor
+      getFetchMore: (lastpage) =>
+        lastpage.todos.length > 0
+          ? {
+              where: {
+                id: { _lt: 5 },
+                created_at: {
+                  _lt: lastpage.todos[lastpage.todos.length - 1].created_at,
+                },
+              },
+            }
           : null,
-      }),
     }
   );
+
+  if (typeof window !== "undefined") {
+    window.client = client;
+  }
+
+  console.log(data);
 
   return (
     <>
@@ -74,8 +66,8 @@ export default function PeopleInfinite() {
             {data?.map((page, index) => (
               <React.Fragment key={index}>
                 {page
-                  ? page.allPeople?.edges?.map((edge) => (
-                      <Person key={edge.node.id} person={edge.node} />
+                  ? page.todos?.map((todo) => (
+                      <Todo key={todo.id} todo={todo} />
                     ))
                   : null}
               </React.Fragment>

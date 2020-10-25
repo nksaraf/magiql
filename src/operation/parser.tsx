@@ -17,6 +17,16 @@ import {
   DocumentNode,
   SelectionSetNode,
   FragmentDefinitionNode,
+  ArgumentNode,
+  VariableNode,
+  IntValueNode,
+  BooleanValueNode,
+  FloatValueNode,
+  StringValueNode,
+  EnumValueNode,
+  NullValueNode,
+  ObjectFieldNode,
+  ValueNode,
 } from "graphql";
 import {
   removeTypeNameFromOperation,
@@ -25,6 +35,83 @@ import {
   inlineFragments,
 } from "./transforms";
 import { memoized } from "../utils/memoized";
+
+const parseValue = (arg: ValueNode) => {
+  switch (arg.kind) {
+    case "IntValue":
+    case "FloatValue":
+      return Number(arg.value);
+    case "BooleanValue":
+      return arg.value;
+    case "StringValue":
+    case "EnumValue":
+      return arg.value;
+    case "NullValue":
+      return null;
+    case "ObjectValue":
+      const value = {};
+      arg.fields.forEach((field) => {
+        value[field.name.value] = parseValue(field.value);
+      });
+      return value;
+    case "ListValue":
+      return arg.values.map(parseValue);
+  }
+};
+
+function parseArgumentValue(arg: ValueNode) {
+  switch (arg.kind) {
+    case "Variable":
+      return {
+        kind: "Variable",
+        variableName: arg.name.value,
+      };
+    case "BooleanValue":
+    case "FloatValue":
+    case "StringValue":
+    case "EnumValue":
+    case "NullValue":
+    case "IntValue":
+      return {
+        kind: "Literal",
+        value: parseValue(arg),
+      };
+    case "ObjectValue":
+      return {
+        kind: "ObjectValue",
+        fields: parseArguments(arg.fields),
+      };
+    case "ListValue":
+      return {
+        kind: "ListValue",
+        items: arg.values.map((val, index) => ({
+          name: "arg" + index,
+          ...parseArgumentValue(val),
+        })),
+      };
+  }
+}
+
+function parseArguments(args: readonly (ArgumentNode | ObjectFieldNode)[]) {
+  console.log(args);
+  return args.map((arg) => {
+    switch (arg.value.kind) {
+      case "Variable":
+      case "BooleanValue":
+      case "FloatValue":
+      case "StringValue":
+      case "EnumValue":
+      case "NullValue":
+      case "IntValue":
+      case "ObjectValue":
+      case "ListValue":
+        return {
+          name: arg.name.value,
+          ...parseArgumentValue(arg.value),
+        };
+    }
+  });
+}
 
 const parseSelections = (selectionSet: SelectionSetNode) => {
   const selections: NormalizationSelection[] = selectionSet.selections.map(
@@ -35,17 +122,7 @@ const parseSelections = (selectionSet: SelectionSetNode) => {
             name: sel.name.value,
             alias: sel.alias?.value,
             kind: "LinkedField",
-            args: sel.arguments.map((arg) => ({
-              kind: arg.value.kind === "Variable" ? "Variable" : "Literal",
-              ...(arg.value.kind === "Variable"
-                ? {
-                    variableName: arg.value.name.value,
-                  }
-                : {
-                    value: (arg.value as any).value,
-                  }),
-              name: arg.name.value,
-            })),
+            args: parseArguments(sel.arguments),
             plural: undefined,
             storageKey: null,
             concreteType: null,
@@ -57,17 +134,7 @@ const parseSelections = (selectionSet: SelectionSetNode) => {
             alias: sel.alias?.value,
             kind: "ScalarField",
             concreteType: null,
-            args: sel.arguments.map((arg) => ({
-              kind: arg.value.kind === "Variable" ? "Variable" : "Literal",
-              ...(arg.value.kind === "Variable"
-                ? {
-                    variableName: arg.value.name.value,
-                  }
-                : {
-                    value: (arg.value as any).value,
-                  }),
-              name: arg.name.value,
-            })),
+            args: parseArguments(sel.arguments),
             plural: undefined,
           };
         }
@@ -91,14 +158,7 @@ const parseOperation = (
     argumentDefinitions: op.variableDefinitions.map((v) => ({
       name: v.variable.name.value,
       kind: "LocalArgument",
-      defaultValue:
-        {
-          IntValue: Number((v.defaultValue as any)?.value),
-          FloatValue: Number((v.defaultValue as any)?.value),
-          BooleanValue: Boolean((v.defaultValue as any)?.value === true),
-          Variable: (v.defaultValue as any)?.value,
-          StringValue: (v.defaultValue as any)?.value,
-        }[v.defaultValue?.kind] ?? (v.defaultValue as any)?.value, // TODO
+      defaultValue: v.defaultValue ? parseValue(v.defaultValue) : null,
     })),
     kind: "Operation",
     name: op.name.value,
@@ -177,6 +237,7 @@ export const parseGraphQLTag = memoized(
           "No GraphQL query/mutation/subscription/fragment found"
         );
       }
+
       if (document.kind === "FragmentDefinition") {
         return parseFragment(node, taggedNode);
       } else {

@@ -1,8 +1,8 @@
 import { ReactQueryCacheProvider, ReactQueryConfigProvider } from "react-query";
-import { GraphQLClient } from "../core/graphQLClient";
+import { Client } from "../client/client";
 import React from "react";
 
-export const GraphQLClientContext = React.createContext<GraphQLClient | null>(
+export const GraphQLClientContext = React.createContext<Client | null>(
   null
 );
 
@@ -19,7 +19,7 @@ export const GraphQLClientProvider = ({
   client,
   children,
 }: React.PropsWithChildren<{
-  client: GraphQLClient;
+  client: Client;
 }>) => {
   return (
     <ReactQueryCacheProvider queryCache={client.queryCache}>

@@ -13,22 +13,22 @@ import {
   GraphQLTaggedNode,
   FetchOptions,
   CombinedError,
+  RequestConfig,
 } from "../types";
 import { useGraphQLClient } from "./useGraphQLClient";
-import { GraphQLClient } from "../core/graphQLClient";
+import { Client } from "../client/client";
 
 export interface UseQueryOptions<TQuery extends Query, TError = CombinedError>
-  extends QueryConfig<Response<TQuery>, TError> {
+  extends QueryConfig<Response<TQuery>, TError>,
+    RequestConfig<TQuery> {
   variables?: Variables<TQuery>;
-  operationName?: string;
-  fetchOptions?: FetchOptions<Variables<TQuery>>;
 }
 
 export type UseQueryResult<TQuery extends Query, TError> = QueryResult<
   Response<TQuery>,
   TError
 > & {
-  client: GraphQLClient;
+  client: Client;
   operation: Operation<TQuery>;
 };
 
@@ -48,7 +48,6 @@ export function useQuery<TQuery extends Query, TError = CombinedError>(
   });
   const queryKey = client.getQueryKey(operation);
   const { data, isMissingData } = client.store.useOperation(operation);
-  console.log(data, isMissingData, client.store, operation);
   const baseQuery = useBaseQuery<Response<TQuery>, TError, typeof queryKey>(
     queryKey,
     async () => {

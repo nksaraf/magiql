@@ -5,9 +5,11 @@ import {
   NormalizationSelector,
   OperationDescriptor,
   Snapshot as RelaySnapshot,
+  SelectorStoreUpdater,
   SingularReaderSelector,
   GraphQLResponseWithData,
   GraphQLResponseWithoutData,
+  CacheConfig,
 } from "relay-runtime";
 import {
   ReaderLinkedField,
@@ -16,7 +18,7 @@ import {
   ReaderInlineFragment,
 } from "relay-runtime/lib/util/ReaderNode";
 import { SubscriptionClient } from "subscriptions-transport-ws";
-import { GraphQLClient } from "./core/graphQLClient";
+import { Client } from "./client/client";
 import { CombinedError } from "./fetch/error";
 import { TypedSnapshot } from "relay-runtime/lib/store/RelayStoreTypes";
 
@@ -79,13 +81,14 @@ export const constants = {
   IS_WITHIN_UNMATCHED_TYPE_REFINEMENT: "__isWithinUnmatchedTypeRefinement",
 };
 
-export interface RequestDescriptor<TVariables> extends RelayRequestDescriptor {
+export interface RequestDescriptor<TQuery extends Query>
+  extends RelayRequestDescriptor {
   /** Relay: Hashed ID of the query, Raw:  */
   readonly identifier: string;
   /** Contains DocumentNode of the GraphQL Tree. AST Structure */
   readonly node: ConcreteRequest;
   /** Variables for GraphQL query */
-  readonly variables: TVariables;
+  readonly variables: Variables<TQuery>;
 }
 
 export interface Operation<TQuery extends Query> extends OperationDescriptor {
@@ -95,6 +98,7 @@ export interface Operation<TQuery extends Query> extends OperationDescriptor {
   readonly request: RequestDescriptor<Variables<TQuery>>;
   readonly root: NormalizationSelector;
   readonly response: Response<TQuery>;
+  options: OperationOptions<TQuery>;
 }
 
 export interface FetchRequestOptions extends Omit<RequestInit, "body"> {
@@ -209,7 +213,7 @@ export type ExchangeOp = (
 
 /** Input parameters for to an Exchange factory function. */
 export interface ExchangeInput {
-  client: GraphQLClient;
+  client: Client;
   forward: ExchangeIO;
   dispatchDebug: <TQuery extends Query>(event: DebugEvent<TQuery>) => void;
 }
@@ -232,3 +236,24 @@ export type Exchange = ((input: ExchangeInput) => ExchangeIO) & {
 export type ExchangeIO = <TQuery extends Query>(
   operation: Operation<TQuery>
 ) => Promise<OperationResult<TQuery>>;
+
+export interface OperationOptions<TQuery extends Query>
+  extends RequestConfig<TQuery>,
+    ResponseUpdaterConfig<TQuery> {
+  variables?: Variables<TQuery>;
+  [key: string]: any;
+}
+
+export interface RequestConfig<TMutation extends Query> {
+  operationName?: string;
+  fetchOptions?: FetchOptions<Variables<TMutation>>;
+}
+
+export interface ResponseUpdaterConfig<TMutation extends Query> {
+  optimisticUpdater?: SelectorStoreUpdater | null;
+  updater?: SelectorStoreUpdater | null;
+  optimisticResponse?:
+    | Response<TMutation>
+    | ((variables: Variables<TMutation>) => Response<TMutation>);
+  cacheConfig?: CacheConfig;
+}

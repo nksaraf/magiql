@@ -1,5 +1,5 @@
 import { Exchange, Operation, Query, CombinedError } from "../types";
-import { GraphQLClient } from "../core/graphQLClient";
+import { Client } from "../client/client";
 
 export function authExchange<T>({
   refreshAuthState,
@@ -91,7 +91,7 @@ export interface AuthExchangeConfig<T> {
   addAuthToOperation<TQuery extends Query>(params: {
     operation: Operation<TQuery>;
     authState: T | null;
-    client: GraphQLClient;
+    client: Client;
   }): Promise<Operation<TQuery>>;
   onAuthFailed(): void;
   willAuthError?<TQuery extends Query>(params: {

@@ -20,7 +20,7 @@ export {};
 //   const environment = useEnvironment();
 //   // const FragmentResource = getFragmentResourceForEnvironment(environment);
 
-//   const isMountedRef = useRef(false);
+//    const isMountedRef = useRef(false);
 //   const [, forceUpdate] = useState(0);
 //   const fragmentIdentifier = getFragmentIdentifier(fragmentNode, fragmentRef);
 

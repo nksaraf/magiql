@@ -20,10 +20,11 @@ import {
   constants,
   Store,
   GetDataID,
+  OperationOptions,
 } from "../types";
 
 import { createNormalizer, defaultGetDataId } from "../operation/normalizer";
-import type { GraphQLSubscriptionClient } from "./subscriptionClient";
+import type { SubscriptionClient } from "./subscription-client";
 import { createFetchOperation, fetchGraphQL } from "../fetch/fetchGraphQL";
 import {
   Environment,
@@ -31,7 +32,7 @@ import {
   RecordSource,
   Store as RelayStore,
 } from "relay-runtime";
-import { createRelayStore } from "../store/relayModernStore";
+import { createRelayStore } from "../store/relay";
 
 export const defaultExchanges: Exchange[] = [
   storeExchange,
@@ -56,6 +57,8 @@ function createRelayEnvironment({ endpoint, fetchOptions }) {
       return await fetchGraphQL(fetchOperation);
     }),
     store: new RelayStore(new RecordSource()),
+    // @ts-ignore
+    UNSTABLE_DO_NOT_USE_getDataID: defaultGetDataId,
   });
 }
 
@@ -66,14 +69,14 @@ export interface GraphQLClientOptions {
   queryCache?: QueryCache;
   environment?: Environment;
   onDebugEvent?: <TQuery extends Query>(event: DebugEvent<TQuery>) => void;
-  subscriptionClient?: GraphQLSubscriptionClient | undefined;
+  subscriptionClient?: SubscriptionClient | undefined;
   store?: Store;
   normalizer?: Normalizer;
   exchanges?: Exchange[];
   getDataID?: GetDataID;
 }
 
-export class GraphQLClient {
+export class Client {
   endpoint: string;
   fetchOptions: FetchOptions<object>;
   queryConfig: ReactQueryConfig<unknown, unknown>;
@@ -82,7 +85,7 @@ export class GraphQLClient {
   store: Store;
   environment: Environment;
   normalizer: Normalizer;
-  subscriptionClient?: GraphQLSubscriptionClient;
+  subscriptionClient?: SubscriptionClient;
   getDataID: GetDataID;
   exchanges: Exchange[];
   composedExchange: Exchange;
@@ -127,10 +130,7 @@ export class GraphQLClient {
 
   createOperation<TQuery extends Query>(
     node: string | GraphQLTaggedNode,
-    options: {
-      variables: Variables<TQuery>;
-      fetchOptions?: FetchOptions<Variables<TQuery>>;
-    } = { variables: {} }
+    options: OperationOptions<TQuery> = { variables: {} }
   ) {
     return createOperation(node, options) as Operation<TQuery>;
   }
@@ -162,9 +162,5 @@ export class GraphQLClient {
       client: this,
       dispatchDebug: this.onDebugEvent,
     })(operation);
-  }
-
-  async commitMutation() {
-    
   }
 }

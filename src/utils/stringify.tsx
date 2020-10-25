@@ -1,10 +1,10 @@
-
 export const stringifyData = (data: any) => {
   return JSON.stringify(
     data,
-    (old, value) => old === "__fragmentOwner"
-      ? undefined
-      : old === "__fragments"
+    (old, value) =>
+      old === "__fragmentOwner"
+        ? undefined
+        : old === "__fragments"
         ? Object.keys(value)
         : value,
     2

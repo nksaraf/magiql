@@ -1,2 +1,2 @@
 export { useSubscription } from "./hooks/useSubscription";
-export { GraphQLSubscriptionClient } from "./core/subscriptionClient";
+export { SubscriptionClient } from "./client/subscription-client";

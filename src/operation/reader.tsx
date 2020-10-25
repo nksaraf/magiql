@@ -98,8 +98,6 @@ export function readFragment<TData, TRecord>(
             record
           );
 
-          // console.log(record, field, fieldName, value);
-
           if (value === undefined) {
             isMissingData = true;
           }
@@ -116,8 +114,6 @@ export function readFragment<TData, TRecord>(
             selector.variables,
             record
           );
-
-          // console.log(record, field, fieldName, value);
 
           onReadField(reader.getDataID(record), fieldName);
 

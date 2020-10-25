@@ -18,7 +18,7 @@ import {
 } from "../types";
 import { batchedUpdates } from "../utils/batchedUpdates";
 import { createRecordReader, readFragment } from "../operation/reader";
-import { createStore } from "./cacheStore";
+import { createStore } from "./query-cache";
 
 export function createNormalizedQueryCacheStore(
   options: Partial<Store> & {
@@ -106,8 +106,6 @@ export function createNormalizedQueryCacheStore(
         onReadRecord: (dataID) => seenRecords.add(dataID),
       }
     );
-
-    console.log(seenRecords);
 
     // @ts-ignore
     useSubscriptions([...seenRecords.values()]);

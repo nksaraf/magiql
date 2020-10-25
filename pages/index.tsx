@@ -1,37 +1,40 @@
 import React from "react";
-import { graphql, useQuery } from "magiql";
+import { graphql, useMutation, useQuery } from "magiql";
 import { Actions, ActionButton, Header } from "../components/ActionButton";
 import { NavBar } from "../components/NavBar";
-import { Person_person, Person } from "../components/Person";
+import { Todo, Todo_todo } from "../components/Todo";
+
 import Link from "next/link";
+import { stringifyData } from "magiql/utils/stringify";
 
 export default function People() {
-  const { data, status, operation, client } = useQuery(
+  const { data, status } = useQuery(
     graphql`
-      query PeopleQuery($after: String) {
-        allPeople(first: 10, after: $after) {
-          edges {
-            node {
-              id
-              ...Person_person
-            }
-            cursor
-          }
-          pageInfo {
-            hasNextPage
-            endCursor
-          }
+      query MyQuery($limit: Int) {
+        todos(order_by: { updated_at: desc }, limit: $limit) {
+          id
+          ...Todo_todo
         }
       }
 
-      ${Person_person}
+      ${Todo_todo}
     `,
     {
-      getFetchMore: (lastpage) => ({
-        after: lastpage.allPeople.pageInfo.hasNextPage
-          ? lastpage.allPeople.pageInfo.endCursor
-          : null,
-      }),
+      variables: { limit: 3 },
+    }
+  );
+
+  const [mutate] = useMutation(
+    graphql`
+      mutation createTodo($text: String) {
+        insert_todos_one(object: { description: $text, is_checked: false }) {
+          id
+          description
+        }
+      }
+    `,
+    {
+      invalidateQueries: ["MyQuery"],
     }
   );
 
@@ -47,19 +50,20 @@ export default function People() {
         </code>
         <Actions>
           <ActionButton onClick={() => {}}>Refresh</ActionButton>
+          <ActionButton
+            onClick={() => {
+              mutate({ text: "random" });
+            }}
+          >
+            Create
+          </ActionButton>
         </Actions>
         <div style={{ display: "flex", flexDirection: "row" }}>
-          <div style={{ flex: 1 }}>
+          <pre style={{ flex: 1 }}>
             {data
-              ? data.allPeople?.edges?.map((edge) => (
-                  <Link key={edge.node.id} href={`/person/${edge.node.id}`}>
-                    <a>
-                      <Person person={edge.node} />
-                    </a>
-                  </Link>
-                ))
+              ? data.todos.map((todo) => <Todo key={todo.id} todo={todo} />)
               : null}
-          </div>
+          </pre>
         </div>
       </main>
     </>

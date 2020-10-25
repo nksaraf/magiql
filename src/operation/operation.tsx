@@ -12,6 +12,7 @@ import type {
   Variables,
   GraphQLTaggedNode,
   FetchOptions,
+  OperationOptions,
 } from "../types";
 import { parseGraphQLTag } from "./parser";
 
@@ -65,18 +66,15 @@ export const getOperationName = (query: string) => {
 
 export const createOperation = function <TQuery extends Query>(
   query: string | GraphQLTaggedNode,
-  options: {
-    variables: Variables<TQuery>;
-    fetchOptions?: FetchOptions<Variables<TQuery>>;
-  } = { variables: {} }
+  options: OperationOptions<TQuery> = { variables: {} }
 ): Operation<TQuery> {
-  const { variables = {}, fetchOptions = {} } = options;
   const node = getRequest(query);
   const operationDescriptor = createRelayOperationDescriptor(
     node,
-    variables
+    options.variables ?? {}
   ) as Operation<TQuery>;
+  operationDescriptor.request.node.params.metadata.fetchOptions =
+    options.fetchOptions;
 
-  operationDescriptor.request.node.params.metadata.fetchOptions = fetchOptions;
-  return operationDescriptor;
+  return { ...operationDescriptor, options };
 };

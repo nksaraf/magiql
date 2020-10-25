@@ -3,12 +3,12 @@ import { setConsole } from "react-query";
 
 import { setBatch } from "./utils/batchedUpdates";
 
-export * from "./core/graphQLClient";
+export * from "./client/client";
 export * from "./exchanges/compose";
 export * from "./fetch/fetchGraphQL";
 export * from "./types";
-export * from "./store/cacheStore";
-export * from "./store/normalizedCacheStore";
+export * from "./store/query-cache";
+export * from "./store/normalized-query-cache";
 export * from "./operation/normalizer";
 export * from "./operation/reader";
 export * from "./utils";

@@ -5,17 +5,17 @@ import {
   MutationResult,
 } from "react-query";
 import { createOperation } from "../operation/operation";
-import { GraphQLClient } from "../core/graphQLClient";
+import { Client } from "../client/client";
 
 import {
   Query,
   Variables,
   Response,
-  Store,
   GraphQLTaggedNode,
   Operation,
-  FetchOptions,
   CombinedError,
+  ResponseUpdaterConfig,
+  RequestConfig,
 } from "../types";
 import { useGraphQLClient } from "./useGraphQLClient";
 
@@ -25,7 +25,7 @@ export type UseMutationResult<
 > = [
   MutateFunction<Response<TMutation>, TError, Variables<TMutation>>,
   MutationResult<Response<TMutation>, TError> & {
-    client: GraphQLClient;
+    client: Client;
     operation: Operation<TMutation>;
   }
 ];
@@ -33,13 +33,10 @@ export type UseMutationResult<
 export interface UseMutationOptions<
   TMutation extends Query,
   TError = CombinedError
-> extends MutationConfig<Response<TMutation>, TError, Variables<TMutation>> {
-  operationName?: string;
+> extends MutationConfig<Response<TMutation>, TError, Variables<TMutation>>,
+    ResponseUpdaterConfig<TMutation>,
+    RequestConfig<TMutation> {
   invalidateQueries?: any[];
-  optimisticResponse?:
-    | Response<TMutation>
-    | ((variables: Variables<TMutation>) => Response<TMutation>);
-  fetchOptions?: FetchOptions<Variables<TMutation>>;
 }
 
 export function useMutation<TMutation extends Query, TError = CombinedError>(
@@ -51,6 +48,8 @@ export function useMutation<TMutation extends Query, TError = CombinedError>(
     invalidateQueries = [],
     fetchOptions = {},
     optimisticResponse,
+    optimisticUpdater,
+    updater,
     onMutate,
     ...mutationOptions
   } = options;
@@ -59,28 +58,17 @@ export function useMutation<TMutation extends Query, TError = CombinedError>(
   const client = useGraphQLClient();
   const [mutateFn, state] = useBaseMutation<TData, TError, TVariables>(
     (variables) => {
-      const operation = client.createOperation(mutation, {
+      const operation = client.createOperation<TMutation>(mutation, {
         variables,
         fetchOptions,
+        optimisticResponse,
+        optimisticUpdater,
+        updater,
       });
       return client.execute<TMutation>(operation).then(({ data }) => data);
     },
     {
       ...mutationOptions,
-      onMutate: (variables) => {
-        onMutate?.(variables);
-        if (optimisticResponse) {
-          const operation = createOperation<TMutation>(mutation, { variables });
-          const normalizedData = client.normalizer.normalizeResponse(
-            typeof optimisticResponse === "object"
-              ? optimisticResponse
-              : (optimisticResponse as any)(variables),
-            operation
-          );
-
-          client.store.update(normalizedData);
-        }
-      },
       onSuccess: (data, variables) => {
         onSuccess?.(data, variables);
         for (var query of invalidateQueries) {
