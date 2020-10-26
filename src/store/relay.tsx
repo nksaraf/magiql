@@ -17,11 +17,21 @@ import {
   Operation,
   Snapshot,
   Variables,
+  KeyType,
 } from "../types";
 import getFragmentIdentifier from "relay-runtime/lib/util/getFragmentIdentifier";
 import RelayModernEnvironment from "relay-runtime/lib/store/RelayModernEnvironment";
 import { createStore } from "./query-cache";
-import { FragmentResource, isMissingData } from "./fragment";
+import { FragmentResource, FragmentResult, isMissingData } from "./fragment";
+import { ReaderFragment } from "relay-runtime";
+
+export type SelectorSnapshot<TData, TPlural extends boolean = boolean> = {
+  disableStoreUpdates: () => void;
+  isMissingData: boolean;
+  enableStoreUpdates: () => void;
+  shouldUpdateGeneration: number;
+  cacheKey: string;
+} & FragmentResult<TData, TPlural>;
 
 export function createRelayStore({
   environment,
@@ -30,7 +40,14 @@ export function createRelayStore({
 }): Store {
   const fragmentResource = new FragmentResource(environment);
 
-  function useSelector<TData>(fragmentNode, fragmentRef) {
+  function useSelector<
+    TData,
+    TKey extends KeyType | KeyType[],
+    TPlural extends boolean = TKey extends any[] ? true : false
+  >(
+    fragmentNode: ReaderFragment,
+    fragmentRef: TKey
+  ): SelectorSnapshot<TData, TPlural> {
     const isMountedRef = React.useRef(false);
     const rerender = useRerenderer();
 
@@ -39,6 +56,7 @@ export function createRelayStore({
     // memoization values to indicate if computations for useMemo or useEffect
     // should be re-executed.
     const fragmentIdentifier = getFragmentIdentifier(fragmentNode, fragmentRef);
+
     const mustResubscribeGenerationRef = React.useRef(0);
     const shouldUpdateGenerationRef = React.useRef(0);
 
@@ -70,13 +88,14 @@ export function createRelayStore({
     }
 
     // Read fragment data; this might suspend.
-    const fragmentResult = fragmentResource.readWithIdentifier(
-      fragmentNode,
-      fragmentRef,
-      fragmentIdentifier
-    );
+    const fragmentResult = fragmentResource.readWithIdentifier<
+      TData,
+      typeof fragmentRef,
+      TPlural
+    >(fragmentNode, fragmentRef, fragmentIdentifier);
 
     const isListeningForUpdatesRef = React.useRef(true);
+
     function enableStoreUpdates() {
       isListeningForUpdatesRef.current = true;
       const didMissUpdates = fragmentResource.checkMissedUpdates(
@@ -133,14 +152,14 @@ export function createRelayStore({
 
     return {
       // $FlowFixMe[incompatible-return]
-      data: fragmentResult.data,
+      ...fragmentResult,
       disableStoreUpdates,
       isMissingData: fragmentResult.snapshot
         ? isMissingData(fragmentResult.snapshot)
         : true,
       enableStoreUpdates,
       shouldUpdateGeneration: shouldUpdateGenerationRef.current,
-    } as any;
+    };
   }
 
   function useEntities() {
@@ -157,19 +176,23 @@ export function createRelayStore({
 
   function useOperationPages<TQuery extends Query>(
     operation: Operation<TQuery>,
-    pageVariables: any[]
+    pageVariables: {}[]
   ) {
-    return pageVariables.map((variables) => {
-      const pageOperation = createOperation(operation.request.node, {
-        variables,
-      });
-      console.log(pageOperation);
-      return (environment
-        .getStore()
-        .lookup(pageOperation.fragment) as unknown) as Snapshot<
-        Response<TQuery>
-      >;
-    });
+    const refs = pageVariables.map((vars, index) => ({
+      __id: operation.fragment.dataID,
+      __fragments: {
+        [operation.fragment.node.name]: vars,
+      },
+      __fragmentOwner: operation.request,
+    }));
+
+    return useSelector<Response<TQuery>, KeyType[]>(
+      {
+        ...operation.request.node.fragment,
+        metadata: { plural: true },
+      },
+      refs as any
+    );
   }
 
   return createStore({
@@ -180,8 +203,10 @@ export function createRelayStore({
     useSelector,
     updateRecord: () => {},
     useOperationPages,
-    useFragment: useSelector,
-    useOperation: (operation) => {
+    useFragment: (fragmentNode, fragmentRef) => {
+      return useSelector(fragmentNode, fragmentRef);
+    },
+    useOperation: <TQuery extends Query>(operation: Operation<TQuery>) => {
       const rootFragmentRef = {
         __id: operation.fragment.dataID,
         __fragments: {
@@ -190,7 +215,10 @@ export function createRelayStore({
         __fragmentOwner: operation.request,
       };
 
-      return useSelector(operation.request.node.fragment, rootFragmentRef);
+      return useSelector<Response<TQuery>, KeyType>(
+        operation.request.node.fragment,
+        rootFragmentRef as any
+      );
     },
     useRecords: useEntities,
     get: {} as any,
@@ -199,7 +227,8 @@ export function createRelayStore({
 
 function useHasChanged(value: any): boolean {
   const [mirroredValue, setMirroredValue] = React.useState(value);
-  const valueChanged = mirroredValue !== value;
+  const valueChanged =
+    stableStringify(mirroredValue) !== stableStringify(value);
   if (valueChanged) {
     setMirroredValue(value);
   }

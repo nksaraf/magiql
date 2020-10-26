@@ -9,9 +9,14 @@ export default function PeopleInfinite() {
     graphql`
       query todosInfinite(
         $limit: Int
-        $where: todos_bool_exp = { created_at: { _lt: "now()" } }
+        $before: timestamptz = "now()"
+        $in: [Int!]
       ) {
-        todos(order_by: { created_at: desc }, where: $where, limit: $limit) {
+        todos(
+          order_by: { created_at: desc }
+          where: { id: { _in: $in }, created_at: { _lt: $before } }
+          limit: $limit
+        ) {
           id
           created_at
           ...Todo_todo
@@ -23,26 +28,21 @@ export default function PeopleInfinite() {
     {
       variables: {
         limit: 2,
+        in: null,
       },
       getFetchMore: (lastpage) =>
         lastpage.todos.length > 0
           ? {
-              where: {
-                id: { _lt: 5 },
-                created_at: {
-                  _lt: lastpage.todos[lastpage.todos.length - 1].created_at,
-                },
-              },
+              before: lastpage.todos[lastpage.todos.length - 1].created_at,
             }
           : null,
     }
   );
 
   if (typeof window !== "undefined") {
+    // @ts-ignore
     window.client = client;
   }
-
-  console.log(data);
 
   return (
     <>

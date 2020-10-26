@@ -93,7 +93,6 @@ function parseArgumentValue(arg: ValueNode) {
 }
 
 function parseArguments(args: readonly (ArgumentNode | ObjectFieldNode)[]) {
-  console.log(args);
   return args.map((arg) => {
     switch (arg.value.kind) {
       case "Variable":

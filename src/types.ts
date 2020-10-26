@@ -21,6 +21,7 @@ import { SubscriptionClient } from "subscriptions-transport-ws";
 import { Client } from "./client/client";
 import { CombinedError } from "./fetch/error";
 import { TypedSnapshot } from "relay-runtime/lib/store/RelayStoreTypes";
+import { SelectorSnapshot } from "./store/relay";
 
 export type {
   ConcreteRequest,
@@ -183,18 +184,21 @@ export interface Store {
   update(recordSource: any): void;
   updateRecord(id: string, record: any): void;
   get(dataID: string): any;
-  useFragment<TKey extends KeyType>(
+  useFragment<TKey extends KeyType | KeyType[]>(
     fragmentNode: ReaderFragment,
     fragmentRef: TKey
-  ): Snapshot<$Call<KeyReturnType<TKey>>>;
+  ): SelectorSnapshot<
+    $Call<KeyReturnType<TKey extends KeyType[] ? TKey[0] : TKey>>,
+    TKey extends any[] ? true : false
+  >;
   useOperation<TQuery extends Query>(
     operation: Operation<TQuery>
-  ): Snapshot<TQuery>;
+  ): SelectorSnapshot<Response<TQuery>, false>;
   useRecords(): [string, { [key: string]: any }][];
   useOperationPages<TQuery extends Query>(
     operation: Operation<TQuery>,
     pageVariables: any[]
-  ): Snapshot<TQuery>[];
+  ): SelectorSnapshot<Response<TQuery>, true>;
   [key: string]: any;
 }
 

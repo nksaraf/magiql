@@ -45,7 +45,7 @@ export const defaultExchanges: Exchange[] = [
   fetchExchange,
 ];
 
-function createRelayEnvironment({ endpoint, fetchOptions }) {
+export function createRelayEnvironment({ endpoint, fetchOptions, getDataID }) {
   return new Environment({
     network: Network.create(async (params, variables) => {
       const fetchOperation = await createFetchOperation(
@@ -56,9 +56,13 @@ function createRelayEnvironment({ endpoint, fetchOptions }) {
       );
       return await fetchGraphQL(fetchOperation);
     }),
-    store: new RelayStore(new RecordSource()),
+    log: console.log,
+    store: new RelayStore(new RecordSource(), {
+      // @ts-ignore
+      log: console.log,
+    }),
     // @ts-ignore
-    UNSTABLE_DO_NOT_USE_getDataID: defaultGetDataId,
+    UNSTABLE_DO_NOT_USE_getDataID: getDataID,
   });
 }
 
@@ -97,7 +101,7 @@ export class Client {
     getDataID = defaultGetDataId,
     queryCache = new QueryCache(),
     normalizer = createNormalizer({ getDataID }),
-    environment = createRelayEnvironment({ endpoint, fetchOptions }),
+    environment = createRelayEnvironment({ endpoint, fetchOptions, getDataID }),
     store = createRelayStore({ environment }),
     onDebugEvent = () => {},
     exchanges = defaultExchanges,

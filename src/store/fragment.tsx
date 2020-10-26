@@ -3,25 +3,26 @@ import invariant from "invariant";
 import {
   getSelector,
   PluralReaderSelector,
+  ReaderSelector,
   SingularReaderSelector,
 } from "relay-runtime";
 
 import recycleNodesInto from "relay-runtime/lib/util/recycleNodesInto";
 
-import type {
-  Disposable,
-  IEnvironment,
-  ReaderFragment,
-  Snapshot,
-} from "relay-runtime";
+import type { Disposable, IEnvironment, ReaderFragment } from "relay-runtime";
 
-type SingularOrPluralSnapshot = Snapshot | Snapshot[];
+import { Snapshot, KeyType } from "../types";
 
-export type FragmentResult = {
+export type SingularOrPluralSnapshot<
+  TData,
+  TPlural extends boolean = boolean
+> = TPlural extends true ? Snapshot<TData>[] : Snapshot<TData>;
+
+export type FragmentResult<TData, TPlural extends boolean = boolean> = {
   cacheKey: string;
-  data: any;
+  data: null | (TPlural extends true ? TData[] : TData);
   isMissingData: any;
-  snapshot: SingularOrPluralSnapshot | null;
+  snapshot: SingularOrPluralSnapshot<TData, TPlural> | null;
 };
 
 // TODO: Fix to not rely on LRU. If the number of active fragments exceeds this
@@ -42,17 +43,17 @@ const createCache = () => {
   };
 };
 
-export function isMissingData(snapshot: SingularOrPluralSnapshot) {
+export function isMissingData(snapshot: SingularOrPluralSnapshot<any>) {
   if (Array.isArray(snapshot)) {
     return snapshot.some((s) => s.isMissingData);
   }
   return snapshot.isMissingData;
 }
 
-function getFragmentResult(
+function getFragmentResult<TData>(
   cacheKey: string,
-  snapshot: SingularOrPluralSnapshot
-): FragmentResult {
+  snapshot: SingularOrPluralSnapshot<TData>
+): FragmentResult<TData> {
   if (Array.isArray(snapshot)) {
     return {
       cacheKey,
@@ -83,25 +84,29 @@ export class FragmentResource {
    * equal to `getFragmentIdentifier(fragmentNode, fragmentRef)` from the
    * arguments.
    */
-  readWithIdentifier(
+  readWithIdentifier<
+    TData,
+    TKey extends KeyType | KeyType[],
+    TPlural extends boolean = KeyType extends any[] ? true : false
+  >(
     fragmentNode: ReaderFragment,
-    fragmentRef: any,
+    fragmentRef: TKey,
     fragmentIdentifier: string,
     fragmentKey?: string
-  ): FragmentResult {
+  ): FragmentResult<TData, TPlural> {
     const environment = this._environment;
 
     // If fragmentRef is null or undefined, pass it directly through.
     // This is a convenience when consuming fragments via a HOC api, when the
     // prop corresponding to the fragment ref might be passed as null.
-    if (fragmentRef == null) {
-      return {
-        cacheKey: fragmentIdentifier,
-        data: null,
-        snapshot: null,
-        isMissingData: true,
-      };
-    }
+    // if (fragmentRef == null) {
+    //   return {
+    //     cacheKey: fragmentIdentifier,
+    //     data: null,
+    //     snapshot: null,
+    //     isMissingData: true,
+    //   };
+    // }
 
     // If fragmentRef is plural, ensure that it is an array.
     // If it's empty, return the empty array direclty before doing any more work.
@@ -133,7 +138,6 @@ export class FragmentResource {
     // 2. If not, try reading the fragment from the Relay store.
     // If the snapshot has data, return it and save it in cache
     const fragmentSelector = getSelector(fragmentNode, fragmentRef);
-    console.log(fragmentSelector);
     // invariant(
     //   fragmentSelector != null,
     //   'Relay: Expected to receive an object where `...%s` was spread, ' +
@@ -154,12 +158,12 @@ export class FragmentResource {
     //   componentDisplayName,
     // );
 
-    const snapshot =
-      fragmentSelector.kind === "PluralReaderSelector"
-        ? (fragmentSelector as PluralReaderSelector).selectors.map((s) =>
-            environment.lookup(s)
-          )
-        : environment.lookup(fragmentSelector as SingularReaderSelector);
+    const snapshot: SingularOrPluralSnapshot<TData> = (fragmentSelector.kind ===
+    "PluralReaderSelector"
+      ? (fragmentSelector as PluralReaderSelector).selectors.map((s) =>
+          environment.lookup(s)
+        )
+      : environment.lookup(fragmentSelector as SingularReaderSelector)) as any;
 
     const fragmentOwner =
       fragmentSelector.kind === "PluralReaderSelector"
@@ -170,7 +174,10 @@ export class FragmentResource {
       fragmentOwner?.node?.params?.name ?? "Unknown Parent Query";
 
     if (!isMissingData(snapshot)) {
-      const fragmentResult = getFragmentResult(fragmentIdentifier, snapshot);
+      const fragmentResult = getFragmentResult<TData>(
+        fragmentIdentifier,
+        snapshot
+      );
       this._cache.set(fragmentIdentifier, fragmentResult);
       return fragmentResult;
     }
@@ -260,7 +267,10 @@ export class FragmentResource {
   //   });
   // }
 
-  subscribe(fragmentResult: FragmentResult, callback: () => void): Disposable {
+  subscribe(
+    fragmentResult: FragmentResult<any>,
+    callback: () => void
+  ): Disposable {
     const environment = this._environment;
     const { cacheKey } = fragmentResult;
     const renderedSnapshot = fragmentResult.snapshot;
@@ -288,12 +298,12 @@ export class FragmentResource {
         "Relay: Expected snapshots to be plural. " +
           "If you're seeing this, this is likely a bug in Relay."
       );
-      (currentSnapshot as Snapshot[]).forEach((snapshot, idx) => {
+      (currentSnapshot as Snapshot<any>[]).forEach((snapshot, idx) => {
         dataSubscriptions.push(
           environment.subscribe(snapshot, (latestSnapshot) => {
             this._updatePluralSnapshot(
               cacheKey,
-              currentSnapshot as Snapshot[],
+              currentSnapshot as Snapshot<any>[],
               latestSnapshot,
               idx
             );
@@ -308,13 +318,16 @@ export class FragmentResource {
           "If you're seeing this, this is likely a bug in Relay."
       );
       dataSubscriptions.push(
-        environment.subscribe(currentSnapshot as Snapshot, (latestSnapshot) => {
-          this._cache.set(
-            cacheKey,
-            getFragmentResult(cacheKey, latestSnapshot)
-          );
-          callback();
-        })
+        environment.subscribe(
+          currentSnapshot as Snapshot<any>,
+          (latestSnapshot) => {
+            this._cache.set(
+              cacheKey,
+              getFragmentResult(cacheKey, latestSnapshot)
+            );
+            callback();
+          }
+        )
       );
     }
 
@@ -327,8 +340,8 @@ export class FragmentResource {
   }
 
   checkMissedUpdates(
-    fragmentResult: FragmentResult
-  ): [boolean, SingularOrPluralSnapshot | null] {
+    fragmentResult: FragmentResult<any>
+  ): [boolean, SingularOrPluralSnapshot<any> | null] {
     const environment = this._environment;
     const { cacheKey } = fragmentResult;
     const renderedSnapshot = fragmentResult.snapshot;
@@ -378,8 +391,8 @@ export class FragmentResource {
 
   _updatePluralSnapshot(
     cacheKey: string,
-    baseSnapshots: Snapshot[],
-    latestSnapshot: Snapshot,
+    baseSnapshots: Snapshot<any>[],
+    latestSnapshot: Snapshot<any>,
     idx: number
   ): void {
     const currentFragmentResult = this._cache.get(cacheKey);

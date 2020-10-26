@@ -100,9 +100,10 @@ export function useInfiniteQuery<TQuery extends Query, TError = CombinedError>(
     };
   }) ?? [variables];
 
-  console.log(pageQueries);
-
-  const pages = client.store.useOperationPages(operation, pageQueries);
+  const { data, isMissingData } = client.store.useOperationPages(
+    operation,
+    pageQueries
+  );
 
   const { canFetchMore, fetchMore: baseFetchMore } = infiniteQuery;
 
@@ -117,7 +118,7 @@ export function useInfiniteQuery<TQuery extends Query, TError = CombinedError>(
 
   return {
     ...infiniteQuery,
-    data: pages.map((d) => d.data),
+    data: isMissingData ? null : data,
     operation,
     client,
     canFetchMore,
