@@ -73,8 +73,6 @@ export const createOperation = function <TQuery extends Query>(
     node,
     options.variables ?? {}
   ) as Operation<TQuery>;
-  operationDescriptor.request.node.params.metadata.fetchOptions =
-    options.fetchOptions;
 
   return { ...operationDescriptor, options };
 };

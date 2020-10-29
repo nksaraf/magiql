@@ -72,7 +72,9 @@ export async function fetchGraphQL<TQuery extends Query>({
   }
 
   const query: string =
-    typeof rawQuery === "string" ? rawQuery : rawQuery.params.text!;
+    typeof rawQuery === "string"
+      ? rawQuery
+      : (rawQuery as ConcreteRequest).params.text!;
 
   const operation = {
     endpoint,
@@ -127,7 +129,7 @@ export async function createFetchOperation<TQuery extends Query>(
   params: RequestParameters,
   variables: Variables<TQuery>,
   endpoint: string,
-  basefetchOptions: FetchOptions<TQuery>
+  basefetchOptions: FetchOptions<TQuery>[] = []
 ): Promise<FetchOperation<Variables<TQuery>>> {
   const fetchOperation = {
     query: params.text,
@@ -137,17 +139,13 @@ export async function createFetchOperation<TQuery extends Query>(
     endpoint: endpoint,
   };
 
-  const clientFetchOptions = await resolveFetchOptions(
-    basefetchOptions ?? {},
-    fetchOperation
+  const fetchOptions = deepMerge.all(
+    await Promise.all(
+      [...basefetchOptions, params.metadata.fetchOptions ?? {}].map((opt) =>
+        resolveFetchOptions(opt, fetchOperation)
+      )
+    )
   );
-
-  const operationFetchOptions = await resolveFetchOptions(
-    params.metadata.fetchOptions ?? {},
-    fetchOperation
-  );
-
-  const fetchOptions = deepMerge(clientFetchOptions, operationFetchOptions);
   return {
     fetchOptions,
     ...fetchOperation,

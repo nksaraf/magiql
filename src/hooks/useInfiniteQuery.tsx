@@ -5,7 +5,7 @@ import {
   InfiniteQueryResult,
   QueryConfig,
 } from "react-query";
-import { Client } from "../client/client";
+import { GraphQLClient } from "../client/client";
 
 import {
   Variables,
@@ -32,7 +32,7 @@ export type UseInfiniteQueryResult<
   TQuery extends Query,
   TError
 > = InfiniteQueryResult<Response<TQuery>, TError> & {
-  client: Client;
+  client: GraphQLClient;
   operation: Operation<TQuery>;
 };
 

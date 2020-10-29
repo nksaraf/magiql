@@ -8,39 +8,52 @@ export const relayExchange: Exchange = function relayExchange({
 }) {
   return async function <TQuery extends Query>(operation: Operation<TQuery>) {
     if (operation.request.node.params.operationKind === "query") {
-      const promise = new Promise<FetchResult<TQuery>>((resolve, reject) =>
-        client.environment.execute({ operation }).subscribe({
-          next: (response) => {
-            resolve(response as FetchResult<TQuery>);
+      const promise = new Promise<FetchResult<TQuery>>((resolve, reject) => {
+        const cacheConfig = {
+          ...(operation.options.cacheConfig ?? {}),
+          metadata: {
+            ...(operation.options.cacheConfig?.metadata ?? {}),
+            fetchOptions: operation.options.fetchOptions ?? {},
+            operationName: operation.options.operationName,
           },
-          start: () => {
-            dispatchDebug({
-              type: "fetchRequest",
-              message: "fetching",
-              operation,
-              data: {},
-            });
-          },
-          error: (error) => {
-            if (error.source) {
-              resolve(
-                makeResult({
-                  data: null,
-                  errors: error.source.errors,
-                })
-              );
-            } else {
-              resolve(makeNetworkErrorResult(error));
-            }
-          },
-        })
-      );
+        };
+
+        client.environment
+          .execute({
+            operation,
+            cacheConfig: cacheConfig,
+            updater: operation.options.updater,
+          })
+          .subscribe({
+            next: (response) => {
+              resolve(response as FetchResult<TQuery>);
+            },
+            start: () => {
+              dispatchDebug({
+                name: "query.execute",
+                operation,
+                data: {},
+              });
+            },
+            error: (error) => {
+              if (error.source) {
+                resolve(
+                  makeResult({
+                    data: null,
+                    errors: error.source.errors,
+                  })
+                );
+              } else {
+                resolve(makeNetworkErrorResult(error));
+              }
+            },
+          });
+      });
 
       const result: FetchResult<TQuery> = await promise;
       const error = !result.data ? result.combinedError : undefined;
       dispatchDebug({
-        type: error ? "fetchError" : "fetchSuccess",
-        message: `${error ? "fetch failed" : "fetch successful"}`,
+        name: error ? "query.error" : "query.success",
         operation,
         data: {
           value: error || result,
@@ -52,11 +65,19 @@ export const relayExchange: Exchange = function relayExchange({
         operation,
       };
     } else if (operation.request.node.params.operationKind === "mutation") {
-      const promise = new Promise<FetchResult<TQuery>>((resolve, reject) =>
+      const promise = new Promise<FetchResult<TQuery>>((resolve, reject) => {
+        const cacheConfig = {
+          ...(operation.options.cacheConfig ?? {}),
+          metadata: {
+            ...(operation.options.cacheConfig?.metadata ?? {}),
+            fetchOptions: operation.options.fetchOptions ?? {},
+            operationName: operation.options.operationName,
+          },
+        };
         client.environment
           .executeMutation({
             operation,
-            cacheConfig: operation.options.cacheConfig ?? {},
+            cacheConfig: cacheConfig,
             optimisticResponse: operation.options.optimisticResponse
               ? typeof operation.options.optimisticResponse === "object"
                 ? operation.options.optimisticResponse
@@ -73,8 +94,7 @@ export const relayExchange: Exchange = function relayExchange({
             },
             start: () => {
               dispatchDebug({
-                type: "fetchRequest",
-                message: "fetching",
+                name: "mutation.execute",
                 operation,
                 data: {},
               });
@@ -87,14 +107,13 @@ export const relayExchange: Exchange = function relayExchange({
                 })
               );
             },
-          })
-      );
+          });
+      });
 
       const result: FetchResult<TQuery> = await promise;
       const error = !result.data ? result.combinedError : undefined;
       dispatchDebug({
-        type: error ? "fetchError" : "fetchSuccess",
-        message: `${error ? "fetch failed" : "fetch successful"}`,
+        name: error ? "mutation.error" : "mutation.success",
         operation,
         data: {
           value: error || result,
@@ -110,5 +129,3 @@ export const relayExchange: Exchange = function relayExchange({
     }
   };
 };
-
-relayExchange.emoji = "🏃";

@@ -45,21 +45,36 @@ export const defaultExchanges: Exchange[] = [
   fetchExchange,
 ];
 
-export function createRelayEnvironment({ endpoint, fetchOptions, getDataID }) {
+export function createRelayEnvironment({
+  endpoint,
+  fetchOptions,
+  getDataID,
+  onDebugEvent,
+}) {
   return new Environment({
-    network: Network.create(async (params, variables) => {
+    network: Network.create(async (params, variables, cacheConfig) => {
       const fetchOperation = await createFetchOperation(
         params,
         variables,
         endpoint,
-        fetchOptions
+        [cacheConfig.metadata.fetchOptions, fetchOptions]
       );
       return await fetchGraphQL(fetchOperation);
     }),
-    log: console.log,
+    log: (event) => {
+      onDebugEvent({
+        ...event,
+        timestamp: Date.now(),
+      });
+    },
     store: new RelayStore(new RecordSource(), {
       // @ts-ignore
-      log: console.log,
+      log: (event) => {
+        onDebugEvent({
+          ...event,
+          timestamp: Date.now(),
+        });
+      },
     }),
     // @ts-ignore
     UNSTABLE_DO_NOT_USE_getDataID: getDataID,
@@ -80,7 +95,21 @@ export interface GraphQLClientOptions {
   getDataID?: GetDataID;
 }
 
-export class Client {
+function logger(log) {
+  let last;
+
+  return (event) => {
+    if (process.env.NODE_ENV === "development") {
+      log({
+        ...event,
+        diff: last ? event.timestamp - last.timestamp : 0,
+      });
+      last = event;
+    }
+  };
+}
+
+export class GraphQLClient {
   endpoint: string;
   fetchOptions: FetchOptions<object>;
   queryConfig: ReactQueryConfig<unknown, unknown>;
@@ -101,9 +130,14 @@ export class Client {
     getDataID = defaultGetDataId,
     queryCache = new QueryCache(),
     normalizer = createNormalizer({ getDataID }),
-    environment = createRelayEnvironment({ endpoint, fetchOptions, getDataID }),
+    onDebugEvent = logger((event) => console.log(event.name, "+" + event.diff)),
+    environment = createRelayEnvironment({
+      endpoint,
+      fetchOptions,
+      getDataID,
+      onDebugEvent,
+    }),
     store = createRelayStore({ environment }),
-    onDebugEvent = () => {},
     exchanges = defaultExchanges,
     subscriptionClient,
   }: Partial<GraphQLClientOptions>) {
@@ -134,9 +168,9 @@ export class Client {
 
   createOperation<TQuery extends Query>(
     node: string | GraphQLTaggedNode,
-    options: OperationOptions<TQuery> = { variables: {} }
+    cacheConfig: OperationOptions<TQuery> = { variables: {} }
   ) {
-    return createOperation(node, options) as Operation<TQuery>;
+    return createOperation(node, cacheConfig) as Operation<TQuery>;
   }
 
   createFragmentRef(record, type, fragmentName) {

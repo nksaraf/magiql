@@ -16,7 +16,7 @@ import {
   RequestConfig,
 } from "../types";
 import { useGraphQLClient } from "./useGraphQLClient";
-import { Client } from "../client/client";
+import { GraphQLClient } from "../client/client";
 
 export interface UseQueryOptions<TQuery extends Query, TError = CombinedError>
   extends QueryConfig<Response<TQuery>, TError>,
@@ -28,7 +28,7 @@ export type UseQueryResult<TQuery extends Query, TError> = QueryResult<
   Response<TQuery>,
   TError
 > & {
-  client: Client;
+  client: GraphQLClient;
   operation: Operation<TQuery>;
 };
 

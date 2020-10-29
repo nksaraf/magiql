@@ -18,7 +18,7 @@ import {
   ReaderInlineFragment,
 } from "relay-runtime/lib/util/ReaderNode";
 import { SubscriptionClient } from "subscriptions-transport-ws";
-import { Client } from "./client/client";
+import { GraphQLClient } from "./client/client";
 import { CombinedError } from "./fetch/error";
 import { TypedSnapshot } from "relay-runtime/lib/store/RelayStoreTypes";
 import { SelectorSnapshot } from "./store/relay";
@@ -107,7 +107,7 @@ export interface FetchRequestOptions extends Omit<RequestInit, "body"> {
 }
 
 export interface FetchOperation<TVariables> {
-  query: string | ConcreteRequest;
+  query: string | GraphQLTaggedNode;
   operationName?: string;
   operationKind?: OperationKind;
   variables?: TVariables;
@@ -217,18 +217,17 @@ export type ExchangeOp = (
 
 /** Input parameters for to an Exchange factory function. */
 export interface ExchangeInput {
-  client: Client;
+  client: GraphQLClient;
   forward: ExchangeIO;
   dispatchDebug: <TQuery extends Query>(event: DebugEvent<TQuery>) => void;
 }
 
 export type DebugEvent<TQuery extends Query> = {
-  type: string;
-  data: any;
-  message: string;
-  operation: Operation<TQuery>;
-  timestamp?: number;
-  source?: string;
+  name: string;
+  [key: string]: any;
+  // operation: Operation<TQuery>;
+  // timestamp?: number;
+  // source?: string;
 };
 
 /** Function responsible for listening for streamed [operations]{@link Operation}. */

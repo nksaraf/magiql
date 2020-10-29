@@ -3,21 +3,16 @@ import "prismjs/themes/prism.css";
 
 import React from "react";
 import Head from "next/head";
-import { Client, GraphQLClientProvider } from "magiql";
+import { GraphQLClient, GraphQLClientProvider } from "magiql";
 import GraphQLDevtools from "magiql/devtools";
 
-const client = new Client({
+const client = new GraphQLClient({
   endpoint: "https://todo-magiql.hasura.app/v1/graphql",
-  onDebugEvent: (event) => {
-    console.log(
-      `${event.operation.request.node.operation.name} => ${event.source} ${event.message}`,
-      event.data
-    );
-  },
   queryConfig: {
     queries: {
       refetchOnMount: false,
       refetchInterval: false,
+      refetchOnWindowFocus: false,
     },
   },
 });

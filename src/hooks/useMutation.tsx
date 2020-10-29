@@ -5,7 +5,7 @@ import {
   MutationResult,
 } from "react-query";
 import { createOperation } from "../operation/operation";
-import { Client } from "../client/client";
+import { GraphQLClient } from "../client/client";
 
 import {
   Query,
@@ -25,7 +25,7 @@ export type UseMutationResult<
 > = [
   MutateFunction<Response<TMutation>, TError, Variables<TMutation>>,
   MutationResult<Response<TMutation>, TError> & {
-    client: Client;
+    client: GraphQLClient;
     operation: Operation<TMutation>;
   }
 ];

@@ -3,10 +3,7 @@
  * https://github.com/FormidableLabs/urql/blob/main/packages/core/src/exchanges
  */
 
-import type {
-  Exchange,
-  ExchangeInput,
-} from "../types";
+import type { Exchange, ExchangeInput } from "../types";
 
 export const composeExchanges = (exchanges: Exchange[]) => ({
   client,
@@ -20,9 +17,8 @@ export const composeExchanges = (exchanges: Exchange[]) => ({
         forward,
         dispatchDebug(event) {
           dispatchDebug({
-            timestamp: Date.now(),
-            source: exchange.emoji,
             ...event,
+            timestamp: Date.now(),
           });
         },
       }),
@@ -35,7 +31,3 @@ export const fallbackExchange: Exchange = function fallbackExchange() {
   };
 };
 fallbackExchange.emoji = "❓";
-
-
-
-

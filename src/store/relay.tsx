@@ -21,9 +21,12 @@ import {
 } from "../types";
 import getFragmentIdentifier from "relay-runtime/lib/util/getFragmentIdentifier";
 import RelayModernEnvironment from "relay-runtime/lib/store/RelayModernEnvironment";
-import { createStore } from "./query-cache";
 import { FragmentResource, FragmentResult, isMissingData } from "./fragment";
 import { ReaderFragment } from "relay-runtime";
+
+export const createStore = (store: Store) => {
+  return store;
+};
 
 export type SelectorSnapshot<TData, TPlural extends boolean = boolean> = {
   disableStoreUpdates: () => void;

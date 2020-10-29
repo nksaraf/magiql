@@ -1,5 +1,5 @@
 import { Exchange, Operation, Query, CombinedError } from "../types";
-import { Client } from "../client/client";
+import { GraphQLClient } from "../client/client";
 
 export function authExchange<T>({
   refreshAuthState,
@@ -26,15 +26,13 @@ export function authExchange<T>({
         didAuthError({ error: result.combinedError })
       ) {
         dispatchDebug({
-          type: "authError",
-          message: "auth error",
+          name: "auth.error",
           data: result.combinedError,
           operation: operationWithAuth,
         });
 
         dispatchDebug({
-          type: "refreshAuthRequest",
-          message: "refreshing auth",
+          name: "auth.refresh.start",
           data: authState,
           operation: operationWithAuth,
         });
@@ -42,8 +40,7 @@ export function authExchange<T>({
 
         if (authState) {
           dispatchDebug({
-            type: "refreshAuthSuccess",
-            message: "succesfully refreshed auth",
+            name: "auth.refresh.success",
             data: authState,
             operation: operationWithAuth,
           });
@@ -59,8 +56,7 @@ export function authExchange<T>({
             didAuthError({ error: result.combinedError })
           ) {
             dispatchDebug({
-              type: "authFailed",
-              message: "failed auth",
+              name: "auth.failed",
               data: authState,
               operation: operationWithAuth,
             });
@@ -68,8 +64,7 @@ export function authExchange<T>({
           }
         } else {
           dispatchDebug({
-            type: "authFailed",
-            message: "failed auth",
+            name: "auth.failed",
             data: authState,
             operation: operationWithAuth,
           });
@@ -80,7 +75,7 @@ export function authExchange<T>({
       return result;
     };
   };
-  authExchange.emoji = "🔓";
+
   return authExchange;
 }
 
@@ -91,7 +86,7 @@ export interface AuthExchangeConfig<T> {
   addAuthToOperation<TQuery extends Query>(params: {
     operation: Operation<TQuery>;
     authState: T | null;
-    client: Client;
+    client: GraphQLClient;
   }): Promise<Operation<TQuery>>;
   onAuthFailed(): void;
   willAuthError?<TQuery extends Query>(params: {
