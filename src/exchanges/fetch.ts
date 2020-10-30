@@ -21,11 +21,11 @@ export const fetchExchange: Exchange = function fetchExchange({
         },
         operation.request.variables,
         client.endpoint,
-        client.fetchOptions
+        [client.fetchOptions]
       );
 
       dispatchDebug({
-        type: "fetchRequest",
+        name: "fetch.start",
         message: "fetching",
         operation,
         data: fetchOperation,
@@ -36,8 +36,7 @@ export const fetchExchange: Exchange = function fetchExchange({
       const error = !result.data ? result.combinedError : undefined;
 
       dispatchDebug({
-        type: error ? "fetchError" : "fetchSuccess",
-        message: `${error ? "fetch failed" : "fetch successful"}`,
+        name: error ? "fetch.error" : "fetch.success",
         operation,
         data: {
           ...fetchOperation,
@@ -54,4 +53,3 @@ export const fetchExchange: Exchange = function fetchExchange({
     }
   };
 };
-fetchExchange.emoji = "🚀";

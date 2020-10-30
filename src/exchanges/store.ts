@@ -19,7 +19,7 @@ export const storeExchange: Exchange = ({ forward, dispatchDebug, client }) => {
       );
 
       dispatchDebug({
-        type: "normalize",
+        name: "store.normalize",
         message: "normalized response",
         operation,
         data: {
@@ -31,7 +31,7 @@ export const storeExchange: Exchange = ({ forward, dispatchDebug, client }) => {
       client.store.update(result.extensions?.normalizedData);
 
       dispatchDebug({
-        type: "commit",
+        name: "store.commit",
         message: "commited to store",
         operation,
         data: result.extensions?.normalizedData,

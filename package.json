@@ -10,7 +10,7 @@
     "prepublishOnly": "yarn clean && run-p build:node build:common",
     "clean": "rm -rf dist",
     "build:node": "yarn tsup src/babel.ts src/cli.ts --format cjs",
-    "build:common": "yarn tsup src/index.ts src/node.ts src/subscriptions.ts src/index.native.ts src/devtools.native.ts src/devtools-native.ts --format esm,cjs --legacy-output --dts --external react --external react-dom --external react-native",
+    "build:common": "yarn tsup src/index.ts src/node.ts src/subscriptions.ts src/index.native.ts src/devtools.native.ts src/devtools.ts --format esm,cjs --legacy-output --dts --external react --external react-dom --external react-native",
     "watch:node": "yarn build:node --watch",
     "watch:common": "yarn build:common --watch",
     "build": "run-p build:node build:common && next build",
@@ -45,7 +45,6 @@
     "react-draggable": "^4.4.3",
     "react-notion": "^0.8.1",
     "react-query-devtools": "^2.5.1",
-    "relay-runtime": "file:.yalc/relay-runtime",
     "subscriptions-transport-ws": "^0.9.18",
     "tsup": "^3.7.0",
     "typescript": "^4.0.3"
@@ -55,11 +54,9 @@
     "cosmiconfig": "^7.0.0",
     "hash-sum": "^2.0.0",
     "isomorphic-unfetch": "^3.0.0",
-    "jotai": "^0.7.1",
-    "magiql": "file:.yalc/magiql",
     "react-query": "^2.25.2",
-    "recoil": "^0.0.13",
-    "relay-compiler": "^10.0.1"
+    "relay-compiler": "^10.0.1",
+    "relay-runtime": "npm:@nksaraf/relay-runtime"
   },
   "peerDependencies": {
     "prettier": "*",
@@ -98,19 +95,19 @@
       "node": "./dist/devtools.js",
       "default": "./dist/esm/devtools.js"
     },
+    "./devtools.native": {
+      "import": "./dist/esm/devtools.native.js",
+      "browser": "./dist/esm/devtools.native.js",
+      "require": "./dist/devtools.native.js",
+      "node": "./dist/devtools.native.js",
+      "default": "./dist/esm/devtools.native.js"
+    },
     "./node": {
       "import": "./dist/esm/node.js",
       "browser": "./dist/esm/node.js",
       "require": "./dist/node.js",
       "node": "./dist/node.js",
       "default": "./dist/esm/node.js"
-    },
-    "./store/recoil": {
-      "import": "./dist/esm/recoil-store.js",
-      "browser": "./dist/esm/recoil-store.js",
-      "require": "./dist/recoil-store.js",
-      "node": "./dist/recoil-store.js",
-      "default": "./dist/esm/recoil-store.js"
     },
     "./subscriptions": {
       "import": "./dist/esm/subscriptions.js",
@@ -119,12 +116,12 @@
       "node": "./dist/subscriptions.js",
       "default": "./dist/esm/subscriptions.js"
     },
-    "./native": {
-      "import": "./dist/esm/native.js",
-      "browser": "./dist/esm/native.js",
-      "require": "./dist/native.js",
-      "node": "./dist/native.js",
-      "default": "./dist/esm/native.js"
+    "./index.native": {
+      "import": "./dist/esm/index.native.js",
+      "browser": "./dist/esm/index.native.js",
+      "require": "./dist/index.native.js",
+      "node": "./dist/index.native.js",
+      "default": "./dist/esm/index.native.js"
     },
     "./package.json": "./package.json",
     "./": "./"

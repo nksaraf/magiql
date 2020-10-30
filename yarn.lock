@@ -3739,13 +3739,6 @@ jest-worker@24.9.0:
     merge-stream "^2.0.0"
     supports-color "^6.1.0"
 
-jotai@^0.7.1:
-  version "0.7.1"
-  resolved "https://registry.yarnpkg.com/jotai/-/jotai-0.7.1.tgz#b3128fcfc70a22ebeeb7dc93ca0c753d634012a5"
-  integrity sha512-24VdRfBnCrks1t04napgiZzpn8Fz3Gsv/70WMA2yVcrLUEA34rlnOINUXAP2Y803FynVhzIRMrkrj5yO+q0R6Q==
-  dependencies:
-    use-context-selector "^1.1.4"
-
 joycon@^2.2.5:
   version "2.2.5"
   resolved "https://registry.yarnpkg.com/joycon/-/joycon-2.2.5.tgz#8d4cf4cbb2544d7b7583c216fcdfec19f6be1615"
@@ -5142,11 +5135,6 @@ readdirp@~3.4.0:
   dependencies:
     picomatch "^2.2.1"
 
-recoil@^0.0.13:
-  version "0.0.13"
-  resolved "https://registry.yarnpkg.com/recoil/-/recoil-0.0.13.tgz#23e6d63135c07d8defbd91aaa35dca94ec5c15a6"
-  integrity sha512-2OToaQ8GR//KsdKdaEhMi04QKStLGRpk3qjC58iBpZpUtsByZ4dUy2UJtRcYuhnVlltGZ8HNwcEQRdFOS864SQ==
-
 redent@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/redent/-/redent-3.0.0.tgz#e557b7998316bb53c9f1f56fa626352c6963059f"
@@ -5246,8 +5234,10 @@ relay-runtime@10.0.1:
     "@babel/runtime" "^7.0.0"
     fbjs "^1.0.0"
 
-"relay-runtime@file:.yalc/relay-runtime":
-  version "10.0.1"
+"relay-runtime@npm:@nksaraf/relay-runtime":
+  version "10.0.1-patch.3"
+  resolved "https://registry.yarnpkg.com/@nksaraf/relay-runtime/-/relay-runtime-10.0.1-patch.3.tgz#8131a8b3deb4e4c3e0e91ee31407ed7d74dc1f92"
+  integrity sha512-vHVhh4HvOlKgRElYD2u9tSoFmapEDiK0QONUDantl8jxO9Z3N8D6pytyBv3D7gPNgqdtr9K2QsY7f/87xJqOAw==
   dependencies:
     "@babel/runtime" "^7.0.0"
     fbjs "^3.0.0"
@@ -6232,11 +6222,6 @@ url@^0.11.0:
   dependencies:
     punycode "1.3.2"
     querystring "0.2.0"
-
-use-context-selector@^1.1.4:
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/use-context-selector/-/use-context-selector-1.1.4.tgz#11c1cc3856a7ea06972a7b1e0402ce86b9a8ed31"
-  integrity sha512-qJ1KFw6G7XUTdyiUODz+XO0fRdfB6qApjZP/R+uqtO5ptGdmmq276z2my5hU8SFhzFEwXCj7tFNFA9w8LVkjJQ==
 
 use-subscription@1.4.1:
   version "1.4.1"

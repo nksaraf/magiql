@@ -1,7 +1,5 @@
 import type { ReactQueryConfig } from "react-query";
 import { composeExchanges, fallbackExchange } from "../exchanges/compose";
-import { storeExchange } from "../exchanges/store";
-import { fetchExchange } from "../exchanges/fetch";
 import { errorExchange } from "../exchanges/error";
 import { relayExchange } from "../exchanges/relay";
 import { QueryCache } from "react-query";
@@ -11,7 +9,6 @@ import {
   QueryKey,
   InfiniteQueryKey,
   Query,
-  Variables,
   FetchOptions,
   Exchange,
   DebugEvent,
@@ -35,14 +32,12 @@ import {
 import { createRelayStore } from "../store/relay";
 
 export const defaultExchanges: Exchange[] = [
-  storeExchange,
   errorExchange({
     onError: (error) => {
       throw error;
     },
   }),
   relayExchange,
-  fetchExchange,
 ];
 
 export function createRelayEnvironment({
