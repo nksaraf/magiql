@@ -5031,9 +5031,9 @@ react-query-devtools@^2.5.1:
     match-sorter "^4.1.0"
 
 react-query@^2.23.0:
-  version "2.23.0"
-  resolved "https://registry.yarnpkg.com/react-query/-/react-query-2.23.0.tgz#9f9552a30380dfc1da2c165b5011465a78128ace"
-  integrity sha512-LHBhrr7ntstjpt85ssEaW3cGJx4BqQBFleTM3fXMO0MFzaMDQx0oxdUur+iQSOpLGPlrpToJbrjFNMQTpEExdA==
+  version "2.26.1"
+  resolved "https://registry.yarnpkg.com/react-query/-/react-query-2.26.1.tgz#9e6c47384a40e3323da4be961553943998784aa4"
+  integrity sha512-7J280iWlb7LZW1eGvOnZwm4logE5Wpq+0rHHcnNjzpK3TW1pAPaPQYp3yE2Z4j5FOtWYhK64hoK2IsVOUCbRRw==
   dependencies:
     "@babel/runtime" "^7.5.5"
 
