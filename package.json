@@ -2,7 +2,7 @@
   "name": "magiql",
   "version": "0.0.9",
   "description": "",
-  "repository": "Nikhil Saraf",
+  "repository": { "git": "https://github.com/nksaraf/magiql.git", "branch": "main" },
   "license": "MIT",
   "author": "Nikhil Saraf <nsaraf98@gmail.com>",
   "types": "dist/index.d.ts",
