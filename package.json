@@ -31,6 +31,7 @@
     "babel-plugin-macros": "^2.8.0",
     "deepmerge": "^4.2.2",
     "docs-ts": "^0.5.1",
+    "dumi": "^1.0.38",
     "graphql": "^15.3.0",
     "graphql-parse": "^0.1.3",
     "match-sorter": "^4.2.1",
