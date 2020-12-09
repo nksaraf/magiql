@@ -28,7 +28,6 @@ export default () => (
 );
 ```
 
-<code src='../src/demos/simple.tsx' />
-<code src='../src/demos/fragment.tsx' />
+<code src='./demos/fragment.tsx' />
 
 

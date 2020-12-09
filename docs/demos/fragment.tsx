@@ -13,12 +13,12 @@ function Films() {
     edges {
       node {
         id
-        title
-        ...Film_film
+        ...${Film_film}
       }
     }
   }
 }
+
   `)
 
   if (error) {
@@ -31,7 +31,7 @@ function Films() {
 
   // return <pre>{JSON.stringify(data, null, 2)}</pre>
 
-  return <>{data.allFilms.edges.map(edge => <Film film={edge.node} />)}</>
+  return <>{data.allFilms.edges.map(edge => <Film key={edge.node.id} film={edge.node} />)}</>
 
 }
 

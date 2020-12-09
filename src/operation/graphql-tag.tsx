@@ -32,5 +32,7 @@ export const graphql: (
 
   const graphqlDoc = rawGraphQL + ' ' + embedFrags;
 
+  console.log(graphqlDoc)
+
   return parseGraphQLTag(graphqlDoc); 
 }

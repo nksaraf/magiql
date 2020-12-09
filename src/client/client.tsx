@@ -181,7 +181,7 @@ export class GraphQLClient {
     operation: Operation<TQuery>
   ): QueryKey<TQuery> {
     return [
-      operation.request.node.params.name,
+      operation.request.node.params.id,
       operation.request.variables ?? {},
     ];
   }

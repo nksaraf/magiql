@@ -38,6 +38,5 @@ const node: ReaderFragment = {
   type: "Film",
   abstractKey: null,
 };
-(node as any).hash = "7d67c2a1aa2a816895950dfa965fd804";
-
+(node as any).hash = "d671945bcd6a86036ffe29e8d77f34da";
 export default node;

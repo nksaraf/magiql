@@ -2,8 +2,10 @@ import { graphql, useFragment } from "magiql";
 
 export const Film_film = graphql`
   fragment Film_film on Film {
-    id
+    ... on Film {
+      id
     title
+    }
   }
 `;
 export function Film({ film }) {

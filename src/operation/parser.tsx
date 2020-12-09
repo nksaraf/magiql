@@ -15,6 +15,7 @@ import {
   NullValueNode,
   ObjectFieldNode,
   ValueNode,
+  InlineFragmentNode,
 } from "graphql";
 import { parse } from "graphql/language/parser";
 import { print } from "graphql/language/printer";
@@ -142,6 +143,12 @@ const parseSelections = (selectionSet: SelectionSetNode) => {
           kind: "FragmentSpread",
           name: sel.name.value,
         };
+      } else if (sel.kind === 'InlineFragment') {
+        return {
+          type: (sel as InlineFragmentNode).typeCondition.name.value,
+          kind: "InlineFragment",
+          selections: parseSelections(sel.selectionSet),
+        }
       }
     }
   ) as any;
@@ -180,7 +187,7 @@ export const parseRequest = (
     (def) => def.kind === "OperationDefinition"
   ) as OperationDefinitionNode;
 
-  const requestName = requestDocument.name ? requestDocument.name : ('Request' + OPERATION_COUNTER++)
+  const requestName = requestDocument.name ? requestDocument.name.value : ('Request' + OPERATION_COUNTER++)
 
   const queryText = print(requestDocument);
   return {

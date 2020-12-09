@@ -171,6 +171,4 @@ const node: ConcreteRequest = (function () {
   };
 })();
 (node as any).hash = "61f4bba8385200d01537292ba30d38ec";
-(node as any).query =
-  "query fragmentQuery {\n  allFilms {\n    edges {\n      node {\n        id\n        title\n      }\n    }\n  }\n}\n";
 export default node;

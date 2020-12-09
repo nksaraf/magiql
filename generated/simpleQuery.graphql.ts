@@ -124,6 +124,4 @@ const node: ConcreteRequest = (function () {
   };
 })();
 (node as any).hash = "bbc3d5b907f9c484c047ad7f5fb2efae";
-(node as any).query =
-  "query simpleQuery {\n  allFilms {\n    edges {\n      node {\n        id\n        title\n      }\n    }\n  }\n}\n";
 export default node;
