@@ -27,6 +27,8 @@ const SideMenu: FC<INavbarProps> = ({ mobileMenuCollapsed, location }) => {
     Boolean((meta.hero || meta.features || meta.gapless) && mode === 'site') ||
     meta.sidemenu === false ||
     undefined;
+  
+  console.log(isHiddenMenus, menu, navItems)
 
   return (
     <div
@@ -102,9 +104,9 @@ const SideMenu: FC<INavbarProps> = ({ mobileMenuCollapsed, location }) => {
 
               return (
                 <li key={item.path || item.title}>
-                  <NavLink to={item.path} exact={!(item.children && item.children.length)}>
+                  <a className={`menu-bold ${item.path === location.pathname ? 'active' : ''}`} href={item.path}>
                     {item.title}
-                  </NavLink>
+                  </a>
                   {/* group children */}
                   {Boolean(item.children && item.children.length) && (
                     <ul>

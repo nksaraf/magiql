@@ -29,8 +29,16 @@ export const removeTypeNameFromOperation = (
 };
 
 export const addTypeName = (node: DocumentNode): DocumentNode => {
+  let skipSet = false;
   return visit(node, {
+    OperationDefinition: (node) => {
+      skipSet = true;
+    },
     SelectionSet: (node) => {
+      if (skipSet) {
+        skipSet = false;
+        return node;
+      }
       const typeName = node.selections.find(
         (sel) =>
           sel.kind === "Field" && sel.name.value === constants.TYPENAME_KEY

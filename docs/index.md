@@ -27,3 +27,8 @@ export default () => (
   </GraphQLClientProvider>
 );
 ```
+
+<code src='../src/demos/simple.tsx' />
+<code src='../src/demos/fragment.tsx' />
+
+

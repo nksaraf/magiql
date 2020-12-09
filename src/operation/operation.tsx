@@ -35,8 +35,6 @@ export const getRequest = (
   }
   // Parsed by relay (require call for artifact from relay-compiler)
   else {
-    (request.params as any).text =
-      (request as any).query ?? (request.params as any).text;
     (request.params as any).metadata.parser = "relay";
     return request;
   }

@@ -3,6 +3,14 @@ export default {
   favicon: "/favicon.ico",
   logo: "/hat2.png",
   outputPath: "/dist/docs",
-  mode: 'site',
-  exportStatic: {}
+  mode: 'doc',
+  exportStatic: {},
+  menus: {
+    '/api': [
+      {
+        title: 'API',
+        children: ['/api/useQuery'],
+      },
+    ]
+  }
 };

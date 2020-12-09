@@ -12,12 +12,64 @@ export interface GraphQLDevtoolsProps {
   position?: string;
   defaultTab?: "queries" | "store";
   style?: any;
+  buttonProps
+}
+
+function MagiqlDevtoolsButton({ isOpen, setIsOpen, position, style, ...props }) {
+  return (!isOpen && <button
+    {...props}
+    aria-label="Open Magiql Devtools"
+    onClick={() => {
+      setIsOpen(true);
+    }}
+    style={{
+      background: "none",
+      border: 0,
+      padding: 0,
+      position: "fixed",
+      bottom: "0",
+      right: "0",
+      zIndex: 99999,
+      display: "inline-flex",
+      fontSize: "1.5rem",
+      margin: ".5rem",
+      cursor: "pointer",
+      ...style,
+      ...(position === "top-right"
+        ? {
+          top: "0",
+          right: "0",
+        }
+        : position === "top-left"
+          ? {
+            top: "0",
+            left: "0",
+          }
+          : position === "bottom-right"
+            ? {
+              bottom: "0",
+              right: "0",
+            }
+          : position === "bottom-left" ? {
+              bottom: "0",
+              left: "0",
+            } : {
+      position
+
+            }
+      )
+    }}
+  >
+    <Logo aria-hidden />
+  </button>
+);
 }
 
 export default function GraphQLDevtools({
   defaultIsOpen = false,
   defaultTab = "queries",
-  position = "bottom-left",
+  position='bottom-left',
+  buttonProps = {},
   style = {},
 }: GraphQLDevtoolsProps) {
   const [devtools, setDevtools] = React.useState(defaultTab);
@@ -25,47 +77,7 @@ export default function GraphQLDevtools({
   return (
     <ThemeProvider theme={theme}>
       {!isOpen && (
-        <button
-          // {...otherToggleButtonProps}
-          aria-label="Open React Query Devtools"
-          onClick={() => {
-            setIsOpen(true);
-          }}
-          style={{
-            background: "none",
-            border: 0,
-            padding: 0,
-            position: "fixed",
-            bottom: "0",
-            right: "0",
-            zIndex: 99999,
-            display: "inline-flex",
-            fontSize: "1.5rem",
-            margin: ".5rem",
-            cursor: "pointer",
-            ...(position === "top-right"
-              ? {
-                  top: "0",
-                  right: "0",
-                }
-              : position === "top-left"
-              ? {
-                  top: "0",
-                  left: "0",
-                }
-              : position === "bottom-right"
-              ? {
-                  bottom: "0",
-                  right: "0",
-                }
-              : {
-                  bottom: "0",
-                  left: "0",
-                }),
-          }}
-        >
-          <Logo aria-hidden />
-        </button>
+        <MagiqlDevtoolsButton {...{ ...buttonProps, style: { position, ...buttonProps.style}}} isOpen={isOpen} setIsOpen={setIsOpen} />
       )}
       <Draggable>
         <div

@@ -149,6 +149,8 @@ const parseSelections = (selectionSet: SelectionSetNode) => {
   return selections;
 };
 
+let OPERATION_COUNTER = 0;
+
 const parseOperation = (
   op: OperationDefinitionNode
 ): NormalizationOperation => {
@@ -159,7 +161,7 @@ const parseOperation = (
       defaultValue: v.defaultValue ? parseValue(v.defaultValue) : null,
     })),
     kind: "Operation",
-    name: op.name!.value,
+    name: op.name ? op.name.value : ('Operation' + OPERATION_COUNTER++),
     selections: parseSelections(op.selectionSet),
   };
 };
@@ -178,18 +180,18 @@ export const parseRequest = (
     (def) => def.kind === "OperationDefinition"
   ) as OperationDefinitionNode;
 
+  const requestName = requestDocument.name ? requestDocument.name : ('Request' + OPERATION_COUNTER++)
+
   const queryText = print(requestDocument);
   return {
     kind: "Request",
     fragment: parseOperation(requestFragment) as ReaderFragment,
     operation: parseOperation(requestDocument),
-    text: taggedNode,
     params: {
       operationKind: requestDocument.operation,
-      name: requestDocument.name!.value,
+      name: requestName,
       id: null,
-      cacheID: requestDocument.name!.value,
-      // cacheID: sum(queryText),
+      cacheID: sum(queryText),
       text: queryText,
       metadata: {
         parser: "graphql",
@@ -232,7 +234,7 @@ export const parseGraphQLTag = memoized(
 
       if (!document) {
         throw new Error(
-          "No GraphQL query/mutation/subscription/fragment found"
+          "No GraphQL document (query/mutation/subscription/fragment) found"
         );
       }
 
@@ -242,8 +244,7 @@ export const parseGraphQLTag = memoized(
         return parseRequest(node, taggedNode);
       }
     } catch (e) {
-      console.log(e);
-      throw new Error("Error parsing GraphQL");
+      throw e;
     }
   },
   (s) => s

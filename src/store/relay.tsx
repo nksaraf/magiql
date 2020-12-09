@@ -1,23 +1,15 @@
 import React from "react";
-import { QueryCache } from "react-query";
 import { ReaderFragment } from "relay-runtime";
 import RelayModernEnvironment from "relay-runtime/lib/store/RelayModernEnvironment";
-import { getSelector } from "relay-runtime/lib/store/RelayModernSelector";
 import getFragmentIdentifier from "relay-runtime/lib/util/getFragmentIdentifier";
 
 import { useRerenderer } from "../hooks/useRerenderer";
-import { createOperation } from "../operation/operation";
 import {
   Response,
   Query,
   Store,
-  SingularReaderSelector,
-  ReaderSelector,
-  QueryObserver,
   RecordSource,
   Operation,
-  Snapshot,
-  Variables,
   KeyType,
 } from "../types";
 import { stableStringify } from "../utils/stringify";
@@ -180,7 +172,7 @@ export function createRelayStore({
     operation: Operation<TQuery>,
     pageVariables: object[]
   ) {
-    const refs = pageVariables.map((vars, index) => ({
+    const refs = pageVariables.map((vars) => ({
       __id: operation.fragment.dataID,
       __fragments: {
         [operation.fragment.node.name]: vars,
@@ -200,7 +192,7 @@ export function createRelayStore({
   return createStore({
     type: "relayStore",
     isNormalized: false,
-    update: (recordSource: RecordSource) => {},
+    update: () => {},
     environment,
     useSelector,
     updateRecord: () => {},

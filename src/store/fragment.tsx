@@ -89,39 +89,40 @@ export class FragmentResource {
     fragmentNode: ReaderFragment,
     fragmentRef: TKey,
     fragmentIdentifier: string,
-    fragmentKey?: string
+    fragmentKey?: string,
+    componentDisplayName?: string,
   ): FragmentResult<TData, TPlural> {
     const environment = this._environment;
 
     // If fragmentRef is null or undefined, pass it directly through.
     // This is a convenience when consuming fragments via a HOC api, when the
     // prop corresponding to the fragment ref might be passed as null.
-    // if (fragmentRef == null) {
-    //   return {
-    //     cacheKey: fragmentIdentifier,
-    //     data: null,
-    //     snapshot: null,
-    //     isMissingData: true,
-    //   };
-    // }
+    if (fragmentRef == null) {
+      return {
+        cacheKey: fragmentIdentifier,
+        data: null,
+        snapshot: null,
+        isMissingData: true,
+      };
+    }
 
     // If fragmentRef is plural, ensure that it is an array.
     // If it's empty, return the empty array direclty before doing any more work.
-    // if (fragmentNode?.metadata?.plural === true) {
-    //   invariant(
-    //     Array.isArray(fragmentRef),
-    //     "Relay: Expected fragment pointer%s for fragment `%s` to be " +
-    //       "an array, instead got `%s`. Remove `@relay(plural: true)` " +
-    //       "from fragment `%s` to allow the prop to be an object.",
-    //     fragmentKey != null ? ` for key \`${fragmentKey}\`` : "",
-    //     fragmentNode.name,
-    //     typeof fragmentRef,
-    //     fragmentNode.name
-    //   );
-    //   if (fragmentRef.length === 0) {
-    //     return { cacheKey: fragmentIdentifier, data: [], snapshot: [] };
-    //   }
-    // }
+    if (fragmentNode?.metadata?.plural === true) {
+      invariant(
+        Array.isArray(fragmentRef),
+        "Relay: Expected fragment pointer%s for fragment `%s` to be " +
+          "an array, instead got `%s`. Remove `@relay(plural: true)` " +
+          "from fragment `%s` to allow the prop to be an object.",
+        fragmentKey != null ? ` for key \`${fragmentKey}\`` : "",
+        fragmentNode.name,
+        typeof fragmentRef,
+        fragmentNode.name
+      );
+      // if (fragmentRef.length === 0) {
+      //   return { cacheKey: fragmentIdentifier, data: [], snapshot: [] };
+      // }
+    }
 
     // Now we actually attempt to read the fragment:
 
@@ -136,25 +137,25 @@ export class FragmentResource {
     // If the snapshot has data, return it and save it in cache
     const fragmentSelector = getSelector(fragmentNode, fragmentRef);
 
-    // invariant(
-    //   fragmentSelector != null,
-    //   'Relay: Expected to receive an object where `...%s` was spread, ' +
-    //     'but the fragment reference was not found`. This is most ' +
-    //     'likely the result of:\n' +
-    //     "- Forgetting to spread `%s` in `%s`'s parent's fragment.\n" +
-    //     '- Conditionally fetching `%s` but unconditionally passing %s prop ' +
-    //     'to `%s`. If the parent fragment only fetches the fragment conditionally ' +
-    //     '- with e.g. `@include`, `@skip`, or inside a `... on SomeType { }` ' +
-    //     'spread  - then the fragment reference will not exist. ' +
-    //     'In this case, pass `null` if the conditions for evaluating the ' +
-    //     'fragment are not met (e.g. if the `@include(if)` value is false.)',
-    //   fragmentNode.name,
-    //   fragmentNode.name,
-    //   componentDisplayName,
-    //   fragmentNode.name,
-    //   fragmentKey == null ? 'a fragment reference' : `the \`${fragmentKey}\``,
-    //   componentDisplayName,
-    // );
+    invariant(
+      fragmentSelector != null,
+      'Relay: Expected to receive an object where `...%s` was spread, ' +
+        'but the fragment reference was not found`. This is most ' +
+        'likely the result of:\n' +
+        "- Forgetting to spread `%s` in `%s`'s parent's fragment.\n" +
+        '- Conditionally fetching `%s` but unconditionally passing %s prop ' +
+        'to `%s`. If the parent fragment only fetches the fragment conditionally ' +
+        '- with e.g. `@include`, `@skip`, or inside a `... on SomeType { }` ' +
+        'spread  - then the fragment reference will not exist. ' +
+        'In this case, pass `null` if the conditions for evaluating the ' +
+        'fragment are not met (e.g. if the `@include(if)` value is false.)',
+      fragmentNode.name,
+      fragmentNode.name,
+      componentDisplayName,
+      fragmentNode.name,
+      fragmentKey == null ? 'a fragment reference' : `the \`${fragmentKey}\``,
+      componentDisplayName,
+    );
 
     const snapshot: SingularOrPluralSnapshot<TData> = (fragmentSelector.kind ===
     "PluralReaderSelector"

@@ -1,6 +1,9 @@
 ---
-title: Other
+title: Introduction
 order: 1
+group:
+  title: Getting Started
+  order: 1
 ---
 
 ## Getting Started

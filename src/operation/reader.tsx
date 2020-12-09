@@ -28,6 +28,7 @@ export const createFieldReader = (get): Reader<string> => ({
     return record;
   },
 });
+
 export const createRecordReader = (get): Reader<object> => ({
   readField: (field: ReaderField, variables, record) => {
     const fieldName = field.alias ?? field.name;

@@ -37,6 +37,13 @@ export const typescriptFormatterFactory = (
     query = matched[1];
   }
 
+  if (query) {
+    nodeStatement = nodeStatement.replace(/"text":[\s\n]+"((query|mutation|subscription) .*)"/, (a, b) => { 
+      return `"text": ${JSON.stringify(query)}`;
+    })
+  }
+  
+
   const text = `/* tslint:disable */
 /* eslint-disable */
 // @ts-nocheck
@@ -47,7 +54,6 @@ ${typeText || ""}
 ${docTextComment}
 ${nodeStatement}
 (node as any).hash = '${sourceHash}';
-${query ? `(node as any).query = ${JSON.stringify(query)}` : ""}
 export default node;
 `;
 
@@ -73,7 +79,7 @@ export const javascriptFormatterFactory = (): FormatModule => ({
   sourceHash,
 }) => {
   const docTextComment = docText ? "\n/*\n" + docText.trim() + "\n*/\n" : "";
-  const nodeStatement = `const node = ${concreteText};`;
+  let nodeStatement = `const node = ${concreteText};`;
   let query;
   if (node.kind === "Request") {
     const matched: any = typeText.match(
@@ -81,6 +87,13 @@ export const javascriptFormatterFactory = (): FormatModule => ({
     );
     query = matched[1];
   }
+
+  if (query) {
+    nodeStatement = nodeStatement.replace(/"text":[\s\n]+"((query|mutation|subscription) .*)"/, (a, b) => { 
+      return `"text": ${JSON.stringify(query)}`;
+    })
+  }
+  
 
   const text = `/* tslint:disable */
 /* eslint-disable */
@@ -90,7 +103,6 @@ ${hash ? `/* ${hash} */\n` : ""}
 ${docTextComment}
 ${nodeStatement}
 node.hash = '${sourceHash}';
-${query ? `node.query = ${JSON.stringify(query)}` : ""}
 export default node;
 `;
   try {

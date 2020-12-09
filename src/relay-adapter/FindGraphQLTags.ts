@@ -150,11 +150,18 @@ function isGraphQLTag(tag: ts.Node): boolean {
 function getTemplateNode(
   quasi: ts.TaggedTemplateExpression
 ): ts.NoSubstitutionTemplateLiteral {
-  invariant(
-    quasi.template.kind === ts.SyntaxKind.NoSubstitutionTemplateLiteral,
-    "FindGraphQLTags: Substitutions are not allowed in graphql tags."
-  );
-  return quasi.template as ts.NoSubstitutionTemplateLiteral;
+  if (quasi.template.kind === ts.SyntaxKind.NoSubstitutionTemplateLiteral) {
+    return quasi.template as ts.NoSubstitutionTemplateLiteral;
+    
+  } else if (quasi.template.kind === ts.SyntaxKind.TemplateExpression) {
+    return quasi.template.head as any;
+  }
+
+  // invariant(
+  //   quasi.template.kind === ts.SyntaxKind.NoSubstitutionTemplateLiteral,
+  //   "FindGraphQLTags: Substitutions are not allowed in graphql tags."
+  // );
+  // return quasi.template as ts.NoSubstitutionTemplateLiteral;
 }
 
 function getGraphQLText(quasi: ts.TaggedTemplateExpression) {
