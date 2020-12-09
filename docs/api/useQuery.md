@@ -1,6 +1,8 @@
 ---
 id: useQuery
 title: useQuery
+group:
+  title: API
 ---
 
 ```js

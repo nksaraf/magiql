@@ -1,7 +1,23 @@
 # Introduction
+```typescript
+function Todo() {
+  const { data, status } = useQuery(
+    graphql`
+      query MyQuery($limit: Int) {
+        todos(order_by: { updated_at: desc }, limit: $limit) {
+          id
+        }
+      }
+    `,
+    {
+      variables: { limit: 3 },
+    }
+  );
 
+  return <pre>{JSON.stringify(data, null, 2)}</pre>;
+}
 
-<API src="../src/hooks/useQuery.tsx"></API>
+```
 
 ```jsx
 import React from "react";
