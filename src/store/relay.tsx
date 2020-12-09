@@ -1,9 +1,10 @@
 import React from "react";
-
 import { QueryCache } from "react-query";
+import { ReaderFragment } from "relay-runtime";
+import RelayModernEnvironment from "relay-runtime/lib/store/RelayModernEnvironment";
 import { getSelector } from "relay-runtime/lib/store/RelayModernSelector";
+import getFragmentIdentifier from "relay-runtime/lib/util/getFragmentIdentifier";
 
-import { stableStringify } from "../utils/stringify";
 import { useRerenderer } from "../hooks/useRerenderer";
 import { createOperation } from "../operation/operation";
 import {
@@ -19,10 +20,8 @@ import {
   Variables,
   KeyType,
 } from "../types";
-import getFragmentIdentifier from "relay-runtime/lib/util/getFragmentIdentifier";
-import RelayModernEnvironment from "relay-runtime/lib/store/RelayModernEnvironment";
+import { stableStringify } from "../utils/stringify";
 import { FragmentResource, FragmentResult, isMissingData } from "./fragment";
-import { ReaderFragment } from "relay-runtime";
 
 export const createStore = (store: Store) => {
   return store;
@@ -166,7 +165,7 @@ export function createRelayStore({
   }
 
   function useEntities() {
-    const [entities, setEntities] = React.useState([]);
+    const [entities, setEntities] = React.useState<any>([]);
 
     React.useEffect(() => {
       const source = environment.getStore().getSource();
@@ -179,7 +178,7 @@ export function createRelayStore({
 
   function useOperationPages<TQuery extends Query>(
     operation: Operation<TQuery>,
-    pageVariables: {}[]
+    pageVariables: object[]
   ) {
     const refs = pageVariables.map((vars, index) => ({
       __id: operation.fragment.dataID,

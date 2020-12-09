@@ -1,10 +1,10 @@
 import React from "react";
-import { getRequest } from "../operation/operation";
 
+import { getRequest } from "../operation/operation";
 import { Query, Variables, GraphQLTaggedNode } from "../types";
-import { useRerenderer } from "./useRerenderer";
 import { useGraphQLClient } from "./useGraphQLClient";
 import { UseQueryOptions, UseQueryResult } from "./useQuery";
+import { useRerenderer } from "./useRerenderer";
 
 export function useSubscription<
   TSubscription extends Query,
@@ -25,7 +25,7 @@ export function useSubscription<
 
   const rerender = useRerenderer();
   const node = getRequest(subscription);
-  const operation = client.createOperation(node, variables);
+  const operation = client.createOperation<TSubscription>(node, variables);
 
   const subscriptionQuery = client.subscriptionClient.buildSubscription(
     operation,

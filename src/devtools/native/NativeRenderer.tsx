@@ -1,7 +1,7 @@
 import React from "react";
-import { createRenderer } from "../common/Explorer";
 import { Text, View, TouchableOpacity } from "react-native";
 
+import { createRenderer } from "../common/Explorer";
 import { theme } from "../common/theme";
 
 export const Entry = ({ style = {}, ...props }) => (

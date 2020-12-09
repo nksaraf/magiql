@@ -32,7 +32,7 @@ export function stableStringify(value: any): string {
 }
 // Copied from: https://github.com/jonschlinkert/is-plain-object
 
-export function isPlainObject(o: any): o is Object {
+export function isPlainObject(o: any): o is object {
   if (!hasObjectPrototype(o)) {
     return false;
   }
@@ -50,6 +50,7 @@ export function isPlainObject(o: any): o is Object {
   }
 
   // If constructor does not have an Object-specific method
+  // eslint-disable-next-line
   if (!prot.hasOwnProperty("isPrototypeOf")) {
     return false;
   }

@@ -3,18 +3,19 @@
 /**
  * Adapted from https://github.com/facebook/relay/blob/master/packages/relay-compiler/bin/RelayCompilerBin.js
  */
-import { relayCompiler } from "relay-compiler";
-import { loadConfig } from "./relay-adapter/config";
 
-import meow from "meow";
-import fetch from "node-fetch";
 import * as fs from "fs";
-import * as path from "path";
+import meow from "meow";
 import mkdirp from "mkdirp";
-import { getIntrospectionQuery } from "../node_modules/graphql/utilities/getIntrospectionQuery";
-import { buildClientSchema } from "../node_modules/graphql/utilities/buildClientSchema";
-import { printSchema } from "../node_modules/graphql/utilities/printSchema";
+import fetch from "node-fetch";
+import * as path from "path";
 import * as query from "querystringify";
+import { relayCompiler } from "relay-compiler";
+
+import { buildClientSchema } from "../node_modules/graphql/utilities/buildClientSchema";
+import { getIntrospectionQuery } from "../node_modules/graphql/utilities/getIntrospectionQuery";
+import { printSchema } from "../node_modules/graphql/utilities/printSchema";
+import { loadConfig } from "./relay-adapter/config";
 
 /**
  *
@@ -29,13 +30,13 @@ export function getHeadersFromInput(
     case "string": {
       const keys = query.parse(cli.flags.header);
       const key = Object.keys(keys)[0];
-      return [{ key: key, value: keys[key] }];
+      return [{ key, value: keys[key] }];
     }
     case "object": {
       return (cli.flags.header as any).map((header) => {
         const keys = query.parse(header);
         const key = Object.keys(keys)[0];
-        return { key: key, value: keys[key] };
+        return { key, value: keys[key] };
       });
     }
     default: {

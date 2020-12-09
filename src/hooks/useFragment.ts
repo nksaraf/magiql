@@ -1,3 +1,5 @@
+import { stringifyData } from "magiql";
+
 import { getFragment } from "../operation/operation";
 import { $Call, KeyType, KeyReturnType, GraphQLTaggedNode } from "../types";
 import { useGraphQLClient } from "./useGraphQLClient";
@@ -12,6 +14,6 @@ export function useFragment<TKey extends KeyType | KeyType[]>(
   : null {
   const node = getFragment(fragmentNode);
   const client = useGraphQLClient();
-  const { data, isMissingData } = client.store.useFragment(node, fragmentRef);
-  return isMissingData ? null : (data as any);
+  const { data, isMissingData } = client.store.useFragment(node!, fragmentRef);
+  return data as any;
 }

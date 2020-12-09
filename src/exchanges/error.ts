@@ -1,11 +1,4 @@
-import {
-  Exchange,
-
-
-
-  CombinedError
-} from "../types";
-
+import { Exchange, CombinedError } from "../types";
 
 export const errorExchange = ({
   onError = (error: CombinedError) => {

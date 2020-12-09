@@ -1,5 +1,9 @@
 import { QueryConfig } from "react-query";
-import { Observable, SubscriptionClient as BaseSubscriptionClient } from "subscriptions-transport-ws";
+import {
+  Observable,
+  SubscriptionClient as BaseSubscriptionClient,
+} from "subscriptions-transport-ws";
+
 import { resolveFetchOptions } from "../fetch/fetchGraphQL";
 import {
   FetchOptions,
@@ -13,7 +17,7 @@ import {
 export class SubscriptionClient extends BaseSubscriptionClient {
   endpoint: string;
   fetchOptions: FetchOptions<object>;
-  queryCache: QueryCache;
+  queryCache?: QueryCache;
 
   constructor({
     endpoint,
@@ -27,7 +31,7 @@ export class SubscriptionClient extends BaseSubscriptionClient {
       connectionParams: async () => {
         return await resolveFetchOptions(fetchOptions, {
           operationKind: "subscription",
-          endpoint: endpoint,
+          endpoint,
         });
       },
     });
@@ -54,7 +58,7 @@ export class SubscriptionClient extends BaseSubscriptionClient {
     }: QueryConfig<Response<TQuery>, Error>
   ) {
     const queryKey = this.getQueryKey(operation);
-    const query = this.queryCache.buildQuery<Response<TQuery>, Error>(
+    const query = this.queryCache!.buildQuery<Response<TQuery>, Error>(
       queryKey,
       {
         ...options,
@@ -71,7 +75,8 @@ export class SubscriptionClient extends BaseSubscriptionClient {
         subscription?.unsubscribe();
       },
       execute() {
-        const observable = this.request({
+        const client: BaseSubscriptionClient = this as any;
+        const observable = client.request({
           query: operation.request.node.params.text as string,
           variables: operation.request.variables,
           operationName: operation.request.node.params.name,

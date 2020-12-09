@@ -4,8 +4,8 @@ import {
   getRequest as baseGetRequest,
   getFragment as baseGetFragment,
 } from "relay-runtime/lib/query/GraphQLTag";
-
 import { createOperationDescriptor as createRelayOperationDescriptor } from "relay-runtime/lib/store/RelayModernOperationDescriptor";
+
 import type {
   Query,
   Operation,

@@ -7,9 +7,9 @@ import {
   FlatList,
 } from "react-native";
 
+import { useGraphQLClient } from "../../hooks/useGraphQLClient";
 import { Explorer } from "../common/Explorer";
 import { NativeRenderer } from "./NativeRenderer";
-import { useGraphQLClient } from "../../hooks/useGraphQLClient";
 
 export function StoreDevtools({ onClose }: { onClose: () => void }) {
   const client = useGraphQLClient();

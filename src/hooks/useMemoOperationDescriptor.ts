@@ -1,7 +1,8 @@
-import { stableStringify } from "magiql/utils/stringify";
+import { stableStringify } from "../utils/stringify";
 import React from "react";
-import { GraphQLTaggedNode, Operation, Variables, Query } from "../types";
+
 import { createOperation, getRequest } from "../operation/operation";
+import { GraphQLTaggedNode, Operation, Variables, Query } from "../types";
 
 export function useMemoOperationDescriptor<TQuery extends Query>(
   gqlQuery: GraphQLTaggedNode | string,

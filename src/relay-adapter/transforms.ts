@@ -18,9 +18,7 @@ export const MagiqlQueryTransform = {
         linkedField = this.traverse(linkedField);
         const context = this.getContext();
         const schema = context.getSchema();
-        const typeIdFields = 
-        
-        (keyFields as any)[
+        const typeIdFields = (keyFields as any)[
           schema.getRawType(linkedField.type).name as string
         ];
 

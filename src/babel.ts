@@ -1,5 +1,6 @@
 import compileGraphQLTag from "babel-plugin-relay/lib/compileGraphQLTag";
 import getValidGraphQLTag from "babel-plugin-relay/lib/getValidGraphQLTag";
+
 import { loadConfig } from "./relay-adapter/config";
 const { languagePlugin, ...config } = loadConfig();
 
@@ -57,7 +58,6 @@ module.exports = function BabelPluginRelay(context: { types: any }): any {
       const ast = getValidGraphQLTag(path);
       if (ast) {
         compileGraphQLTag(t, path, state, ast);
-        return;
       }
     },
   };

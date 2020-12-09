@@ -5,8 +5,8 @@ import {
   InfiniteQueryResult,
   QueryConfig,
 } from "react-query";
-import { GraphQLClient } from "../client/client";
 
+import { GraphQLClient } from "../client/client";
 import {
   Variables,
   Response,
@@ -90,9 +90,9 @@ export function useInfiniteQuery<TQuery extends Query, TError = CombinedError>(
 
   const pageQueries = infiniteQuery.data?.map((page, index) => {
     if (index === 0) return variables;
-    const fetchMoreVariable: any = options.getFetchMore(
-      infiniteQuery.data[index - 1],
-      infiniteQuery.data
+    const fetchMoreVariable: any = options.getFetchMore?.(
+      infiniteQuery.data![index - 1],
+      infiniteQuery.data!
     );
     return {
       ...variables,
@@ -118,7 +118,7 @@ export function useInfiniteQuery<TQuery extends Query, TError = CombinedError>(
 
   return {
     ...infiniteQuery,
-    data: isMissingData ? null : data,
+    data: isMissingData ? undefined : data ?? undefined,
     operation,
     client,
     canFetchMore,

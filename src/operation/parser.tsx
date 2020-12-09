@@ -1,17 +1,5 @@
 // Piggybacking off relay-runtime here
 // https://github.com/facebook/relay/blob/7c67b4750592e469d499128108fe16afe2adaf51/packages/relay-runtime/store/RelayModernSelector.js
-import type {
-  ReaderFragment,
-  NormalizationOperation,
-  NormalizationSelection,
-  ConcreteRequest,
-  RequestParameters,
-} from "relay-runtime";
-import sum from "hash-sum";
-
-import { parse } from "graphql/language/parser";
-import { print } from "graphql/language/printer";
-
 import {
   OperationDefinitionNode,
   DocumentNode,
@@ -28,13 +16,24 @@ import {
   ObjectFieldNode,
   ValueNode,
 } from "graphql";
+import { parse } from "graphql/language/parser";
+import { print } from "graphql/language/printer";
+import sum from "hash-sum";
+import type {
+  ReaderFragment,
+  NormalizationOperation,
+  NormalizationSelection,
+  ConcreteRequest,
+  RequestParameters,
+} from "relay-runtime";
+
+import { memoized } from "../utils/memoized";
 import {
   removeTypeNameFromOperation,
   addTypeName,
   flattenFragments,
   inlineFragments,
 } from "./transforms";
-import { memoized } from "../utils/memoized";
 
 const parseValue = (arg: ValueNode) => {
   switch (arg.kind) {
@@ -121,7 +120,7 @@ const parseSelections = (selectionSet: SelectionSetNode) => {
             name: sel.name.value,
             alias: sel.alias?.value,
             kind: "LinkedField",
-            args: parseArguments(sel.arguments),
+            args: parseArguments(sel.arguments!),
             plural: undefined,
             storageKey: null,
             concreteType: null,
@@ -133,7 +132,7 @@ const parseSelections = (selectionSet: SelectionSetNode) => {
             alias: sel.alias?.value,
             kind: "ScalarField",
             concreteType: null,
-            args: parseArguments(sel.arguments),
+            args: parseArguments(sel.arguments!),
             plural: undefined,
           };
         }
@@ -154,13 +153,13 @@ const parseOperation = (
   op: OperationDefinitionNode
 ): NormalizationOperation => {
   return {
-    argumentDefinitions: op.variableDefinitions.map((v) => ({
+    argumentDefinitions: op.variableDefinitions!.map((v) => ({
       name: v.variable.name.value,
       kind: "LocalArgument",
       defaultValue: v.defaultValue ? parseValue(v.defaultValue) : null,
     })),
     kind: "Operation",
-    name: op.name.value,
+    name: op.name!.value,
     selections: parseSelections(op.selectionSet),
   };
 };
@@ -187,9 +186,9 @@ export const parseRequest = (
     text: taggedNode,
     params: {
       operationKind: requestDocument.operation,
-      name: requestDocument.name.value,
+      name: requestDocument.name!.value,
       id: null,
-      cacheID: requestDocument.name.value,
+      cacheID: requestDocument.name!.value,
       // cacheID: sum(queryText),
       text: queryText,
       metadata: {
@@ -243,7 +242,8 @@ export const parseGraphQLTag = memoized(
         return parseRequest(node, taggedNode);
       }
     } catch (e) {
-      console.log("Error parsing GraphQL", e.message, taggedNode);
+      console.log(e);
+      throw new Error("Error parsing GraphQL");
     }
   },
   (s) => s

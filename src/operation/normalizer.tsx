@@ -6,7 +6,6 @@ import type {
   NormalizationSplitOperation,
   NormalizationStream,
 } from "relay-runtime";
-const RelayConcreteNode = require("relay-runtime/lib/util/RelayConcreteNode");
 import { getStorageKey } from "relay-runtime/lib/store/RelayStoreUtils";
 import type {
   NormalizationClientExtension,
@@ -23,6 +22,8 @@ import {
   Record,
   Response,
 } from "../types";
+
+const RelayConcreteNode = require("relay-runtime/lib/util/RelayConcreteNode");
 
 export const PREFIX = "client:";
 

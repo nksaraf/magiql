@@ -1,4 +1,5 @@
 import React from "react";
+
 import { isServer } from "../utils";
 
 export function useMountedCallback<T extends Function>(callback: T): T {

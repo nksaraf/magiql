@@ -1,9 +1,19 @@
 import type { ReactQueryConfig } from "react-query";
+import { QueryCache } from "react-query";
+import {
+  Environment,
+  Network,
+  RecordSource,
+  Store as RelayStore,
+} from "relay-runtime";
+
 import { composeExchanges, fallbackExchange } from "../exchanges/compose";
 import { errorExchange } from "../exchanges/error";
 import { relayExchange } from "../exchanges/relay";
-import { QueryCache } from "react-query";
+import { createFetchOperation, fetchGraphQL } from "../fetch/fetchGraphQL";
+import { createNormalizer, defaultGetDataId } from "../operation/normalizer";
 import { createOperation } from "../operation/operation";
+import { createRelayStore } from "../store/relay";
 import {
   Operation,
   QueryKey,
@@ -19,17 +29,7 @@ import {
   GetDataID,
   OperationOptions,
 } from "../types";
-
-import { createNormalizer, defaultGetDataId } from "../operation/normalizer";
 import type { SubscriptionClient } from "./subscription-client";
-import { createFetchOperation, fetchGraphQL } from "../fetch/fetchGraphQL";
-import {
-  Environment,
-  Network,
-  RecordSource,
-  Store as RelayStore,
-} from "relay-runtime";
-import { createRelayStore } from "../store/relay";
 
 export const defaultExchanges: Exchange[] = [
   errorExchange({
@@ -52,7 +52,7 @@ export function createRelayEnvironment({
         params,
         variables,
         endpoint,
-        [cacheConfig.metadata.fetchOptions, fetchOptions]
+        [cacheConfig.metadata?.fetchOptions ?? {}, fetchOptions]
       );
       return await fetchGraphQL(fetchOperation);
     }),
@@ -149,6 +149,7 @@ export class GraphQLClient {
     if (this.subscriptionClient) {
       this.subscriptionClient.queryCache = this.queryCache;
     }
+    this.getDataID = getDataID;
     this.environment = environment;
   }
 
@@ -189,7 +190,9 @@ export class GraphQLClient {
     return await this.composedExchange({
       forward: fallbackExchange({
         client: this,
-        forward: null,
+        forward: () => {
+          throw new Error("");
+        },
         dispatchDebug: this.onDebugEvent,
       }),
       client: this,

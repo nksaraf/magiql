@@ -1,8 +1,10 @@
 node_modules
 dist
 coverage
+**/.umi
 .idea
 *.log
 .next
+public/docs
 .parcel-cache
 **/.umi

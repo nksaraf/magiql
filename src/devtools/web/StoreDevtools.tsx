@@ -1,8 +1,9 @@
 import React from "react";
-import { DomRenderer } from "./DomRenderer";
+
+import { useGraphQLClient } from "../../hooks/useGraphQLClient";
 import { Explorer } from "../common/Explorer";
 import { theme } from "../common/theme";
-import { useGraphQLClient } from "../../hooks/useGraphQLClient";
+import { DomRenderer } from "./DomRenderer";
 
 export function StoreDevtools() {
   const client = useGraphQLClient();

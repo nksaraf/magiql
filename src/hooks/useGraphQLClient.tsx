@@ -1,6 +1,7 @@
-import { ReactQueryCacheProvider, ReactQueryConfigProvider } from "react-query";
-import { GraphQLClient } from "../client/client";
 import React from "react";
+import { ReactQueryCacheProvider, ReactQueryConfigProvider } from "react-query";
+
+import { GraphQLClient } from "../client/client";
 
 export const GraphQLClientContext = React.createContext<GraphQLClient | null>(
   null

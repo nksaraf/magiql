@@ -1,5 +1,5 @@
-import { parseGraphQLTag } from "./parser";
 import { GraphQLTaggedNode } from "../types";
+import { parseGraphQLTag } from "./parser";
 
 export const graphql: (
   strings: TemplateStringsArray,

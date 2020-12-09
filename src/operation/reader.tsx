@@ -1,6 +1,5 @@
-import { getStorageKey } from "relay-runtime/lib/store/RelayStoreUtils";
 import type { SelectorData, ReaderField } from "relay-runtime";
-const RelayConcreteNode = require("relay-runtime/lib/util/RelayConcreteNode");
+import { getStorageKey } from "relay-runtime/lib/store/RelayStoreUtils";
 
 import {
   constants,
@@ -12,6 +11,8 @@ import {
   ReaderNode,
   Snapshot,
 } from "../types";
+
+const RelayConcreteNode = require("relay-runtime/lib/util/RelayConcreteNode");
 
 export const createFieldReader = (get): Reader<string> => ({
   readField: (field: ReaderField, variables, dataID) => {

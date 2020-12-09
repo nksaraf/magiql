@@ -4,6 +4,7 @@ import {
   QueryResult,
 } from "react-query";
 
+import { GraphQLClient } from "../client/client";
 import {
   Variables,
   Response,
@@ -16,7 +17,6 @@ import {
   RequestConfig,
 } from "../types";
 import { useGraphQLClient } from "./useGraphQLClient";
-import { GraphQLClient } from "../client/client";
 
 export interface UseQueryOptions<TQuery extends Query, TError = CombinedError>
   extends QueryConfig<Response<TQuery>, TError>,
@@ -48,6 +48,7 @@ export function useQuery<TQuery extends Query, TError = CombinedError>(
   });
   const queryKey = client.getQueryKey(operation);
   const { data, isMissingData } = client.store.useOperation(operation);
+
   const baseQuery = useBaseQuery<Response<TQuery>, TError, typeof queryKey>(
     queryKey,
     async () => {

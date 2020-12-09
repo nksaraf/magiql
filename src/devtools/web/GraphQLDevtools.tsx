@@ -1,11 +1,11 @@
 import React from "react";
 import Draggable from "react-draggable";
 
-import { ThemeProvider, DomRenderer } from "./DomRenderer";
-import Logo from "./RQLogo";
 import { theme } from "../common/theme";
-import { StoreDevtools } from "./StoreDevtools";
+import { ThemeProvider, DomRenderer } from "./DomRenderer";
 import { QueriesDevtools } from "./QueriesDevtools";
+import Logo from "./RQLogo";
+import { StoreDevtools } from "./StoreDevtools";
 
 export interface GraphQLDevtoolsProps {
   defaultIsOpen?: boolean;

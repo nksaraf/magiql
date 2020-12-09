@@ -1,15 +1,12 @@
 import invariant from "invariant";
-
 import {
   getSelector,
   PluralReaderSelector,
   ReaderSelector,
   SingularReaderSelector,
 } from "relay-runtime";
-
-import recycleNodesInto from "relay-runtime/lib/util/recycleNodesInto";
-
 import type { Disposable, IEnvironment, ReaderFragment } from "relay-runtime";
+import recycleNodesInto from "relay-runtime/lib/util/recycleNodesInto";
 
 import { Snapshot, KeyType } from "../types";
 
@@ -138,6 +135,7 @@ export class FragmentResource {
     // 2. If not, try reading the fragment from the Relay store.
     // If the snapshot has data, return it and save it in cache
     const fragmentSelector = getSelector(fragmentNode, fragmentRef);
+
     // invariant(
     //   fragmentSelector != null,
     //   'Relay: Expected to receive an object where `...%s` was spread, ' +
@@ -291,7 +289,7 @@ export class FragmentResource {
     }
 
     // 3. Establish subscriptions on the snapshot(s)
-    const dataSubscriptions = [];
+    const dataSubscriptions: Disposable[] = [];
     if (Array.isArray(renderedSnapshot)) {
       invariant(
         Array.isArray(currentSnapshot),
@@ -352,7 +350,7 @@ export class FragmentResource {
     let didMissUpdates = false;
 
     if (Array.isArray(renderedSnapshot)) {
-      const currentSnapshots = [];
+      const currentSnapshots: Snapshot<any>[] = [];
       renderedSnapshot.forEach((snapshot, idx) => {
         let currentSnapshot = environment.lookup(snapshot.selector);
         const renderData = snapshot.data;

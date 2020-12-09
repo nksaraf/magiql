@@ -157,7 +157,7 @@ function resolveEntry({
   const path = [];
   let type: string = typeof value;
   let subEntries;
-  const subEntryPages = [];
+  const subEntryPages: any[] = [];
   const makeProperty = (sub) => {
     const newPath = path.concat(sub.label);
     const subDefaultExpanded =
@@ -191,10 +191,10 @@ function resolveEntry({
           value === null
             ? null
             : typeof value === "object"
-            ? value[constants.REF_KEY]
-              ? asRef(value[constants.REF_KEY])
-              : value[constants.REFS_KEY]
-              ? value[constants.REFS_KEY].map(asRef)
+            ? value?.[constants.REF_KEY]
+              ? asRef(value?.[constants.REF_KEY])
+              : value?.[constants.REFS_KEY]
+              ? value?.[constants.REFS_KEY].map(asRef)
               : value
             : value,
       })

@@ -1,5 +1,5 @@
-import { Exchange, Operation, Query, CombinedError } from "../types";
 import { GraphQLClient } from "../client/client";
+import { Exchange, Operation, Query, CombinedError } from "../types";
 
 export function authExchange<T>({
   refreshAuthState,

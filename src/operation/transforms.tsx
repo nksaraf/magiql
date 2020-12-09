@@ -1,5 +1,3 @@
-import { constants } from "../types";
-import { visit } from "graphql/language/visitor";
 import {
   SelectionNode,
   DocumentNode,
@@ -8,6 +6,9 @@ import {
   InlineFragmentNode,
   FieldNode,
 } from "graphql";
+import { visit } from "graphql/language/visitor";
+
+import { constants } from "../types";
 
 export const removeTypeNameFromOperation = (
   node: DocumentNode
@@ -42,8 +43,6 @@ export const addTypeName = (node: DocumentNode): DocumentNode => {
             ...node.selections,
             {
               arguments: [],
-              selectionSet: null,
-              alias: null,
               name: {
                 value: constants.TYPENAME_KEY,
                 kind: "Name",

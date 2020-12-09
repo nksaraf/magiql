@@ -1,5 +1,6 @@
-import plugin from ".";
 import { cosmiconfigSync, defaultLoaders } from "cosmiconfig";
+
+import plugin from ".";
 
 var explorer = cosmiconfigSync("magiql", {
   searchPlaces: ["magiql.config.js", "magiql.config.json", "package.json"],

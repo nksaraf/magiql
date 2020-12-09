@@ -12,15 +12,20 @@ import {
   CacheConfig,
 } from "relay-runtime";
 import {
+  RecordSourceProxy,
+  StoreUpdater,
+  TypedSnapshot,
+} from "relay-runtime/lib/store/RelayStoreTypes";
+import {
   ReaderLinkedField,
   ReaderCondition,
   ReaderFragment,
   ReaderInlineFragment,
 } from "relay-runtime/lib/util/ReaderNode";
 import { SubscriptionClient } from "subscriptions-transport-ws";
+
 import { GraphQLClient } from "./client/client";
 import { CombinedError } from "./fetch/error";
-import { TypedSnapshot } from "relay-runtime/lib/store/RelayStoreTypes";
 import { SelectorSnapshot } from "./store/relay";
 
 export type {
@@ -253,7 +258,9 @@ export interface RequestConfig<TMutation extends Query> {
 }
 
 export interface ResponseUpdaterConfig<TMutation extends Query> {
-  optimisticUpdater?: SelectorStoreUpdater | null;
+  optimisticUpdater?:
+    | ((store: RecordSourceProxy, variables: Variables<TMutation>) => void)
+    | null;
   updater?: SelectorStoreUpdater | null;
   optimisticResponse?:
     | Response<TMutation>

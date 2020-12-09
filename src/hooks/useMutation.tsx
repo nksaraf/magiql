@@ -4,9 +4,9 @@ import {
   MutateFunction,
   MutationResult,
 } from "react-query";
-import { createOperation } from "../operation/operation";
-import { GraphQLClient } from "../client/client";
 
+import { GraphQLClient } from "../client/client";
+import { createOperation } from "../operation/operation";
 import {
   Query,
   Variables,

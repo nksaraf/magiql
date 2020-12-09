@@ -73,7 +73,7 @@ export const javascriptFormatterFactory = (): FormatModule => ({
   sourceHash,
 }) => {
   const docTextComment = docText ? "\n/*\n" + docText.trim() + "\n*/\n" : "";
-  let nodeStatement = `const node = ${concreteText};`;
+  const nodeStatement = `const node = ${concreteText};`;
   let query;
   if (node.kind === "Request") {
     const matched: any = typeText.match(

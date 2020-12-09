@@ -21,7 +21,7 @@ export const relayExchange: Exchange = function relayExchange({
         client.environment
           .execute({
             operation,
-            cacheConfig: cacheConfig,
+            cacheConfig,
             updater: operation.options.updater,
           })
           .subscribe({
@@ -77,15 +77,21 @@ export const relayExchange: Exchange = function relayExchange({
         client.environment
           .executeMutation({
             operation,
-            cacheConfig: cacheConfig,
+            cacheConfig,
             optimisticResponse: operation.options.optimisticResponse
               ? typeof operation.options.optimisticResponse === "object"
                 ? operation.options.optimisticResponse
-                : (operation.options.optimisticResponse as any)(
+                : (operation.options.optimisticResponse as any)?.(
                     operation.options.variables
                   )
               : undefined,
-            optimisticUpdater: operation.options.optimisticUpdater,
+            optimisticUpdater: operation.options.optimisticUpdater
+              ? (store) =>
+                  operation.options.optimisticUpdater?.(
+                    store,
+                    operation.options.variables
+                  )
+              : undefined,
             updater: operation.options.updater,
           })
           .subscribe({
