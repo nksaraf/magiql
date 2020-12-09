@@ -2,5 +2,5 @@ export default {
   // configuration items
   favicon: "/favicon.ico",
   logo: "/hat2.png",
-  outputPath: "/public/docs"
+  outputPath: "/dist/docs"
 };

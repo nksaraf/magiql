@@ -4,7 +4,9 @@ coverage
 **/.umi
 .idea
 *.log
+
 .next
 public/docs
 .parcel-cache
 **/.umi
+**/.umi-*
