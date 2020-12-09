@@ -1,5 +1,5 @@
 ---
-title: Introduction
+title: Other
 order: 1
 ---
 

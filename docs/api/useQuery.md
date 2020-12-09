@@ -56,7 +56,7 @@ const result = useQuery({
 })
 ```
 
-**Options**
+### Options
 
 - `queryKey: string | unknown[]`
   - **Required**
@@ -135,21 +135,21 @@ const result = useQuery({
   - Set this to `true` to enable suspense mode.
   - When `true`, `useQuery` will suspend when `status === 'loading'`
   - When `true`, `useQuery` will throw runtime errors when `status === 'error'`
-- `initialData: TData | () => TData`
+#### `initialData: TData | () => TData`
   - Optional
   - If set, this value will be used as the initial data for the query cache (as long as the query hasn't been created or cached yet)
   - If set to a function, the function will be called **once** during the shared/root query initialization, and be expected to synchronously return the initialData
   - Initial data is considered stale by default unless a `staleTime` has been set.
   - `initialData` **is persisted** to the cache
-- `placeholderData: TData | () => TData`
+#### `placeholderData`: `TData | () => TData`
   - Optional
   - If set, this value will be used as the placeholder data for this particular query observer while the query is still in the `loading` data and no initialData has been provided.
   - `placeholderData` is **not persisted** to the cache
-- `keepPreviousData: boolean`
+#### `keepPreviousData: boolean`
   - Optional
   - Defaults to `false`
   - If set, any previous `data` will be kept when fetching new data because the query key changed.
-- `structuralSharing: boolean`
+#### `structuralSharing: boolean`
   - Optional
   - Defaults to `true`
   - If set to `false`, structural sharing between query results will be disabled.
