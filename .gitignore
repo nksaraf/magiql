@@ -5,3 +5,4 @@ coverage
 *.log
 .next
 .parcel-cache
+**/.umi
