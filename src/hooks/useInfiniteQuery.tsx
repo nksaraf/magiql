@@ -69,7 +69,7 @@ export function useInfiniteQuery<TQuery extends Query, TError = CombinedError>(
   const queryKey = client.getInfinteQueryKey(operation);
   const infiniteQuery = useBaseInfiniteQuery<TData, TError, typeof queryKey>(
     queryKey,
-    (_, variables = {}, fetchMoreVariables) => {
+    (_, __, variables = {}, fetchMoreVariables) => {
       const fetchMoreOperation = client.createOperation<TQuery>(
         operation.request.node,
         {

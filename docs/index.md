@@ -11,23 +11,6 @@ order: 1
 $ npm i magiql
 ```
 
-Create a `GraphQLClient` to connect to your GraphQL server and wrap your app in a `GraphQLClientProvider` passing in the client
+2. See the example below to use this
 
-```typescript
-import { GraphQLClient, GraphQLClientProvider } from "magiql";
-import App from './App';
-
-const client = new GraphQLClient({
-  endpoint: "https://todo-magiql.hasura.app/v1/graphql",
-});
-
-export default () => (
-  <GraphQLClientProvider client={client}>
-    <App />
-  </GraphQLClientProvider>
-);
-```
-
-<code src='./demos/fragment.tsx' />
-
-
+ <code src='./demos/fragment.tsx' compact defaultShowCode={true} />

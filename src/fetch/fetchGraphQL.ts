@@ -107,12 +107,16 @@ export async function fetchGraphQL<TQuery extends Query>({
 
     const contentTypeHeader = response.headers.get("Content-Type");
 
-    if (!response.ok || !contentTypeHeader?.startsWith("application/json")) {
+    console.log(response);
+    if (!contentTypeHeader?.startsWith("application/json")) {
       const result = await response.text();
       return makeNetworkErrorResult(
         new Error(`Expected JSON response, received "${result}"`),
         response
       );
+    } else if (!response.ok) {
+      const result = await response.json();
+      return makeResult(result, response);
     }
 
     const result: {

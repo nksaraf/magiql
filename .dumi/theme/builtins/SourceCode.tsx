@@ -1,8 +1,8 @@
-import React from 'react';
-import Highlight, { defaultProps, Language } from 'prism-react-renderer';
-import { useCopy } from 'dumi/theme';
-import 'prismjs/themes/prism.css';
-import './SourceCode.less';
+import React from "react";
+import Highlight, { defaultProps, Language } from "prism-react-renderer";
+import { useCopy } from "dumi/theme";
+import "prismjs/themes/prism.css";
+import "./SourceCode.less";
 
 export interface ICodeBlockProps {
   code: string;
@@ -15,7 +15,12 @@ export default ({ code, lang, showCopy = true }: ICodeBlockProps) => {
   console.log(lang);
   return (
     <div className="__dumi-default-code-block">
-      <Highlight {...defaultProps} code={code} language={lang === 'typescript' ? 'tsx': lang} theme={undefined}>
+      <Highlight
+        {...defaultProps}
+        code={code}
+        language={lang}
+        theme={undefined}
+      >
         {({ className, style, tokens, getLineProps, getTokenProps }) => (
           <pre className={className} style={style}>
             {showCopy && (

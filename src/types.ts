@@ -153,9 +153,14 @@ export interface GraphQLVariables<TVariables> {
   variables?: TVariables;
 }
 
-export type QueryKey<TQuery extends Query> = [string, Variables<TQuery>];
+export type QueryKey<TQuery extends Query> = [
+  string,
+  string,
+  Variables<TQuery>
+];
 
 export type InfiniteQueryKey<TQuery extends Query> = [
+  string,
   string,
   Variables<TQuery>,
   Partial<Variables<TQuery>>

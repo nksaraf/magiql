@@ -143,12 +143,12 @@ const parseSelections = (selectionSet: SelectionSetNode) => {
           kind: "FragmentSpread",
           name: sel.name.value,
         };
-      } else if (sel.kind === 'InlineFragment') {
+      } else if (sel.kind === "InlineFragment") {
         return {
           type: (sel as InlineFragmentNode).typeCondition.name.value,
           kind: "InlineFragment",
           selections: parseSelections(sel.selectionSet),
-        }
+        };
       }
     }
   ) as any;
@@ -168,7 +168,7 @@ const parseOperation = (
       defaultValue: v.defaultValue ? parseValue(v.defaultValue) : null,
     })),
     kind: "Operation",
-    name: op.name ? op.name.value : ('Operation' + OPERATION_COUNTER++),
+    name: op.name ? op.name.value : "Operation" + OPERATION_COUNTER++,
     selections: parseSelections(op.selectionSet),
   };
 };
@@ -187,7 +187,9 @@ export const parseRequest = (
     (def) => def.kind === "OperationDefinition"
   ) as OperationDefinitionNode;
 
-  const requestName = requestDocument.name ? requestDocument.name.value : ('Request' + OPERATION_COUNTER++)
+  const requestName = requestDocument.name
+    ? requestDocument.name.value
+    : "Request" + OPERATION_COUNTER++;
 
   const queryText = print(requestDocument);
   return {

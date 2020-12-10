@@ -158,6 +158,7 @@ export class GraphQLClient {
   ): InfiniteQueryKey<TQuery> {
     return [
       operation.request.node.params.name,
+      operation.request.node.params.cacheID,
       operation.request.variables ?? {},
     ] as any;
   }
@@ -181,7 +182,8 @@ export class GraphQLClient {
     operation: Operation<TQuery>
   ): QueryKey<TQuery> {
     return [
-      operation.request.node.params.id,
+      operation.request.node.params.name,
+      operation.request.node.params.cacheID,
       operation.request.variables ?? {},
     ];
   }

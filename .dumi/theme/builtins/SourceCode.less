@@ -1,14 +1,15 @@
-@import (reference) '../style/variables.less';
+@import (reference) "../style/variables.less";
 
 .@{prefix}-code-block {
   position: relative;
   background-color: @c-light-bg;
+  font-size: 14px;
 
   & + & {
     margin-top: 16px;
   }
 
-  > pre[class*='language-'] {
+  > pre[class*="language-"] {
     margin: 0;
     background: transparent;
 
@@ -39,11 +40,11 @@
       opacity: 0.9;
     }
 
-    &[data-status='ready'] {
+    &[data-status="ready"] {
       background-position: -54px 0;
     }
 
-    &[data-status='copied'] {
+    &[data-status="copied"] {
       opacity: 1;
       pointer-events: none;
       background-position: -54px -16px;

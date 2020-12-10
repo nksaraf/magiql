@@ -44,6 +44,7 @@ export class SubscriptionClient extends BaseSubscriptionClient {
   ): QueryKey<TQuery> {
     return [
       operation.request.node.params.name,
+      operation.request.node.params.cacheID,
       operation.request.variables ?? {},
     ];
   }

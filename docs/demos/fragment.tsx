@@ -1,40 +1,33 @@
-import { GraphQLClient, GraphQLClientProvider, graphql, useQuery } from "magiql";
-import { Film_film, Film } from "./Film";
+import { graphql, useQuery } from "magiql";
+import { withGraphQLClient } from "./withGraphQLClient";
+import { Pokemon, Pokemon_pokemon } from "./Pokemon";
+import { Pokeball } from "./Pokeball";
 
-const client = new GraphQLClient({
-  endpoint: "https://swapi-graphql.netlify.app/.netlify/functions/index",
-});
-
-
-function Films() {
+function Pokemons() {
   const { data, isLoading, error } = useQuery(graphql`
     query fragmentQuery {
-  allFilms {
-    edges {
-      node {
+      pokemons {
         id
-        ...${Film_film}
+        ...${Pokemon_pokemon}
       }
     }
-  }
-}
-
-  `)
+  `);
 
   if (error) {
-    return <div>Error</div>
+    return <div>Error</div>;
   }
 
   if (isLoading) {
-    return <div>Loading</div>
+    return <Pokeball />;
   }
 
-  // return <pre>{JSON.stringify(data, null, 2)}</pre>
-
-  return <>{data.allFilms.edges.map(edge => <Film key={edge.node.id} film={edge.node} />)}</>
-
+  return (
+    <>
+      {data.pokemons.map((poke) => (
+        <Pokemon key={poke.id} pokemon={poke} />
+      ))}
+    </>
+  );
 }
 
-export default function App() {
-  return <GraphQLClientProvider client={client}> <Films /></GraphQLClientProvider>;
-}
+export default withGraphQLClient(Pokemons);
