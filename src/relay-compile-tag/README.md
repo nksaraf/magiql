@@ -14,7 +14,7 @@
 **Difference**: 
 Can't autodetect fragments across documents
 
-**Alternative**: 
+**Solutions**: 
 Parser accepts the following syntax to include fragments (thanks to tagged template literals):
   ```tsx
   const Pokemon_pokemon = graphql`
@@ -42,16 +42,17 @@ Parser accepts the following syntax to include fragments (thanks to tagged templ
 **Difference:** 
 Can't detect which selection sets are lists
 
-**Alternative:** 
+**Solutions:** 
 This can be easily worked out at runtime:
 * Data in response would contain lists which can be detected while normalizing
 * While reading from store, when a list of recordIDs is detected
 
 **Difference:** 
-Can't generate types
+Can't generate types and include type hints
 
-**Alternative:** 
-Use `graphql-code-generator` _(adaptor coming soon...)_
+**Solutions:** 
+* Adds `__typename` to the GraphQL documents to fetch type information for the `relay-runtime`.
+* Use `graphql-code-generator` for typescript types and global fragments _(adaptor coming soon...)_
 
 _Might have missed more differences but these are the ones I notice._
 
