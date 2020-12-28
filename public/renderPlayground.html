@@ -49,82 +49,84 @@
       type="application/javascript"
     ></script>
     <script type="module">
-      import ow from 'https://unpkg.com/oceanwind';
+      import ow from "https://unpkg.com/oceanwind";
       const { React, ReactDOM, htm, GraphiQL, GraphiQLExplorer } = window;
       const html = htm.bind(React.createElement);
-      
-      const getFetcher = (url) => function graphQLFetcher(graphQLParams) {
-        return fetch(
-          url,
-          {
-            method: 'post',
+
+      const getFetcher = (url) =>
+        function graphQLFetcher(graphQLParams) {
+          return fetch(url, {
+            method: "post",
             headers: {
-              Accept: 'application/json',
-              'Content-Type': 'application/json',
+              Accept: "application/json",
+              "Content-Type": "application/json",
             },
             body: JSON.stringify(graphQLParams),
-          },
-        ).then(function (response) {
-          return response.json().catch(function () {
-            return response.text();
+          }).then(function (response) {
+            return response.json().catch(function () {
+              return response.text();
+            });
           });
-        });
-      }
+        };
 
       function GraphiQLPlayground({ url }) {
         const [query, setQuery] = React.useState(``);
         const graphiqlRef = React.useRef();
         const [graphiql, setGraphiqlState] = React.useState({});
-        const fetcher = React.useMemo(() => getFetcher(url), [url])
+        const fetcher = React.useMemo(() => getFetcher(url), [url]);
         React.useEffect(() => {
           const originalSetState = graphiqlRef.current.safeSetState;
-          setGraphiqlState(graphiqlRef.current.state)
+          setGraphiqlState(graphiqlRef.current.state);
           graphiqlRef.current.safeSetState = (fn) => {
-            setGraphiqlState(prev => ({ ...prev, ...fn }));
-            originalSetState(fn)
+            setGraphiqlState((prev) => ({ ...prev, ...fn }));
+            originalSetState(fn);
           };
-        }, [graphiqlRef.current])
+        }, [graphiqlRef.current]);
         return html`
-          <div className=${ow`flex flex-row flex-1`} key=${url}>
-            <${GraphiQLExplorer.Explorer} 
-              query=${query} 
-              onEdit=${setQuery} 
+          <div className=${tw`flex flex-row flex-1`} key=${url}>
+            <${GraphiQLExplorer.Explorer}
+              query=${query}
+              onEdit=${setQuery}
               explorerIsOpen=${true}
-              schema=${graphiql.schema} 
+              schema=${graphiql.schema}
               width=${240}
             />
             <${GraphiQL}
-              ref=${(ref) => graphiqlRef.current = ref}
+              ref=${(ref) => (graphiqlRef.current = ref)}
               fetcher=${fetcher}
               query=${query}
               onEditQuery=${setQuery}
               defaultVariableEditorOpen=${true}
             />
           </div>
-        `
+        `;
       }
 
-
       function Playground() {
-        const [url, setUrl] = React.useState('/api/graphql');
+        const [url, setUrl] = React.useState("/api/graphql");
 
         return html`
-          <div className=${ow`flex flex-col h-screen w-screen`}>
-            <div><input type="text" defaultValue=${url} onBlur=${(e) => {
-              setUrl(e.currentTarget.value)
-            }} className=${ow`w-full`} /></div>
+          <div className=${tw`flex flex-col h-screen w-screen`}>
+            <div>
+              <input
+                type="text"
+                defaultValue=${url}
+                onBlur=${(e) => {
+                  setUrl(e.currentTarget.value);
+                }}
+                className=${tw`w-full`}
+              />
+            </div>
             <${GraphiQLPlayground} url=${url} key=${url} />
           </div>
-        `
+        `;
       }
 
       ReactDOM.render(
         html`<${Playground} />`,
-        document.getElementById('graphiql'),
+        document.getElementById("graphiql")
       );
-    </script> 
-    <script>
-      
     </script>
+    <script></script>
   </body>
 </html>

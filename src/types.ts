@@ -23,10 +23,11 @@ import {
   ReaderInlineFragment,
 } from "relay-runtime/lib/util/ReaderNode";
 import { SubscriptionClient } from "subscriptions-transport-ws";
+import { CombinedError } from "./error";
 
-import { GraphQLClient } from "./client/client";
-import { CombinedError } from "./fetch/error";
-import { SelectorSnapshot } from "./store/relay";
+// import { GraphQLClient } from "./client/client";
+// import { CombinedError } from "./fetch/error";
+// import { SelectorSnapshot } from "./store/relay";
 
 export type {
   ConcreteRequest,
@@ -45,7 +46,7 @@ export type {
   ReaderSelection,
 } from "relay-runtime/lib/util/ReaderNode";
 
-export { CombinedError };
+// export { CombinedError };
 
 export type ReaderNode =
   | ReaderCondition
@@ -188,35 +189,35 @@ export interface Normalizer {
   getDataID: GetDataID;
 }
 
-export interface Store {
-  type: string;
-  isNormalized: boolean;
-  update(recordSource: any): void;
-  updateRecord(id: string, record: any): void;
-  get(dataID: string): any;
-  useFragment<TKey extends KeyType | KeyType[]>(
-    fragmentNode: ReaderFragment,
-    fragmentRef: TKey
-  ): SelectorSnapshot<
-    $Call<KeyReturnType<TKey extends KeyType[] ? TKey[0] : TKey>>,
-    TKey extends any[] ? true : false
-  >;
-  useOperation<TQuery extends Query>(
-    operation: Operation<TQuery>
-  ): SelectorSnapshot<Response<TQuery>, false>;
-  useRecords(): [string, { [key: string]: any }][];
-  useOperationPages<TQuery extends Query>(
-    operation: Operation<TQuery>,
-    pageVariables: any[]
-  ): SelectorSnapshot<Response<TQuery>, true>;
-  [key: string]: any;
-}
+// export interface Store {
+//   type: string;
+//   isNormalized: boolean;
+//   update(recordSource: any): void;
+//   updateRecord(id: string, record: any): void;
+//   get(dataID: string): any;
+//   useFragment<TKey extends KeyType | KeyType[]>(
+//     fragmentNode: ReaderFragment,
+//     fragmentRef: TKey
+//   ): SelectorSnapshot<
+//     $Call<KeyReturnType<TKey extends KeyType[] ? TKey[0] : TKey>>,
+//     TKey extends any[] ? true : false
+//   >;
+//   useOperation<TQuery extends Query>(
+//     operation: Operation<TQuery>
+//   ): SelectorSnapshot<Response<TQuery>, false>;
+//   useRecords(): [string, { [key: string]: any }][];
+//   useOperationPages<TQuery extends Query>(
+//     operation: Operation<TQuery>,
+//     pageVariables: any[]
+//   ): SelectorSnapshot<Response<TQuery>, true>;
+//   [key: string]: any;
+// }
 
-export type UseOperationPages = Store["useOperationPages"];
-export type UseRecords = Store["useRecords"];
-export type UseOperation = Store["useOperation"];
-export type UpdateStore = Store["update"];
-export type UseFragment = Store["useFragment"];
+// export type UseOperationPages = Store["useOperationPages"];
+// export type UseRecords = Store["useRecords"];
+// export type UseOperation = Store["useOperation"];
+// export type UpdateStore = Store["update"];
+// export type UseFragment = Store["useFragment"];
 export type GetDataID = (record: any, type: any) => string | null;
 
 export type Snapshot<TData> = TypedSnapshot<TData>;
@@ -227,7 +228,7 @@ export type ExchangeOp = (
 
 /** Input parameters for to an Exchange factory function. */
 export interface ExchangeInput {
-  client: GraphQLClient;
+  // client: GraphQLClient;
   forward: ExchangeIO;
   dispatchDebug: <TQuery extends Query>(event: DebugEvent<TQuery>) => void;
 }

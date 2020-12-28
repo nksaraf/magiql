@@ -1,7 +1,0 @@
-{
-  "name": "magiql/node",
-  "private": true,
-  "main": "../dist/node.js",
-  "module": "../dist/esm/node.js",
-  "types": "../dist/node.d.ts"
-}
