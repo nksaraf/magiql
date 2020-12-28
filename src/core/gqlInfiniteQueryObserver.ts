@@ -9,34 +9,35 @@ import {
 import {
   GraphQLTaggedNode,
   Operation,
+  Response,
   Query as IQuery,
   Variables,
-} from "./types";
-import { getRequest } from "./relay-parser/parser";
+} from "../types";
+import { getRequest } from "../relay-graphql-tag/parser";
 import { GQLClient } from "./gqlClient";
 import { executeQuery } from "./relayQuery";
 
-export interface GQLQueryObserverOptions<
+export interface GQLInfiniteQueryObserverOptions<
   TQuery extends IQuery,
   TError = Error,
-  TData = TQuery["response"],
-  TQueryData = TQuery["response"]
-> extends QueryObserverOptions<TQuery["response"], TError, TData, TQueryData> {
+  TData = Response<TQuery>,
+  TQueryData = Response<TQuery>
+> extends QueryObserverOptions<Response<TQuery>, TError, TData, TQueryData> {
   query?: string | GraphQLTaggedNode;
   variables?: Variables<TQuery>;
   cacheConfig?: CacheConfig;
   gqlClient?: GQLClient;
 }
 
-export class GQLQueryObserver<
+export class GQLInfiniteQueryObserver<
   TQuery extends IQuery,
   TError = Error,
-  TData = TQuery["response"],
-  TQueryData = TQuery["response"]
-> extends QueryObserver<TQuery["response"], TError, TData, TQueryData> {
+  TData = Response<TQuery>,
+  TQueryData = Response<TQuery>
+> extends QueryObserver<Response<TQuery>, TError, TData, TQueryData> {
   storeListener: Disposable;
-  // options: GQLQueryObserverOptions<
-  //   TQuery["response"],
+  // options: GQLInfiniteQueryObserverOptions<
+  //   Response<TQuery>,
   //   TError,
   //   TData,
   //   TQueryData
@@ -45,7 +46,7 @@ export class GQLQueryObserver<
 
   constructor(
     client: GQLClient,
-    options: GQLQueryObserverOptions<TQuery, TError, TData, TQueryData>
+    options: GQLInfiniteQueryObserverOptions<TQuery, TError, TData, TQueryData>
   ) {
     super(client, { ...options, gqlClient: client } as any);
   }
@@ -59,7 +60,7 @@ export class GQLQueryObserver<
     query,
     variables,
     ...options
-  }: GQLQueryObserverOptions<TQuery, TError, TData, TQueryData>) {
+  }: GQLInfiniteQueryObserverOptions<TQuery, TError, TData, TQueryData>) {
     const operation = createOperationDescriptor(
       getRequest(query),
       variables
@@ -130,7 +131,7 @@ export class GQLQueryObserver<
 
   //
   getOptions() {
-    return this.options as GQLQueryObserverOptions<
+    return this.options as GQLInfiniteQueryObserverOptions<
       TQuery,
       TError,
       TData,

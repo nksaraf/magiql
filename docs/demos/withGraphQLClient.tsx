@@ -1,4 +1,4 @@
-import { GraphQLClient, GraphQLClientProvider } from "magiql";
+import { GQL, GraphQLClientProvider } from "magiql";
 import GraphQLDevtools from "magiql/devtools";
 import ow from "oceanwind";
 

@@ -10384,7 +10384,7 @@ react-query-devtools@^2.5.1:
   dependencies:
     match-sorter "^4.1.0"
 
-"react-query:@npm:@nksaraf/react-query", "react-query@npm:@nksaraf/react-query":
+"react-query@npm:@nksaraf/react-query":
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/@nksaraf/react-query/-/react-query-3.0.2.tgz#cb32aba3b3d3275af1f0db8e0e7aebb2378de2a4"
   integrity sha512-zJ4bIOZqkm8B078rpTEPRb5On7k35PRgpCnd/tX8IU/X8hVRZkQUsmRZpfHxYClsYGT189aSGmBKIwWk3BOo8A==

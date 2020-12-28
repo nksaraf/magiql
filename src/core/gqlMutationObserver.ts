@@ -1,4 +1,4 @@
-import { MutationObserver } from "react-query/core";
+import { MutationObserver, MutationObserverOptions } from "react-query/core";
 import { CacheConfig, createOperationDescriptor } from "relay-runtime";
 import {
   FetchResult,
@@ -7,10 +7,9 @@ import {
   Query as IQuery,
   Response,
   Variables,
-} from "./types";
-import { getRequest } from "./relay-parser/parser";
+} from "../types";
+import { getRequest } from "../relay-graphql-tag/parser";
 import { GQLClient } from "./gqlClient";
-import { MutationObserverOptions } from "react-query:";
 import { executeMutation } from "./relayQuery";
 
 export interface GQLMutationObserverOptions<

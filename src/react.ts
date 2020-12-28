@@ -1,4 +1,7 @@
-import { GQLQueryObserver, GQLQueryObserverOptions } from "./gqlQueryObserver";
+import {
+  GQLQueryObserver,
+  GQLQueryObserverOptions,
+} from "./core/gqlQueryObserver";
 import { useBaseMutation, useBaseQuery } from "react-query";
 import { GraphQLTaggedNode, Query, Response } from "./types";
 
@@ -6,14 +9,14 @@ import { $Call, KeyType, KeyReturnType } from "./types";
 import {
   GQLFragmentObserver,
   GQLFragmentObserverOptions,
-} from "./gqlFragmentObserver";
+} from "./core/gqlFragmentObserver";
 import { UseBaseQueryResult } from "react-query";
-import { CombinedError } from "./error";
+import { CombinedError } from "./core/error";
 import {
   GQLMutationObserver,
   GQLMutationObserverOptions,
-} from "./gqlMutationObserver";
-import { UseMutationResult } from "react-query:";
+} from "./core/gqlMutationObserver";
+import { UseMutationResult } from "react-query";
 
 export function useQuery<
   TQuery extends Query,

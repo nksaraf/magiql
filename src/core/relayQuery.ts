@@ -1,4 +1,4 @@
-import { FetchResult, Operation, Query as IQuery } from "./types";
+import { FetchResult, Operation, Query as IQuery } from "../types";
 import { Environment } from "relay-runtime";
 import { CombinedError } from "./error";
 import { makeNetworkErrorResult, makeResult } from "./fetchGraphQL";

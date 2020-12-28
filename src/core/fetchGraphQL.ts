@@ -1,6 +1,6 @@
 import fetch from "isomorphic-unfetch";
 
-import { getRequest } from "./relay-parser/parser";
+import { getRequest } from "../relay-graphql-tag/parser";
 import type {
   ConcreteRequest,
   FetchOperation,
@@ -9,7 +9,7 @@ import type {
   Query,
   Response,
   Variables,
-} from "./types";
+} from "../types";
 import { CombinedError } from "./error";
 
 export type BaseVariables = { [key: string]: any };

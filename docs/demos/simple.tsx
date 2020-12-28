@@ -1,5 +1,4 @@
 import { graphql, useQuery } from "magiql";
-import { GraphQLDevtools } from "magiql/devtools";
 import { withGraphQLClient } from "./withGraphQLClient";
 
 function Films() {

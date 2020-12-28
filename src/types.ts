@@ -23,7 +23,7 @@ import {
   ReaderInlineFragment,
 } from "relay-runtime/lib/util/ReaderNode";
 import { SubscriptionClient } from "subscriptions-transport-ws";
-import { CombinedError } from "./error";
+import { CombinedError } from "./core/error";
 
 // import { GraphQLClient } from "./client/client";
 // import { CombinedError } from "./fetch/error";

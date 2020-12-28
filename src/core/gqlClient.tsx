@@ -9,13 +9,7 @@ import {
   RelayNetworkLayer,
   urlMiddleware,
 } from "react-relay-network-modern/node8";
-import { ConcreteRequest, ReaderFragment, Snapshot } from "relay-runtime";
-import {
-  $Call,
-  KeyType,
-  GraphQLTaggedNode,
-  KeyReturnType,
-} from "./types";
+
 import { Environment, RecordSource, Store } from "relay-runtime";
 
 export class GQLClient extends QueryClient {
@@ -82,5 +76,3 @@ export class GQLClient extends QueryClient {
     return this.environment.getNetwork();
   }
 }
-
-
