@@ -1,8 +1,7 @@
-<p align="center">
-  <img src="/public/hat2.png" width="120" /><h1  align="center"><code margin="0">relay-compile-tag</code></h1><p align="center"><i>A runtime version of Relay compiler as a <code>graphql<code> tag</p>
+# <p align="center"><h1  align="center"><code margin="0">relay-compile-tag</code></h1><p align="center"><i>A runtime version of the <a href=“https://relay.dev/docs/en/installation-and-setup#set-up-relay-compiler”>Relay Compiler</a> as a <code>graphql</code> tag,<br>can be used in any environment</p>
 </p>
 
-The Relay compiler is an amazing piece of technology that greatly improves the development experience while working with GraphQL.
+The Relay Compiler is an amazing piece of technology that greatly improves the development experience while working with GraphQL.
 
 `relay-compiler` uses `babel-relay-plugin` to replace the `graphql` tagged documents to `require` statements at
 build time to the compiled artifacts it generates.
