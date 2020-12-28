@@ -59,7 +59,9 @@ _Might have missed more differences but these are the ones I notice._
 
 _**Disclaimer:** This is NOT meant to discourage the use of `relay-compiler`, on the contrary, this is actually meant to be a gateway to it, encourage it. If you are considering using it, USE IT. The `magiql/cli` and `magiql/babel` exports are also installed when you install `magiql` which wrap the `relay-compiler`, `relay-config` and `babel-plugin-relay` packages into a preconfigured package designed for Typescript. They are designed to make it easy to switch to the compiler anytime._
 
-**To use `relay-runtime` easily**, it was necessary to use the `relay-compiler`. The `relay-compiler` is an amazing piece of technology that greatly improves the development experience while working with GraphQL. The advantages of using the `relay-compiler` are:
+**To use `relay-runtime` easily**. 
+
+Currently, it is necessary to use the `relay-compiler` which is an amazing piece of technology. (if you 
 
 - GraphQL Schema-aware development tooling
   - Typescript code-generation
