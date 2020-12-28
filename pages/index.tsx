@@ -4,7 +4,7 @@ import React from "react";
 
 import { useBaseQuery } from "react-query/lib/react/useBaseQuery";
 import { QueryClientProvider, UseBaseQueryResult } from "react-query";
-import { graphql } from "../src/relay-graphql-tag/graphql-tag";
+import { graphql } from "../src/relay-compile-tag/graphql-tag";
 import { getSelector, GraphQLResponse } from "relay-runtime";
 import { RecordSource } from "relay-runtime";
 import { stringifyData } from "../src/utils/stringify";

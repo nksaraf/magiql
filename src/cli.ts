@@ -15,7 +15,7 @@ import { relayCompiler } from "relay-compiler";
 import { buildClientSchema } from "../node_modules/graphql/utilities/buildClientSchema";
 import { getIntrospectionQuery } from "../node_modules/graphql/utilities/getIntrospectionQuery";
 import { printSchema } from "../node_modules/graphql/utilities/printSchema";
-import { loadConfig } from "./relay-adapter/config";
+import { loadConfig } from "./relay-compiler/config";
 
 /**
  *

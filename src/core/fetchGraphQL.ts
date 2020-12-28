@@ -1,6 +1,6 @@
 import fetch from "isomorphic-unfetch";
 
-import { getRequest } from "../relay-graphql-tag/parser";
+import { getRequest } from "../relay-compile-tag/parser";
 import type {
   ConcreteRequest,
   FetchOperation,

@@ -6,7 +6,7 @@ import {
   GraphQLTaggedNode,
 } from "relay-runtime";
 import { $Call, KeyType, KeyReturnType } from "../types";
-import { getFragment } from "../relay-graphql-tag/parser";
+import { getFragment } from "../relay-compile-tag/parser";
 import { GQLClient } from "./gqlClient";
 
 export interface GQLFragmentObserverOptions<

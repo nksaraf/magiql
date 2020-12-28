@@ -12,7 +12,7 @@ import {
   Query as IQuery,
   Variables,
 } from "../types";
-import { getRequest } from "../relay-graphql-tag/parser";
+import { getRequest } from "../relay-compile-tag/parser";
 import { GQLClient } from "./gqlClient";
 import { executeQuery } from "./relayQuery";
 
