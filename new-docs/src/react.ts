@@ -10,7 +10,7 @@ import {
   Query,
   Response,
   Variables,
-} from './types';
+} from './core/types';
 
 import {
   GQLFragmentObserver,

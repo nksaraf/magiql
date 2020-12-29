@@ -22,9 +22,7 @@ import type {
   ReaderFragment,
   ReaderInlineFragment,
 } from "relay-runtime/lib/util/ReaderNode";
-import { CombinedError } from "./core/error";
-
-
+import { CombinedError } from "./error";
 
 export type {
   ConcreteRequest,

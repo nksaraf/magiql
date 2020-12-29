@@ -11,8 +11,8 @@ import {
   KeyReturnType,
   FragmentData,
   FragmentRef,
-} from '../types';
-import { getFragment } from '../relay-compile-tag/parser';
+} from './types';
+import { getFragment } from "../relay-compile-tag";
 import { GQLClient } from './gqlClient';
 
 export interface GQLFragmentObserverOptions<

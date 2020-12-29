@@ -21,7 +21,7 @@ export function Pokemon({ pokemon }) {
 
   return (
     <div
-      className={tw`flex flex-row items-center shadow-md rounded-lg mb-3 gap-3 w-3/4 bg-white`}
+      className={tw`flex flex-row items-center shadow-md rounded-lg mb-3 gap-3 lg:w-4/5 w-full bg-white`}
     >
       <img height={48} width={48} src={data.sprites.normal} />
       <span className={tw`text-sm text-gray-400`}>{data.id}</span>

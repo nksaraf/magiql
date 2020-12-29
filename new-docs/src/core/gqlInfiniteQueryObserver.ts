@@ -12,8 +12,8 @@ import {
   Response,
   Query as IQuery,
   Variables,
-} from "../types";
-import { getRequest } from "../relay-compile-tag/parser";
+} from "./types";
+import { getRequest } from "../relay-compile-tag";
 import { GQLClient } from "./gqlClient";
 import { executeQuery } from "./relayQuery";
 

@@ -1,25 +1,10 @@
 // Piggybacking off relay-runtime here
 // https://github.com/facebook/relay/blob/7c67b4750592e469d499128108fe16afe2adaf51/packages/relay-runtime/store/RelayModernSelector.js
-import {
-  OperationDefinitionNode,
-  DocumentNode,
-  SelectionSetNode,
-  FragmentDefinitionNode,
-  ArgumentNode,
-  VariableNode,
-  IntValueNode,
-  BooleanValueNode,
-  FloatValueNode,
-  StringValueNode,
-  EnumValueNode,
-  NullValueNode,
-  ObjectFieldNode,
-  ValueNode,
-  InlineFragmentNode,
-} from "graphql";
-import { parse } from "graphql/language/parser";
+
+import { parse as parseGraphQL } from "graphql/language/parser";
 import { print } from "graphql/language/printer";
 import sum from "hash-sum";
+
 import type {
   ReaderFragment,
   NormalizationOperation,
@@ -27,8 +12,20 @@ import type {
   ConcreteRequest,
   RequestParameters,
 } from "relay-runtime";
+import type {
+  OperationDefinitionNode,
+  DocumentNode,
+  SelectionSetNode,
+  FragmentDefinitionNode,
+  ArgumentNode,
+  ObjectFieldNode,
+  ValueNode,
+  InlineFragmentNode,
+} from "graphql";
 
-import { memoized } from "../utils/memoized";
+// https://github.com/facebook/relay/blob/7c67b4750592e469d499128108fe16afe2adaf51/packages/relay-runtime/store/RelayModernSelector.js
+
+import { memoized } from "./memoized";
 
 import {
   removeTypeNameFromOperation,
@@ -193,6 +190,7 @@ export const parseRequest = (
     : "Request" + OPERATION_COUNTER++;
 
   const queryText = print(requestDocument);
+
   return {
     kind: "Request",
     fragment: parseOperation(requestFragment) as ReaderFragment,
@@ -234,8 +232,11 @@ export const parseFragment = (
 export const parseGraphQLTag = memoized(
   (taggedNode: string): ReaderFragment | ConcreteRequest => {
     try {
-      const node = parse(taggedNode);
+      const node = parseGraphQL(taggedNode);
 
+      // find first definition in the document, in two categories:
+      // - query / mutation / subscription
+      // - fragment 
       const document = node.definitions.find(
         (def) =>
           def.kind === "OperationDefinition" ||
@@ -244,7 +245,7 @@ export const parseGraphQLTag = memoized(
 
       if (!document) {
         throw new Error(
-          "No GraphQL document (query/mutation/subscription/fragment) found"
+          "No GraphQL definition (query/mutation/subscription/fragment) found"
         );
       }
 
@@ -260,56 +261,5 @@ export const parseGraphQLTag = memoized(
   (s) => s
 );
 
-// https://github.com/facebook/relay/blob/7c67b4750592e469d499128108fe16afe2adaf51/packages/relay-runtime/store/RelayModernSelector.js
-import {
-  getRequest as baseGetRequest,
-  getFragment as baseGetFragment,
-} from "relay-runtime/lib/query/GraphQLTag";
 
-import type { GraphQLTaggedNode } from "../types";
 
-export const getRequest = (
-  taggedNode: GraphQLTaggedNode | string
-): ConcreteRequest => {
-  if (typeof taggedNode === "string") {
-    return parseGraphQLTag(taggedNode) as ConcreteRequest;
-  }
-
-  // resolves the node from the require call for artifacts from relay-compiler, otherwise returns
-  const request = baseGetRequest(taggedNode);
-
-  // Previously parsed by magiql
-  if (
-    typeof request === "object" &&
-    request.params.metadata?.parser === "graphql"
-  ) {
-    return request as ConcreteRequest;
-  }
-  // Parsed by relay (require call for artifact from relay-compiler)
-  else {
-    (request.params as any).metadata.parser = "relay";
-    return request;
-  }
-};
-
-export const getFragment = (
-  taggedNode: GraphQLTaggedNode | string
-): ReaderFragment | null => {
-  return typeof taggedNode === "string"
-    ? (parseGraphQLTag(taggedNode) as ReaderFragment)
-    : baseGetFragment(taggedNode);
-};
-
-export const getOperationName = (query: string) => {
-  const name = /(query|mutation|subscription) ([\w\d-_]+)/.exec(query);
-  if (name && name.length && name[2]) {
-    return {
-      operationName: name[2],
-      operationKind: name[1],
-    };
-  } else {
-    throw new Error(
-      "Invalid query. Must have a query name, eg. query MyQuery { ... }"
-    );
-  }
-};

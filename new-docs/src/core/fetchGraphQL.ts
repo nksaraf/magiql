@@ -1,15 +1,13 @@
 import fetch from "isomorphic-unfetch";
 
-import { getRequest } from "../relay-compile-tag/parser";
 import type {
-  ConcreteRequest,
   FetchOperation,
   FetchOptions,
   FetchResult,
   Query,
   Response,
   Variables,
-} from "../types";
+} from "./types";
 import { CombinedError } from "./error";
 
 export type BaseVariables = { [key: string]: any };
@@ -70,10 +68,7 @@ export async function fetchGraphQL<TQuery extends Query>({
     throw new Error("Query not found");
   }
 
-  const query: string =
-    typeof rawQuery === "string"
-      ? rawQuery
-      : getRequest(rawQuery as ConcreteRequest).params.text!;
+  const query: string = rawQuery as any;
 
   const operation = {
     endpoint,
@@ -104,7 +99,6 @@ export async function fetchGraphQL<TQuery extends Query>({
 
     const contentTypeHeader = response.headers.get("Content-Type");
 
-    console.log(response);
     if (!contentTypeHeader?.startsWith("application/json")) {
       const result = await response.text();
       return makeNetworkErrorResult(

@@ -5,22 +5,20 @@ import {
   FragmentDefinitionNode,
   InlineFragmentNode,
   FieldNode,
-} from "graphql";
-import { visit } from "graphql/language/visitor";
-
-import { constants } from "../types";
+} from 'graphql';
+import { visit } from 'graphql/language/visitor';
 
 export const removeTypeNameFromOperation = (
-  node: DocumentNode
+  node: DocumentNode,
 ): DocumentNode => {
   return visit(node, {
-    OperationDefinition: (node) => {
+    OperationDefinition: node => {
       return {
         ...node,
         selectionSet: {
           ...node.selectionSet,
           selections: node.selectionSet.selections.filter(
-            (sel) => !(sel.kind === "Field" && sel.name.value === "__typename")
+            sel => !(sel.kind === 'Field' && sel.name.value === '__typename'),
           ),
         },
       };
@@ -29,11 +27,10 @@ export const removeTypeNameFromOperation = (
 };
 
 export const addTypeName = (node: DocumentNode): DocumentNode => {
-  return visit(node, {    
-    SelectionSet: (node) => {
+  return visit(node, {
+    SelectionSet: node => {
       const typeName = node.selections.find(
-        (sel) =>
-          sel.kind === "Field" && sel.name.value === constants.TYPENAME_KEY
+        sel => sel.kind === 'Field' && sel.name.value === '__typename',
       );
 
       if (!typeName) {
@@ -44,10 +41,10 @@ export const addTypeName = (node: DocumentNode): DocumentNode => {
             {
               arguments: [],
               name: {
-                value: constants.TYPENAME_KEY,
-                kind: "Name",
+                value: '__typename',
+                kind: 'Name',
               },
-              kind: "Field",
+              kind: 'Field',
             } as SelectionNode,
           ],
         };
@@ -60,18 +57,18 @@ export const addTypeName = (node: DocumentNode): DocumentNode => {
 
 export const inlineFragments = (node: DocumentNode): DocumentNode => {
   const fragments: FragmentDefinitionNode[] = node.definitions.filter(
-    (def) => def.kind === "FragmentDefinition"
+    def => def.kind === 'FragmentDefinition',
   ) as any;
 
   const doc = visit(node, {
-    FragmentSpread: (node) => {
+    FragmentSpread: node => {
       const fragment = fragments.find(
-        (frag) => frag.name.value === node.name.value
+        frag => frag.name.value === node.name.value,
       );
 
       if (fragment) {
         return {
-          kind: "InlineFragment",
+          kind: 'InlineFragment',
           typeCondition: fragment.typeCondition,
           selectionSet: fragment.selectionSet,
           directives: fragment.directives,
@@ -79,7 +76,7 @@ export const inlineFragments = (node: DocumentNode): DocumentNode => {
         } as InlineFragmentNode;
       } else {
         throw new Error(
-          `Missing fragment definition (forgot to add fragment?): ${node.name.value}`
+          `Missing fragment definition (forgot to add fragment?): ${node.name.value}`,
         );
       }
     },
@@ -88,9 +85,7 @@ export const inlineFragments = (node: DocumentNode): DocumentNode => {
   return {
     ...doc,
     definitions: [
-      doc.definitions.find((doc) => (def) =>
-        def.kind === "OperationDefinition"
-      ),
+      doc.definitions.find(doc => def => def.kind === 'OperationDefinition'),
     ],
   };
 };
@@ -99,15 +94,15 @@ type SelectionMap = Map<string, FieldNode>;
 
 const deepTraverse = (
   node: SelectionSetNode,
-  selectionMap: SelectionMap = new Map()
+  selectionMap: SelectionMap = new Map(),
 ) => {
   let hasFlattened = false;
   const flatten = (node: SelectionSetNode) => {
-    node.selections.forEach((sel) => {
-      if (sel.kind === "InlineFragment") {
+    node.selections.forEach(sel => {
+      if (sel.kind === 'InlineFragment') {
         flatten(sel.selectionSet);
         hasFlattened = true;
-      } else if (sel.kind === "Field") {
+      } else if (sel.kind === 'Field') {
         const key = sel.alias?.value ?? sel.name.value;
 
         const val = selectionMap.get(key);
@@ -145,12 +140,12 @@ const deepTraverse = (
 
 export const flattenFragments = (node: DocumentNode): DocumentNode => {
   return visit(node, {
-    SelectionSet: (node) => {
+    SelectionSet: node => {
       const { selectionMap, hasFlattened } = deepTraverse(node);
 
       function transform(selectionMap: SelectionMap) {
-        return Array.from(selectionMap.values()).map((val) => {
-          if (val.kind === "Field") {
+        return Array.from(selectionMap.values()).map(val => {
+          if (val.kind === 'Field') {
             if (val.selectionSet) {
               return {
                 ...val,

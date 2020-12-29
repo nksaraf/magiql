@@ -7,8 +7,8 @@ import {
   Query as IQuery,
   Response,
   Variables,
-} from '../types';
-import { getRequest } from '../relay-compile-tag/parser';
+} from './types';
+import { getRequest } from "../relay-compile-tag";
 import { GQLClient } from './gqlClient';
 import { executeMutation } from './relayQuery';
 
