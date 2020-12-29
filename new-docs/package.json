@@ -1,0 +1,56 @@
+{
+  "private": true,
+  "name": "magiql",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "dumi dev",
+    "docs:build": "dumi build",
+    "docs:deploy": "gh-pages -d docs-dist",
+    "build": "microbundle build",
+    "deploy": "npm run docs:build && npm run docs:deploy",
+    "release": "npm run build && npm publish",
+    "prettier": "prettier --write \"**/*.{js,jsx,tsx,ts,less,md,json}\"",
+    "test": "umi-test",
+    "test:coverage": "umi-test --coverage"
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "typings": "dist/index.d.ts",
+  "gitHooks": {
+    "pre-commit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,jsx,less,md,json}": [
+      "prettier --write"
+    ],
+    "*.ts?(x)": [
+      "prettier --parser=typescript --write"
+    ]
+  },
+  "dependencies": {
+    "@types/hash-sum": "^1.0.0",
+    "hash-sum": "^2.0.0",
+    "isomorphic-unfetch": "^3.1.0",
+    "react-query": "file:.yalc/react-query",
+    "react-relay-network-modern": "^6.0.0",
+    "relay-runtime": "npm:@nksaraf/relay-runtime"
+  },
+  "peerDependencies": {
+    "graphql": "^15.4.0",
+    "react": "^16.8"
+  },
+  "devDependencies": {
+    "@umijs/test": "^3.0.5",
+    "dumi": "^1.0.10",
+    "father-build": "^1.17.2",
+    "gh-pages": "^3.0.0",
+    "graphql": "^15.4.0",
+    "lint-staged": "^10.0.7",
+    "microbundle": "^0.13.0",
+    "msw": "^0.24.3",
+    "prettier": "^1.19.1",
+    "tsup": "^3.11.0",
+    "twind": "^0.10.1",
+    "yorkie": "^2.0.0"
+  }
+}

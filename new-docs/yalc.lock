@@ -1,0 +1,10 @@
+{
+  "version": "v1",
+  "packages": {
+    "react-query": {
+      "signature": "9e623bb85231ddd666b24fd1de93891d",
+      "file": true,
+      "replaced": "npm:@nksaraf/react-query"
+    }
+  }
+}

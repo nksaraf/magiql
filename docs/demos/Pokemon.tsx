@@ -1,6 +1,7 @@
 import { graphql, useFragment } from "magiql";
-import ow from "oceanwind";
+import { tw } from "twind";
 import { PokemonType, PokemonType_pokemonType } from "./PokemonType";
+import React from "react";
 
 export const Pokemon_pokemon = graphql`
   fragment Pokemon_pokemon on Pokemon {
@@ -20,12 +21,12 @@ export function Pokemon({ pokemon }) {
 
   return (
     <div
-      className={ow`flex flex-row items-center shadow-md rounded-lg mb-3 gap-3 w-3/4 bg-white`}
+      className={tw`flex flex-row items-center shadow-md rounded-lg mb-3 gap-3 w-3/4 bg-white`}
     >
       <img height={48} width={48} src={data.sprites.normal} />
-      <span className={ow`text-sm text-gray-400`}>{data.id}</span>
+      <span className={tw`text-sm text-gray-400`}>{data.id}</span>
       {data.name}
-      <div className={ow`flex flex-row gap-2 items-center`}>
+      <div className={tw`flex flex-row gap-2 items-center`}>
         {data.types.map((type) => (
           <PokemonType pokemonType={type} />
         ))}
