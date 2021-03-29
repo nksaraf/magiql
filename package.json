@@ -29,7 +29,7 @@
     "@types/querystringify": "^2.0.0",
     "@types/react": "^16.9.49",
     "@types/react-dom": "^16.9.8",
-    "@types/react-native": "^0.63.22",
+    "@types/react-native": "^0.64.2",
     "@types/relay-runtime": "^10.0.7",
     "babel-plugin-macros": "^2.8.0",
     "bluebird": "^3.7.2",
