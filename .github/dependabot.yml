@@ -1,0 +1,70 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "10:00"
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: tsup
+    versions:
+    - 3.12.0
+    - 3.12.1
+    - 4.0.0
+    - 4.10.0
+    - 4.2.0
+    - 4.3.1
+    - 4.5.1
+    - 4.6.0
+    - 4.6.1
+    - 4.7.1
+    - 4.8.0
+    - 4.8.10
+    - 4.8.14
+    - 4.8.18
+    - 4.8.19
+    - 4.8.21
+    - 4.9.1
+    - 4.9.2
+  - dependency-name: "@types/node"
+    versions:
+    - 14.14.22
+    - 14.14.25
+    - 14.14.27
+    - 14.14.28
+    - 14.14.30
+    - 14.14.31
+    - 14.14.32
+    - 14.14.33
+    - 14.14.34
+    - 14.14.35
+    - 14.14.36
+    - 14.14.37
+    - 14.14.39
+    - 14.14.41
+    - 15.0.0
+  - dependency-name: y18n
+    versions:
+    - 4.0.1
+    - 4.0.2
+  - dependency-name: "@types/react-native"
+    versions:
+    - 0.63.46
+    - 0.63.48
+    - 0.63.49
+    - 0.63.50
+    - 0.63.51
+    - 0.63.52
+    - 0.64.0
+    - 0.64.1
+    - 0.64.2
+  - dependency-name: "@types/react"
+    versions:
+    - 17.0.0
+    - 17.0.1
+    - 17.0.2
+    - 17.0.3
+  - dependency-name: docs-ts
+    versions:
+    - 0.5.3
