@@ -10990,10 +10990,10 @@ react-lifecycles-compat@^3.0.2, react-lifecycles-compat@^3.0.4:
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
   integrity sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==
 
-react-notion@^0.8.1:
-  version "0.8.1"
-  resolved "https://registry.yarnpkg.com/react-notion/-/react-notion-0.8.1.tgz#2a6df3a1a9ecf2d4719a79d2a4fc0a055de3a9f1"
-  integrity sha512-i6eozvgqtJCfoGSty5FuclE7wPIw3JdXiPgzoXU7+9a+I8SvnMS016NLRbUaQva6EeM+tsziQT2OVj+rMgv26w==
+react-notion@^0.10.0:
+  version "0.10.0"
+  resolved "https://registry.yarnpkg.com/react-notion/-/react-notion-0.10.0.tgz#d30876b681b09d91dc671b04c7f604adb4e2499e"
+  integrity sha512-i5lVAxzSs7GnTpIbKtivPQWxGZiKCO5xmCmMJyn6F91y8X1IIJqnypkK+31F2acb1l1Qd8Yv0ktuvXwz9g49NQ==
   dependencies:
     prismjs "^1.21.0"
 
