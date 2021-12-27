@@ -14,6 +14,8 @@ function Pokemons() {
     }
   `);
 
+  console.log("heree");
+
   if (error) {
     return <div>Error</div>;
   }
@@ -24,7 +26,7 @@ function Pokemons() {
 
   return (
     <div className={tw`w-screen`}>
-      {data.profiles.map((poke) => (
+      {data.profiles.map(poke => (
         <Profile key={poke.id} profile={poke} />
       ))}
     </div>

@@ -1,7 +1,7 @@
 import compileGraphQLTag from "babel-plugin-relay/lib/compileGraphQLTag";
 import getValidGraphQLTag from "babel-plugin-relay/lib/getValidGraphQLTag";
 
-import { loadConfig } from "./relay-adapter/config";
+import { loadConfig } from "./relay-compiler/config";
 const { languagePlugin, ...config } = loadConfig();
 
 if (process.env.NODE_ENV !== "production") {
@@ -9,7 +9,7 @@ if (process.env.NODE_ENV !== "production") {
     const { relayCompiler } = require("relay-compiler");
     relayCompiler({
       ...config,
-      language: languagePlugin,
+      language: languagePlugin
     });
   }
 }
@@ -47,8 +47,7 @@ module.exports = function BabelPluginRelay(context: { types: any }): any {
   const { types: t } = context;
   if (!t) {
     throw new Error(
-      'BabelPluginRelay: Expected plugin context to include "types", but got:' +
-        String(context)
+      'BabelPluginRelay: Expected plugin context to include "types", but got:' + String(context)
     );
   }
 
@@ -59,7 +58,7 @@ module.exports = function BabelPluginRelay(context: { types: any }): any {
       if (ast) {
         compileGraphQLTag(t, path, state, ast);
       }
-    },
+    }
   };
 
   return {
@@ -67,9 +66,9 @@ module.exports = function BabelPluginRelay(context: { types: any }): any {
       Program(path, state) {
         path.traverse(visitor, {
           ...state,
-          opts: { ...config, languagePlugin, ...state.opts },
+          opts: { ...config, languagePlugin, ...state.opts }
         });
-      },
-    },
+      }
+    }
   };
 };
